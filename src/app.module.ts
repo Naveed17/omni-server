@@ -12,6 +12,7 @@ import {
   KitchenController,
   ReportsController,
 } from './pos/extra.controllers';
+import { HealthController } from './health.controller';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import {
     DatabaseModule,
   ],
   controllers: [
+    HealthController,
     LicenseController,
     PosController,
     KhataController,
