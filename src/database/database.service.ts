@@ -157,6 +157,60 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       ALTER TABLE customer_khatas ADD COLUMN IF NOT EXISTS customer_type TEXT DEFAULT 'retail';
       ALTER TABLE customer_khatas ADD COLUMN IF NOT EXISTS due_days INT DEFAULT 30;
       ALTER TABLE khata_transactions ADD COLUMN IF NOT EXISTS payment_method TEXT DEFAULT 'cash';
+
+      -- Multi-tenant schema separation columns
+      ALTER TABLE products ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE categories ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE customer_khatas ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE khata_transactions ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE expenses ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE stock_movements ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE kitchen_tickets ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE cash_drawer ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+
+      CREATE INDEX IF NOT EXISTS idx_products_schema ON products (schema_id);
+      CREATE INDEX IF NOT EXISTS idx_categories_schema ON categories (schema_id);
+      CREATE INDEX IF NOT EXISTS idx_orders_schema ON orders (schema_id);
+      CREATE INDEX IF NOT EXISTS idx_khatas_schema ON customer_khatas (schema_id);
+      CREATE INDEX IF NOT EXISTS idx_expenses_schema ON expenses (schema_id);
+      CREATE INDEX IF NOT EXISTS idx_stock_schema ON stock_movements (schema_id);
+      CREATE INDEX IF NOT EXISTS idx_kitchen_schema ON kitchen_tickets (schema_id);
+
+      CREATE TABLE IF NOT EXISTS licenses (
+        id TEXT PRIMARY KEY,
+        key TEXT NOT NULL UNIQUE,
+        user_name TEXT NOT NULL,
+        whatsapp_number TEXT NOT NULL,
+        is_enabled BOOLEAN NOT NULL DEFAULT TRUE,
+        max_devices INT NOT NULL DEFAULT 4,
+        license_type TEXT NOT NULL DEFAULT 'annual',
+        expires_at TIMESTAMPTZ,
+        modules JSONB NOT NULL DEFAULT '{}'::jsonb,
+        schema_id TEXT,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE TABLE IF NOT EXISTS license_devices (
+        id TEXT PRIMARY KEY,
+        license_id TEXT NOT NULL REFERENCES licenses(id) ON DELETE CASCADE,
+        hwid TEXT NOT NULL,
+        device_name TEXT NOT NULL DEFAULT 'Unknown PC',
+        activated_at TIMESTAMPTZ DEFAULT NOW(),
+        UNIQUE (license_id, hwid)
+      );
+
+      CREATE TABLE IF NOT EXISTS license_settings (
+        id TEXT PRIMARY KEY DEFAULT 'default',
+        support_phone TEXT DEFAULT '+92 300 0000000',
+        support_email TEXT DEFAULT 'support@omnipos.pk',
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      INSERT INTO license_settings (id, support_phone, support_email)
+      VALUES ('default', '+92 300 0000000', 'support@omnipos.pk')
+      ON CONFLICT (id) DO NOTHING;
     `);
   }
 
@@ -256,6 +310,73 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
           [c.id, c.module, c.name]
         );
       }
+    }
+
+    const licCountRes = await this.pool.query('SELECT COUNT(*) FROM licenses');
+    const licCount = parseInt(licCountRes.rows[0].count, 10);
+
+    if (licCount === 0) {
+      console.log('[DatabaseService] Seeding default Omnipos licenses...');
+      const defaultModules = {
+        fastfood: true,
+        omnimart: true,
+        kitchen: true,
+        catalog: true,
+        inventory: true,
+        khata: true,
+        expenses: true,
+        reports: true,
+        webStore: false,
+        admin: true,
+      };
+
+      await this.pool.query(
+        `INSERT INTO licenses (id, key, user_name, whatsapp_number, is_enabled, max_devices, license_type, expires_at, modules)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         ON CONFLICT (key) DO NOTHING`,
+        [
+          'lic_demo_01',
+          'OMNI-DEMO-2026-LIVE',
+          'Omnipos Live Demo',
+          '+923001234567',
+          true,
+          10,
+          'annual',
+          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          JSON.stringify(defaultModules),
+        ]
+      );
+
+      // A test license with fastfood & kitchen only (no omnimart, no khata) to verify module gating
+      const fastFoodOnlyModules = {
+        fastfood: true,
+        omnimart: false,
+        kitchen: true,
+        catalog: true,
+        inventory: true,
+        khata: false,
+        expenses: true,
+        reports: true,
+        webStore: false,
+        admin: true,
+      };
+
+      await this.pool.query(
+        `INSERT INTO licenses (id, key, user_name, whatsapp_number, is_enabled, max_devices, license_type, expires_at, modules)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+         ON CONFLICT (key) DO NOTHING`,
+        [
+          'lic_ff_02',
+          'OMNI-FAST-FOOD-ONLY',
+          'Fast Food Express',
+          '+923009876543',
+          true,
+          5,
+          'annual',
+          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
+          JSON.stringify(fastFoodOnlyModules),
+        ]
+      );
     }
   }
 }

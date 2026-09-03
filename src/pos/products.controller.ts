@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { DatabaseService } from '../database/database.service';
+import { resolveTenantSchemaId } from '../common/tenant';
 
 function mapProductRow(r: any) {
   return {
@@ -28,13 +30,20 @@ export class ProductsController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get()
-  async getProducts(@Query('module') module?: string) {
+  async getProducts(@Req() req: Request, @Query('module') module?: string) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
       let res;
       if (module) {
-        res = await this.db.query('SELECT * FROM products WHERE module = $1 ORDER BY display_order ASC, name ASC', [module]);
+        res = await this.db.query(
+          'SELECT * FROM products WHERE schema_id = $1 AND module = $2 ORDER BY display_order ASC, name ASC',
+          [schemaId, module]
+        );
       } else {
-        res = await this.db.query('SELECT * FROM products ORDER BY display_order ASC, name ASC');
+        res = await this.db.query(
+          'SELECT * FROM products WHERE schema_id = $1 ORDER BY display_order ASC, name ASC',
+          [schemaId]
+        );
       }
       return res.rows.map(mapProductRow);
     } catch (err: any) {
@@ -43,11 +52,12 @@ export class ProductsController {
   }
 
   @Post()
-  async createProduct(@Body() body: any) {
+  async createProduct(@Req() req: Request, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const id = body.id || `prod_${Date.now()}`;
     const res = await this.db.query(
-      `INSERT INTO products (id, module, name, category, cost_price, price, sku_code, rack_location, unit, min_threshold, opening_stock, description, image_url, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, NOW())
+      `INSERT INTO products (id, schema_id, module, name, category, cost_price, price, sku_code, rack_location, unit, min_threshold, opening_stock, description, image_url, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, NOW())
        ON CONFLICT (id) DO UPDATE SET
          name = EXCLUDED.name,
          category = EXCLUDED.category,
@@ -58,14 +68,16 @@ export class ProductsController {
          opening_stock = EXCLUDED.opening_stock,
          description = EXCLUDED.description,
          image_url = EXCLUDED.image_url,
+         schema_id = EXCLUDED.schema_id,
          updated_at = NOW()
        RETURNING *`,
       [
         id,
+        schemaId,
         body.module || 'fastfood',
         body.name,
         body.category || 'General',
-        body.costPrice || null,
+        body.costPrice != null ? body.costPrice : null,
         body.price || 0,
         body.skuCode || null,
         body.rackLocation || null,
@@ -80,23 +92,25 @@ export class ProductsController {
   }
 
   @Put(':id')
-  async updateProduct(@Param('id') id: string, @Body() body: any) {
+  async updateProduct(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const res = await this.db.query(
       `UPDATE products SET
-         name = COALESCE($2, name),
-         category = COALESCE($3, category),
-         cost_price = COALESCE($4, cost_price),
-         price = COALESCE($5, price),
-         sku_code = COALESCE($6, sku_code),
-         rack_location = COALESCE($7, rack_location),
-         opening_stock = COALESCE($8, opening_stock),
-         description = COALESCE($9, description),
-         image_url = COALESCE($10, image_url),
+         name = COALESCE($3, name),
+         category = COALESCE($4, category),
+         cost_price = COALESCE($5, cost_price),
+         price = COALESCE($6, price),
+         sku_code = COALESCE($7, sku_code),
+         rack_location = COALESCE($8, rack_location),
+         opening_stock = COALESCE($9, opening_stock),
+         description = COALESCE($10, description),
+         image_url = COALESCE($11, image_url),
          updated_at = NOW()
-       WHERE id = $1
+       WHERE id = $1 AND schema_id = $2
        RETURNING *`,
       [
         id,
+        schemaId,
         body.name,
         body.category,
         body.costPrice != null ? body.costPrice : null,
@@ -112,8 +126,9 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  async deleteProduct(@Param('id') id: string) {
-    await this.db.query('DELETE FROM products WHERE id = $1', [id]);
+  async deleteProduct(@Req() req: Request, @Param('id') id: string) {
+    const schemaId = resolveTenantSchemaId(req);
+    await this.db.query('DELETE FROM products WHERE id = $1 AND schema_id = $2', [id, schemaId]);
     return { ok: true };
   }
 }
@@ -123,13 +138,20 @@ export class CategoriesController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get()
-  async getCategories(@Query('module') module?: string) {
+  async getCategories(@Req() req: Request, @Query('module') module?: string) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
       let res;
       if (module) {
-        res = await this.db.query('SELECT * FROM categories WHERE module = $1 ORDER BY name ASC', [module]);
+        res = await this.db.query(
+          'SELECT * FROM categories WHERE schema_id = $1 AND module = $2 ORDER BY name ASC',
+          [schemaId, module]
+        );
       } else {
-        res = await this.db.query('SELECT * FROM categories ORDER BY name ASC');
+        res = await this.db.query(
+          'SELECT * FROM categories WHERE schema_id = $1 ORDER BY name ASC',
+          [schemaId]
+        );
       }
       return res.rows;
     } catch {
@@ -138,20 +160,22 @@ export class CategoriesController {
   }
 
   @Post()
-  async createCategory(@Body() body: any) {
+  async createCategory(@Req() req: Request, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const id = body.id || `cat_${Date.now()}`;
     const res = await this.db.query(
-      `INSERT INTO categories (id, module, name) VALUES ($1, $2, $3)
-       ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name
+      `INSERT INTO categories (id, schema_id, module, name) VALUES ($1, $2, $3, $4)
+       ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, schema_id = EXCLUDED.schema_id
        RETURNING *`,
-      [id, body.module || 'fastfood', body.name]
+      [id, schemaId, body.module || 'fastfood', body.name]
     );
     return res.rows[0];
   }
 
   @Delete(':id')
-  async deleteCategory(@Param('id') id: string) {
-    await this.db.query('DELETE FROM categories WHERE id = $1', [id]);
+  async deleteCategory(@Req() req: Request, @Param('id') id: string) {
+    const schemaId = resolveTenantSchemaId(req);
+    await this.db.query('DELETE FROM categories WHERE id = $1 AND schema_id = $2', [id, schemaId]);
     return { ok: true };
   }
 }

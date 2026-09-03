@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Put, Delete, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Delete, Body, Param, Query, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { DatabaseService } from '../database/database.service';
+import { resolveTenantSchemaId } from '../common/tenant';
 
 // ── Stock Movements ──
 @Controller('api/stock-movements')
@@ -7,13 +9,20 @@ export class StockController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get()
-  async getMovements(@Query('module') module?: string) {
+  async getMovements(@Req() req: Request, @Query('module') module?: string) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
       let res;
       if (module) {
-        res = await this.db.query('SELECT * FROM stock_movements WHERE module = $1 ORDER BY date DESC', [module]);
+        res = await this.db.query(
+          'SELECT * FROM stock_movements WHERE schema_id = $1 AND module = $2 ORDER BY date DESC',
+          [schemaId, module]
+        );
       } else {
-        res = await this.db.query('SELECT * FROM stock_movements ORDER BY date DESC');
+        res = await this.db.query(
+          'SELECT * FROM stock_movements WHERE schema_id = $1 ORDER BY date DESC',
+          [schemaId]
+        );
       }
       return res.rows.map((r) => ({
         id: r.id,
@@ -34,14 +43,16 @@ export class StockController {
   }
 
   @Post()
-  async createMovement(@Body() body: any) {
+  async createMovement(@Req() req: Request, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const id = body.id || `mov_${Date.now()}`;
     const res = await this.db.query(
-      `INSERT INTO stock_movements (id, module, product_id, product_name, type, quantity, unit_cost, unit_price, reason, note, date)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, COALESCE($11::timestamptz, NOW()))
+      `INSERT INTO stock_movements (id, schema_id, module, product_id, product_name, type, quantity, unit_cost, unit_price, reason, note, date)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, COALESCE($12::timestamptz, NOW()))
        RETURNING *`,
       [
         id,
+        schemaId,
         body.module || 'fastfood',
         body.productId || 'prod_gen',
         body.productName || 'Item',
@@ -55,11 +66,11 @@ export class StockController {
       ]
     );
 
-    // Also update product stock count
+    // Also update product stock count for this tenant
     const qtyDelta = body.type === 'in' ? Number(body.quantity) : -Number(body.quantity);
     await this.db.query(
-      `UPDATE products SET opening_stock = COALESCE(opening_stock, 0) + $1 WHERE id = $2`,
-      [qtyDelta, body.productId]
+      `UPDATE products SET opening_stock = COALESCE(opening_stock, 0) + $1 WHERE id = $2 AND schema_id = $3`,
+      [qtyDelta, body.productId, schemaId]
     );
 
     return res.rows[0];
@@ -72,9 +83,13 @@ export class ExpensesController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get('expenses')
-  async getExpenses() {
+  async getExpenses(@Req() req: Request) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
-      const res = await this.db.query('SELECT * FROM expenses ORDER BY date DESC');
+      const res = await this.db.query(
+        'SELECT * FROM expenses WHERE schema_id = $1 ORDER BY date DESC',
+        [schemaId]
+      );
       return res.rows.map((r) => ({
         id: r.id,
         category: r.category,
@@ -90,14 +105,16 @@ export class ExpensesController {
   }
 
   @Post('expenses')
-  async createExpense(@Body() body: any) {
+  async createExpense(@Req() req: Request, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const id = body.id || `exp_${Date.now()}`;
     const res = await this.db.query(
-      `INSERT INTO expenses (id, category, amount, payment_mode, vendor_name, description, date)
-       VALUES ($1, $2, $3, $4, $5, $6, COALESCE($7::timestamptz, NOW()))
+      `INSERT INTO expenses (id, schema_id, category, amount, payment_mode, vendor_name, description, date)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, COALESCE($8::timestamptz, NOW()))
        RETURNING *`,
       [
         id,
+        schemaId,
         body.category || 'Other',
         Number(body.amount) || 0,
         body.paymentMode || 'cash',
@@ -110,8 +127,8 @@ export class ExpensesController {
     // If paid via cash, also increment cash drawer cashOut
     if (body.paymentMode === 'cash') {
       await this.db.query(
-        `UPDATE cash_drawer SET cash_out = cash_out + $1 WHERE status = 'open'`,
-        [Number(body.amount) || 0]
+        `UPDATE cash_drawer SET cash_out = cash_out + $1 WHERE schema_id = $2 AND status = 'open'`,
+        [Number(body.amount) || 0, schemaId]
       );
     }
 
@@ -119,15 +136,19 @@ export class ExpensesController {
   }
 
   @Get('cash-drawer')
-  async getCashDrawer() {
+  async getCashDrawer(@Req() req: Request) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
-      let res = await this.db.query("SELECT * FROM cash_drawer WHERE status = 'open' ORDER BY date DESC LIMIT 1");
+      let res = await this.db.query(
+        "SELECT * FROM cash_drawer WHERE schema_id = $1 AND status = 'open' ORDER BY date DESC LIMIT 1",
+        [schemaId]
+      );
       if (res.rows.length === 0) {
         res = await this.db.query(
-          `INSERT INTO cash_drawer (id, opening_float, cash_sales, cash_in, cash_out, status)
-           VALUES ($1, 5000, 0, 0, 0, 'open')
+          `INSERT INTO cash_drawer (id, schema_id, opening_float, cash_sales, cash_in, cash_out, status)
+           VALUES ($1, $2, 5000, 0, 0, 0, 'open')
            RETURNING *`,
-          [`drawer_${Date.now()}`]
+          [`drawer_${Date.now()}`, schemaId]
         );
       }
       const r = res.rows[0];
@@ -147,16 +168,29 @@ export class ExpensesController {
   }
 
   @Post('cash-drawer/action')
-  async handleCashDrawerAction(@Body() body: { type: string; amount: number; notes?: string }) {
+  async handleCashDrawerAction(
+    @Req() req: Request,
+    @Body() body: { type: string; amount: number; notes?: string }
+  ) {
+    const schemaId = resolveTenantSchemaId(req);
     const amt = Number(body.amount) || 0;
     if (body.type === 'CASH_IN') {
-      await this.db.query(`UPDATE cash_drawer SET cash_in = cash_in + $1 WHERE status = 'open'`, [amt]);
+      await this.db.query(
+        `UPDATE cash_drawer SET cash_in = cash_in + $1 WHERE schema_id = $2 AND status = 'open'`,
+        [amt, schemaId]
+      );
     } else if (body.type === 'CASH_OUT') {
-      await this.db.query(`UPDATE cash_drawer SET cash_out = cash_out + $1 WHERE status = 'open'`, [amt]);
+      await this.db.query(
+        `UPDATE cash_drawer SET cash_out = cash_out + $1 WHERE schema_id = $2 AND status = 'open'`,
+        [amt, schemaId]
+      );
     } else if (body.type === 'CLOSE') {
-      await this.db.query(`UPDATE cash_drawer SET status = 'closed', closing_cash = $1 WHERE status = 'open'`, [amt]);
+      await this.db.query(
+        `UPDATE cash_drawer SET status = 'closed', closing_cash = $1 WHERE schema_id = $2 AND status = 'open'`,
+        [amt, schemaId]
+      );
     }
-    return this.getCashDrawer();
+    return this.getCashDrawer(req);
   }
 }
 
@@ -166,14 +200,16 @@ export class KitchenController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get()
-  async getTickets() {
+  async getTickets(@Req() req: Request) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
       const res = await this.db.query(
         `SELECT k.*, o.lines, o.customer_name, o.order_type as ot
          FROM kitchen_tickets k
          LEFT JOIN orders o ON k.order_id = o.id
-         WHERE k.status != 'served'
-         ORDER BY k.created_at ASC`
+         WHERE k.schema_id = $1 AND k.status != 'served'
+         ORDER BY k.created_at ASC`,
+        [schemaId]
       );
       return res.rows.map((r) => ({
         id: r.id,
@@ -191,7 +227,8 @@ export class KitchenController {
   }
 
   @Post()
-  async createManualTicket(@Body() body: any) {
+  async createManualTicket(@Req() req: Request, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const id = body.id || `kds_${Date.now()}`;
     const orderId = body.orderId || `ord_manual_${Date.now()}`;
     const lines = body.lines || [
@@ -206,17 +243,17 @@ export class KitchenController {
 
     // Ensure order exists so relation resolves properly
     await this.db.query(
-      `INSERT INTO orders (id, module, discount_percent, total_amount, customer_name, order_type, stage, lines, created_at, updated_at)
-       VALUES ($1, 'fastfood', 0, 0, $2, $3, 'paid', $4::jsonb, NOW(), NOW())
+      `INSERT INTO orders (id, schema_id, module, discount_percent, total_amount, customer_name, order_type, stage, lines, created_at, updated_at)
+       VALUES ($1, $2, 'fastfood', 0, 0, $3, $4, 'paid', $5::jsonb, NOW(), NOW())
        ON CONFLICT (id) DO NOTHING`,
-      [orderId, body.customerName || 'Walk-in / Phone', body.orderType || 'Rush Order', JSON.stringify(lines)]
+      [orderId, schemaId, body.customerName || 'Walk-in / Phone', body.orderType || 'Rush Order', JSON.stringify(lines)]
     );
 
     const res = await this.db.query(
-      `INSERT INTO kitchen_tickets (id, order_id, status, order_type, notes, created_at, updated_at)
-       VALUES ($1, $2, 'pending', $3, $4, NOW(), NOW())
+      `INSERT INTO kitchen_tickets (id, schema_id, order_id, status, order_type, notes, created_at, updated_at)
+       VALUES ($1, $2, $3, 'pending', $4, $5, NOW(), NOW())
        RETURNING *`,
-      [id, orderId, body.orderType || 'Rush Order', body.notes || null]
+      [id, schemaId, orderId, body.orderType || 'Rush Order', body.notes || null]
     );
 
     return {
@@ -230,37 +267,49 @@ export class KitchenController {
   }
 
   @Put(':id/status')
-  async updateStatus(@Param('id') id: string, @Body() body: { status: string }) {
+  async updateStatus(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() body: { status: string }
+  ) {
+    const schemaId = resolveTenantSchemaId(req);
     await this.db.query(
-      `UPDATE kitchen_tickets SET status = $1, updated_at = NOW() WHERE id = $2`,
-      [body.status, id]
+      `UPDATE kitchen_tickets SET status = $1, updated_at = NOW() WHERE id = $2 AND schema_id = $3`,
+      [body.status, id, schemaId]
     );
     return { ok: true, id, status: body.status };
   }
 
   @Delete(':id')
-  async deleteTicket(@Param('id') id: string) {
-    await this.db.query('DELETE FROM kitchen_tickets WHERE id = $1', [id]);
+  async deleteTicket(@Req() req: Request, @Param('id') id: string) {
+    const schemaId = resolveTenantSchemaId(req);
+    await this.db.query('DELETE FROM kitchen_tickets WHERE id = $1 AND schema_id = $2', [id, schemaId]);
     return { ok: true, id };
   }
 }
 
-// ── Reports Analytics (Live Aggregated from Neon DB) ──
+// ── Reports Analytics (Tenant-isolated Live Aggregation) ──
 @Controller('api/reports/analytics')
 export class ReportsController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get()
-  async getAnalytics() {
+  async getAnalytics(@Req() req: Request) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
-      const salesRes = await this.db.query(`SELECT COALESCE(SUM(total_amount), 0) as gross, COUNT(*) as count FROM orders`);
+      const salesRes = await this.db.query(
+        `SELECT COALESCE(SUM(total_amount), 0) as gross, COUNT(*) as count FROM orders WHERE schema_id = $1`,
+        [schemaId]
+      );
       const grossSales = parseFloat(salesRes.rows[0].gross || 0);
       const totalOrders = parseInt(salesRes.rows[0].count || 0, 10);
 
-      const expRes = await this.db.query(`SELECT COALESCE(SUM(amount), 0) as exp FROM expenses`);
+      const expRes = await this.db.query(
+        `SELECT COALESCE(SUM(amount), 0) as exp FROM expenses WHERE schema_id = $1`,
+        [schemaId]
+      );
       const totalExpenses = parseFloat(expRes.rows[0].exp || 0);
 
-      // Estimate COGS as ~35% of gross or from stock movements
       const cogs = Math.round(grossSales * 0.35);
       const netProfit = grossSales - cogs - totalExpenses;
 
@@ -270,11 +319,7 @@ export class ReportsController {
         totalExpenses,
         netProfit,
         totalOrdersCount: totalOrders,
-        topSellingItems: [
-          { name: 'Crispy Zinger Burger', count: 12, revenue: 6600 },
-          { name: 'Double Cheese Burger', count: 8, revenue: 5760 },
-          { name: 'Oil Filter Premium', count: 4, revenue: 4800 },
-        ],
+        topSellingItems: [],
       };
     } catch {
       return { totalGrossSales: 0, estimatedCOGS: 0, totalExpenses: 0, netProfit: 0, totalOrdersCount: 0, topSellingItems: [] };

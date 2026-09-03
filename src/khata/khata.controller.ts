@@ -1,14 +1,20 @@
-import { Controller, Get, Post, Delete, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Body, Param, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { DatabaseService } from '../database/database.service';
+import { resolveTenantSchemaId } from '../common/tenant';
 
 @Controller('api/khata')
 export class KhataController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get()
-  async getKhatas() {
+  async getKhatas(@Req() req: Request) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
-      const res = await this.db.query('SELECT * FROM customer_khatas ORDER BY created_at DESC');
+      const res = await this.db.query(
+        'SELECT * FROM customer_khatas WHERE schema_id = $1 ORDER BY created_at DESC',
+        [schemaId]
+      );
       return res.rows.map((r) => ({
         id: r.id,
         name: r.name,
@@ -29,11 +35,12 @@ export class KhataController {
   }
 
   @Get(':id/transactions')
-  async getTransactions(@Param('id') khataId: string) {
+  async getTransactions(@Req() req: Request, @Param('id') khataId: string) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
       const res = await this.db.query(
-        'SELECT * FROM khata_transactions WHERE khata_id = $1 ORDER BY created_at DESC',
-        [khataId]
+        'SELECT * FROM khata_transactions WHERE schema_id = $1 AND khata_id = $2 ORDER BY created_at DESC',
+        [schemaId, khataId]
       );
       return res.rows.map((r) => ({
         id: r.id,
@@ -52,6 +59,7 @@ export class KhataController {
 
   @Post()
   async createKhata(
+    @Req() req: Request,
     @Body()
     body: {
       name: string;
@@ -65,17 +73,19 @@ export class KhataController {
       note?: string;
     },
   ) {
+    const schemaId = resolveTenantSchemaId(req);
     const id = `khata_${Date.now()}`;
     const debt = Number(body.currentDebt) || 0;
     const creditLimit = Number(body.creditLimit) || 50000;
     const dueDays = Number(body.dueDays) || 30;
 
     const res = await this.db.query(
-      `INSERT INTO customer_khatas (id, name, phone, address, cnic, customer_type, credit_limit, due_days, current_debt, note, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, NOW(), NOW())
+      `INSERT INTO customer_khatas (id, schema_id, name, phone, address, cnic, customer_type, credit_limit, due_days, current_debt, note, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
        RETURNING *`,
       [
         id,
+        schemaId,
         body.name,
         body.phone || null,
         body.address || null,
@@ -90,9 +100,9 @@ export class KhataController {
 
     if (debt > 0) {
       await this.db.query(
-        `INSERT INTO khata_transactions (id, khata_id, type, amount, balance_after, description, payment_method)
-         VALUES ($1, $2, 'DEBIT', $3, $4, 'Opening Balance / Initial Udhaar', 'cash')`,
-        [`tx_${Date.now()}`, id, debt, debt],
+        `INSERT INTO khata_transactions (id, schema_id, khata_id, type, amount, balance_after, description, payment_method)
+         VALUES ($1, $2, $3, 'DEBIT', $4, $5, 'Opening Balance / Initial Udhaar', 'cash')`,
+        [`tx_${Date.now()}`, schemaId, id, debt, debt],
       );
     }
 
@@ -115,6 +125,7 @@ export class KhataController {
 
   @Post(':id/transaction')
   async addTransaction(
+    @Req() req: Request,
     @Param('id') khataId: string,
     @Body()
     body: {
@@ -124,8 +135,12 @@ export class KhataController {
       paymentMethod?: string;
     },
   ) {
+    const schemaId = resolveTenantSchemaId(req);
     const amt = Number(body.amount) || 0;
-    const khataRes = await this.db.query('SELECT * FROM customer_khatas WHERE id = $1', [khataId]);
+    const khataRes = await this.db.query(
+      'SELECT * FROM customer_khatas WHERE id = $1 AND schema_id = $2',
+      [khataId, schemaId]
+    );
     if (khataRes.rows.length === 0) {
       return { ok: false, error: 'Khata account not found' };
     }
@@ -134,16 +149,17 @@ export class KhataController {
     const newDebt = body.type === 'DEBIT' ? currentDebt + amt : Math.max(0, currentDebt - amt);
 
     await this.db.query(
-      `UPDATE customer_khatas SET current_debt = $1, updated_at = NOW() WHERE id = $2`,
-      [newDebt, khataId],
+      `UPDATE customer_khatas SET current_debt = $1, updated_at = NOW() WHERE id = $2 AND schema_id = $3`,
+      [newDebt, khataId, schemaId],
     );
 
     const txId = `tx_${Date.now()}`;
     await this.db.query(
-      `INSERT INTO khata_transactions (id, khata_id, type, amount, balance_after, description, payment_method)
-       VALUES ($1, $2, $3, $4, $5, $6, $7)`,
+      `INSERT INTO khata_transactions (id, schema_id, khata_id, type, amount, balance_after, description, payment_method)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
         txId,
+        schemaId,
         khataId,
         body.type,
         amt,
@@ -157,8 +173,9 @@ export class KhataController {
   }
 
   @Delete(':id')
-  async deleteKhata(@Param('id') id: string) {
-    await this.db.query('DELETE FROM customer_khatas WHERE id = $1', [id]);
+  async deleteKhata(@Req() req: Request, @Param('id') id: string) {
+    const schemaId = resolveTenantSchemaId(req);
+    await this.db.query('DELETE FROM customer_khatas WHERE id = $1 AND schema_id = $2', [id, schemaId]);
     return { ok: true, id };
   }
 }

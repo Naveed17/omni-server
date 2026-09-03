@@ -1,5 +1,7 @@
-import { Controller, Get, Post, Put, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Put, Body, Param, Query, Req } from '@nestjs/common';
+import type { Request } from 'express';
 import { DatabaseService } from '../database/database.service';
+import { resolveTenantSchemaId } from '../common/tenant';
 
 function mapOrderRow(r: any) {
   return {
@@ -21,13 +23,20 @@ export class OrdersController {
   constructor(private readonly db: DatabaseService) {}
 
   @Get()
-  async getOrders(@Query('module') module?: string) {
+  async getOrders(@Req() req: Request, @Query('module') module?: string) {
+    const schemaId = resolveTenantSchemaId(req);
     try {
       let res;
       if (module) {
-        res = await this.db.query('SELECT * FROM orders WHERE module = $1 ORDER BY created_at DESC', [module]);
+        res = await this.db.query(
+          'SELECT * FROM orders WHERE schema_id = $1 AND module = $2 ORDER BY created_at DESC',
+          [schemaId, module]
+        );
       } else {
-        res = await this.db.query('SELECT * FROM orders ORDER BY created_at DESC');
+        res = await this.db.query(
+          'SELECT * FROM orders WHERE schema_id = $1 ORDER BY created_at DESC',
+          [schemaId]
+        );
       }
       return res.rows.map(mapOrderRow);
     } catch {
@@ -36,21 +45,24 @@ export class OrdersController {
   }
 
   @Post()
-  async createOrder(@Body() body: any) {
+  async createOrder(@Req() req: Request, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const id = body.id || `ord_${Date.now()}`;
     const linesJson = JSON.stringify(body.lines || []);
 
     const res = await this.db.query(
-      `INSERT INTO orders (id, module, discount_percent, total_amount, customer_name, order_type, stage, lines, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8::jsonb, COALESCE($9::timestamptz, NOW()), NOW())
+      `INSERT INTO orders (id, schema_id, module, discount_percent, total_amount, customer_name, order_type, stage, lines, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, COALESCE($10::timestamptz, NOW()), NOW())
        ON CONFLICT (id) DO UPDATE SET
          stage = EXCLUDED.stage,
          total_amount = EXCLUDED.total_amount,
          lines = EXCLUDED.lines,
+         schema_id = EXCLUDED.schema_id,
          updated_at = NOW()
        RETURNING *`,
       [
         id,
+        schemaId,
         body.module || 'fastfood',
         body.discountPercent || 0,
         body.totalAmount || 0,
@@ -64,7 +76,7 @@ export class OrdersController {
 
     const orderRow = mapOrderRow(res.rows[0]);
 
-    // Deduct stock for each sold product in PostgreSQL
+    // Deduct stock for each sold product in PostgreSQL for this tenant
     const orderLines = Array.isArray(body.lines)
       ? body.lines
       : typeof body.lines === 'string'
@@ -79,8 +91,8 @@ export class OrdersController {
             `UPDATE products
              SET opening_stock = GREATEST(0, COALESCE(opening_stock, 0) - $1),
                  updated_at = NOW()
-             WHERE id = $2`,
-            [qty, String(line.productId)]
+             WHERE id = $2 AND schema_id = $3`,
+            [qty, String(line.productId), schemaId]
           );
         } catch (stockErr) {
           console.error(`[Inventory] Failed to deduct stock for product ${line.productId}:`, stockErr);
@@ -88,15 +100,15 @@ export class OrdersController {
       }
     }
 
-    // If Fast Food module, automatically create a KDS Kitchen Ticket
+    // If Fast Food module, automatically create a KDS Kitchen Ticket for this tenant
     if (body.module === 'fastfood') {
       try {
         const ticketId = `kds_${Date.now()}`;
         await this.db.query(
-          `INSERT INTO kitchen_tickets (id, order_id, status, order_type, notes, created_at, updated_at)
-           VALUES ($1, $2, 'pending', $3, $4, NOW(), NOW())
+          `INSERT INTO kitchen_tickets (id, schema_id, order_id, status, order_type, notes, created_at, updated_at)
+           VALUES ($1, $2, $3, 'pending', $4, $5, NOW(), NOW())
            ON CONFLICT (id) DO NOTHING`,
-          [ticketId, id, body.orderType || 'Dine-In', body.customerName ? `Customer: ${body.customerName}` : null]
+          [ticketId, schemaId, id, body.orderType || 'Dine-In', body.customerName ? `Customer: ${body.customerName}` : null]
         );
       } catch (kdsErr) {
         console.error('[KDS] Failed to auto-create kitchen ticket:', kdsErr);
@@ -107,15 +119,16 @@ export class OrdersController {
   }
 
   @Put(':id')
-  async updateOrder(@Param('id') id: string, @Body() body: any) {
+  async updateOrder(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
     const res = await this.db.query(
       `UPDATE orders SET
-         stage = COALESCE($2, stage),
-         total_amount = COALESCE($3, total_amount),
+         stage = COALESCE($3, stage),
+         total_amount = COALESCE($4, total_amount),
          updated_at = NOW()
-       WHERE id = $1
+       WHERE id = $1 AND schema_id = $2
        RETURNING *`,
-      [id, body.stage, body.totalAmount]
+      [id, schemaId, body.stage, body.totalAmount]
     );
     return res.rows[0] ? mapOrderRow(res.rows[0]) : body;
   }
