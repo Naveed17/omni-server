@@ -162,6 +162,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       ALTER TABLE products ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE categories ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS stock_deducted BOOLEAN DEFAULT FALSE;
       ALTER TABLE customer_khatas ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE khata_transactions ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE expenses ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';

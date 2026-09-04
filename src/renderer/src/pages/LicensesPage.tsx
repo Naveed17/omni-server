@@ -1,379 +1,773 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import {
-  KeyRound,
-  Plus,
-  Copy,
-  Check,
-  Power,
-  Laptop,
-  Trash2,
-  Layers,
+  KeyRound, Plus, Copy, Check, Power, Laptop, Trash2, Search,
+  Phone, RefreshCw, Sliders, Sparkles, Cpu,
+  UtensilsCrossed, ShoppingCart, ChefHat, Tag, Package,
+  BookOpen, Receipt, BarChart3, Globe, Settings, X,
 } from 'lucide-react';
+import toast from 'react-hot-toast';
 
-interface LicenseDevice {
-  hwid: string;
-  deviceName: string;
-  activatedAt: string;
-}
-
+/* ─── Types ─────────────────────────────────────────────────────────────────── */
+interface LicenseDevice { hwid: string; deviceName: string; activatedAt: string; }
 interface LicenseRecord {
-  id: string;
-  key: string;
-  userName: string;
-  whatsappNumber: string;
-  isEnabled: boolean;
-  maxDevices: number;
-  licenseType: string;
-  expiresAt: string | null;
-  modules: Record<string, boolean>;
-  activeDevices: LicenseDevice[];
+  id: string; key: string; userName: string; whatsappNumber: string;
+  isEnabled: boolean; maxDevices: number; licenseType: string;
+  expiresAt: string | null; modules: Record<string, boolean>;
+  activeDevices: LicenseDevice[]; createdAt?: string;
+}
+interface ModuleMeta {
+  key: string; label: string; desc: string;
+  icon: React.ComponentType<{ style?: React.CSSProperties }>;
 }
 
-const ALL_MODULES: { key: string; label: string }[] = [
-  { key: 'fastfood', label: 'Fast Food' },
-  { key: 'omnimart', label: 'Omnimart' },
-  { key: 'kitchen', label: 'Kitchen KDS' },
-  { key: 'catalog', label: 'Catalog' },
-  { key: 'inventory', label: 'Inventory' },
-  { key: 'khata', label: 'Khata' },
-  { key: 'expenses', label: 'Expenses' },
-  { key: 'reports', label: 'Reports' },
-  { key: 'webStore', label: 'Web Store' },
-  { key: 'admin', label: 'Admin Settings' },
+/* ─── Modules (Primary Red & Secondary Blue Style) ───────────────────────────── */
+const MODULES: ModuleMeta[] = [
+  { key: 'fastfood',  label: 'Fast Food POS',    desc: 'Dine-In, Takeaway, KDS',       icon: UtensilsCrossed },
+  { key: 'omnimart',  label: 'Omnimart Retail',  desc: 'Barcode & wholesale billing',   icon: ShoppingCart },
+  { key: 'kitchen',   label: 'Kitchen KDS',      desc: 'Chef order display tickets',    icon: ChefHat },
+  { key: 'catalog',   label: 'Product Catalog',  desc: 'Items, variants & categories',  icon: Tag },
+  { key: 'inventory', label: 'Stock Control',    desc: 'In/Out audit & low stock',      icon: Package },
+  { key: 'khata',     label: 'Customer Khata',   desc: 'Udhaar ledger & credit',        icon: BookOpen },
+  { key: 'expenses',  label: 'Expense Tracker',  desc: 'Daily outflows & cash drawer',  icon: Receipt },
+  { key: 'reports',   label: 'Profit Analytics', desc: 'Gross margin, COGS & sales',    icon: BarChart3 },
+  { key: 'webStore',  label: 'Online Web Store', desc: 'Public customer ordering',      icon: Globe },
+  { key: 'admin',     label: 'Admin Settings',   desc: 'Staff roles & print layout',    icon: Settings },
 ];
 
-export default function LicensesPage() {
-  const [licenses, setLicenses] = useState<LicenseRecord[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [copied, setCopied] = useState<string | null>(null);
+/* ─── Matte Glassy Design Tokens ─────────────────────────────────────────────── */
+const S = {
+  // Main frosted matte glass card
+  card: {
+    background: 'rgba(20, 12, 26, 0.65)',
+    backdropFilter: 'blur(26px)',
+    WebkitBackdropFilter: 'blur(26px)',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: 20,
+    boxShadow: '0 16px 40px -12px rgba(0, 0, 0, 0.55)',
+  } as React.CSSProperties,
 
-  // Form state
-  const [newStoreName, setNewStoreName] = useState('');
-  const [newWhatsapp, setNewWhatsapp] = useState('');
-  const [newMaxDevices, setNewMaxDevices] = useState(4);
-  const [selectedModules, setSelectedModules] = useState<Record<string, boolean>>({
-    fastfood: true,
-    omnimart: true,
-    kitchen: true,
-    catalog: true,
-    inventory: true,
-    khata: true,
-    expenses: true,
-    reports: true,
-    webStore: false,
-    admin: true,
+  cardSuspended: {
+    background: 'rgba(38, 10, 20, 0.60)',
+    backdropFilter: 'blur(26px)',
+    WebkitBackdropFilter: 'blur(26px)',
+    border: '1px solid rgba(225, 29, 72, 0.35)',
+    borderRadius: 20,
+    boxShadow: '0 16px 40px -12px rgba(0, 0, 0, 0.55)',
+  } as React.CSSProperties,
+
+  // Inner recessed panel (matte secondary blue undertone)
+  innerPanel: {
+    background: 'rgba(10, 8, 20, 0.60)',
+    backdropFilter: 'blur(16px)',
+    WebkitBackdropFilter: 'blur(16px)',
+    border: '1px solid rgba(255, 255, 255, 0.05)',
+    borderRadius: 16,
+  } as React.CSSProperties,
+
+  // Matte input
+  input: {
+    background: 'rgba(255, 255, 255, 0.05)',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255, 255, 255, 0.1)',
+    borderRadius: 10,
+    color: '#f8fafc',
+    outline: 'none',
+    padding: '9px 14px',
+    fontSize: 13,
+    width: '100%',
+    transition: 'border-color 0.15s',
+  } as React.CSSProperties,
+};
+
+/* ─── Component ──────────────────────────────────────────────────────────────── */
+export default function LicensesPage() {
+  const [licenses, setLicenses]         = useState<LicenseRecord[]>([]);
+  const [loading, setLoading]           = useState(false);
+  const [copied, setCopied]             = useState<string | null>(null);
+  const [search, setSearch]             = useState('');
+  const [filter, setFilter]             = useState<'all' | 'active' | 'disabled'>('all');
+  const [showCreate, setCreate]         = useState(false);
+  const [newName, setNewName]           = useState('');
+  const [newPhone, setNewPhone]         = useState('');
+  const [newMax, setNewMax]             = useState(4);
+  const [saving, setSaving]             = useState(false);
+  const [selMods, setSelMods]           = useState<Record<string, boolean>>({
+    fastfood: true, omnimart: true, kitchen: true, catalog: true, inventory: true,
+    khata: true, expenses: true, reports: true, webStore: false, admin: true,
   });
 
-  const fetchLicenses = async () => {
+  const load = async () => {
     try {
       setLoading(true);
-      const res = await fetch('/api/admin/licenses');
-      if (res.ok) {
-        const json = await res.json();
-        setLicenses(json.data || []);
+      const r = await fetch('/api/admin/licenses');
+      if (r.ok) {
+        const j = await r.json();
+        setLicenses(j.data || []);
       }
-    } catch (err) {
-      console.error('Failed to fetch licenses:', err);
+    } catch {
+      toast.error('Failed to load licenses.');
     } finally {
       setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchLicenses();
-  }, []);
+  useEffect(() => { load(); }, []);
 
-  const handleCreate = async (e: React.FormEvent) => {
+  const create = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newStoreName.trim()) return;
-
+    if (!newName.trim()) return;
     try {
-      const res = await fetch('/api/admin/licenses', {
+      setSaving(true);
+      const r = await fetch('/api/admin/licenses', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          userName: newStoreName.trim(),
-          whatsappNumber: newWhatsapp.trim() || '+92 300 0000000',
-          maxDevices: Number(newMaxDevices) || 4,
-          modules: selectedModules,
+          userName: newName.trim(),
+          whatsappNumber: newPhone.trim() || '+92 300 0000000',
+          maxDevices: newMax,
+          modules: selMods,
         }),
       });
-
-      if (res.ok) {
-        setNewStoreName('');
-        setNewWhatsapp('');
-        await fetchLicenses();
+      if (r.ok) {
+        toast.success(`License issued for "${newName}"`);
+        setNewName('');
+        setNewPhone('');
+        setCreate(false);
+        await load();
+      } else {
+        toast.error('Failed to generate license.');
       }
-    } catch (err) {
-      console.error('Failed to create license:', err);
+    } catch {
+      toast.error('Server error.');
+    } finally {
+      setSaving(false);
     }
   };
 
-  const toggleLicense = async (id: string) => {
-    try {
-      const res = await fetch(`/api/admin/licenses/${id}/toggle`, { method: 'POST' });
-      if (res.ok) {
-        await fetchLicenses();
-      }
-    } catch (err) {
-      console.error('Failed to toggle license:', err);
+  const toggleLic = async (id: string, cur: boolean, name: string) => {
+    const r = await fetch(`/api/admin/licenses/${id}/toggle`, { method: 'POST' });
+    if (r.ok) {
+      toast(cur ? `"${name}" suspended` : `"${name}" activated`);
+      await load();
     }
   };
 
-  const toggleModule = async (license: LicenseRecord, moduleKey: string) => {
-    const nextModules = {
-      ...license.modules,
-      [moduleKey]: !license.modules[moduleKey],
-    };
-
+  const toggleMod = async (lic: LicenseRecord, key: string) => {
+    const next = { ...lic.modules, [key]: !lic.modules[key] };
+    setLicenses((p) => p.map((l) => (l.id === lic.id ? { ...l, modules: next } : l)));
     try {
-      const res = await fetch(`/api/admin/licenses/${license.id}/modules`, {
+      const r = await fetch(`/api/admin/licenses/${lic.id}/modules`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ modules: nextModules }),
+        body: JSON.stringify({ modules: next }),
       });
-      if (res.ok) {
-        await fetchLicenses();
+      if (r.ok) {
+        toast.success(`${key.toUpperCase()} ${next[key] ? 'enabled' : 'disabled'}`, { duration: 1500 });
+        await load();
       }
-    } catch (err) {
-      console.error('Failed to toggle module:', err);
+    } catch {
+      await load();
     }
   };
 
-  const removeDevice = async (licenseId: string, hwid: string) => {
-    if (!confirm(`Unlink device ${hwid}?`)) return;
-    try {
-      const res = await fetch(`/api/admin/licenses/${licenseId}/devices/${encodeURIComponent(hwid)}`, {
-        method: 'DELETE',
-      });
-      if (res.ok) {
-        await fetchLicenses();
-      }
-    } catch (err) {
-      console.error('Failed to unlink device:', err);
+  const bulkMod = async (lic: LicenseRecord, on: boolean) => {
+    const next: Record<string, boolean> = {};
+    MODULES.forEach((m) => { next[m.key] = on; });
+    const r = await fetch(`/api/admin/licenses/${lic.id}/modules`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ modules: next }),
+    });
+    if (r.ok) {
+      toast.success(`All modules ${on ? 'enabled' : 'disabled'}`);
+      await load();
     }
   };
 
-  const copyToClipboard = (key: string) => {
+  const removeDevice = async (lid: string, hwid: string, n: string) => {
+    if (!confirm(`Unlink machine "${n || hwid}"?`)) return;
+    const r = await fetch(`/api/admin/licenses/${lid}/devices/${encodeURIComponent(hwid)}`, { method: 'DELETE' });
+    if (r.ok) {
+      toast.success('Machine unlinked.');
+      await load();
+    }
+  };
+
+  const copyKey = (key: string) => {
     navigator.clipboard.writeText(key);
     setCopied(key);
-    setTimeout(() => setCopied(null), 2000);
+    toast.success('Key copied!');
+    setTimeout(() => setCopied(null), 2500);
   };
 
+  const shown = useMemo(() => licenses.filter((l) => {
+    const q = search.toLowerCase();
+    const m = l.userName.toLowerCase().includes(q) || l.key.toLowerCase().includes(q) || (l.whatsappNumber || '').includes(search);
+    if (!m) return false;
+    if (filter === 'active') return l.isEnabled;
+    if (filter === 'disabled') return !l.isEnabled;
+    return true;
+  }), [licenses, search, filter]);
+
+  const activeN = useMemo(() => licenses.filter((l) => l.isEnabled).length, [licenses]);
+
+  /* ── Render ────────────────────────────────────────────────────────────── */
   return (
-    <div className="p-8 space-y-8 flex-1 overflow-y-auto max-h-screen">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <KeyRound className="w-6 h-6 text-blue-500" />
-            OmniPos Licenses &amp; Module Authority
-          </h1>
-          <p className="text-sm text-slate-400 mt-1">
-            Issue client licenses, toggle individual modules remotely, and manage active terminal locks
-          </p>
-        </div>
-        <button
-          onClick={fetchLicenses}
-          className="px-4 py-2 rounded-xl bg-white/5 hover:bg-white/10 text-white text-xs font-semibold border border-white/10 transition-all"
-        >
-          {loading ? 'Refreshing...' : 'Refresh List'}
-        </button>
-      </div>
+    <div style={{ flex: 1, overflowY: 'auto', height: '100%', scrollbarWidth: 'thin', scrollbarColor: 'rgba(225, 29, 72, 0.25) transparent' }}>
+      <div style={{ padding: '26px 32px', maxWidth: 1380, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
-      {/* Generator Form */}
-      <form onSubmit={handleCreate} className="p-6 rounded-2xl bg-[#141a24] border border-white/10 space-y-4">
-        <h3 className="text-sm font-bold text-white flex items-center gap-2">
-          <Plus className="w-4 h-4 text-blue-400" />
-          Generate New License Key
-        </h3>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Store / Client Name *</label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. Al-Madina Cafe &amp; Supermart"
-              value={newStoreName}
-              onChange={(e) => setNewStoreName(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-[#1b2331] border border-white/10 text-white text-sm focus:outline-none focus:border-blue-500"
-            />
+        {/* ── Top Header ─────────────────────────────────────────────────── */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+            {/* Primary Red Emblem with Blue secondary halo */}
+            <div style={{
+              width: 46, height: 46, borderRadius: 14, flexShrink: 0,
+              background: 'linear-gradient(135deg, #e11d48 0%, #be123c 60%, #2563eb 100%)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 4px 20px rgba(225, 29, 72, 0.45)',
+              border: '1px solid rgba(255, 255, 255, 0.15)',
+            }}>
+              <KeyRound style={{ width: 22, height: 22, color: '#ffffff' }} />
+            </div>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <h1 style={{ fontSize: 22, fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.3px', margin: 0 }}>
+                  Client Licenses
+                </h1>
+                {/* Secondary Blue Pill */}
+                <span style={{
+                  padding: '2px 9px', borderRadius: 999, fontSize: 9, fontWeight: 800,
+                  letterSpacing: 1.2, textTransform: 'uppercase',
+                  background: 'rgba(37, 99, 235, 0.18)', color: '#93c5fd',
+                  border: '1px solid rgba(59, 130, 246, 0.35)',
+                }}>
+                  Control Hub
+                </span>
+              </div>
+              <p style={{ fontSize: 12, color: '#64748b', margin: '3px 0 0' }}>
+                Remote module authority, client management &amp; HWID terminal locking
+              </p>
+            </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">WhatsApp Number</label>
-            <input
-              type="text"
-              placeholder="+92 300 1234567"
-              value={newWhatsapp}
-              onChange={(e) => setNewWhatsapp(e.target.value)}
-              className="w-full px-4 py-2.5 rounded-xl bg-[#1b2331] border border-white/10 text-white text-sm focus:outline-none focus:border-blue-500"
-            />
-          </div>
+          <div style={{ display: 'flex', gap: 10 }}>
+            {/* Secondary Blue Action */}
+            <button
+              onClick={load}
+              disabled={loading}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
+                borderRadius: 11, fontSize: 12, fontWeight: 600, cursor: 'pointer',
+                background: 'rgba(255, 255, 255, 0.05)', color: '#cbd5e1',
+                border: '1px solid rgba(255, 255, 255, 0.09)',
+                backdropFilter: 'blur(16px)', transition: 'all 0.15s ease',
+              }}
+            >
+              <RefreshCw style={{ width: 13, height: 13, color: '#38bdf8', ...(loading ? { animation: 'spin 1s linear infinite' } : {}) }} />
+              {loading ? 'Syncing...' : 'Refresh'}
+            </button>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-300 mb-1.5">Max Terminals (Devices)</label>
-            <input
-              type="number"
-              min={1}
-              max={50}
-              value={newMaxDevices}
-              onChange={(e) => setNewMaxDevices(parseInt(e.target.value, 10))}
-              className="w-full px-4 py-2.5 rounded-xl bg-[#1b2331] border border-white/10 text-white text-sm focus:outline-none focus:border-blue-500"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-semibold text-slate-300 mb-2">Initial Enabled Modules:</label>
-          <div className="flex flex-wrap gap-2">
-            {ALL_MODULES.map((m) => {
-              const active = selectedModules[m.key] === true;
-              return (
-                <button
-                  key={m.key}
-                  type="button"
-                  onClick={() =>
-                    setSelectedModules((prev) => ({ ...prev, [m.key]: !prev[m.key] }))
-                  }
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-all ${
-                    active
-                      ? 'bg-blue-600/20 text-blue-400 border-blue-500/40'
-                      : 'bg-white/5 text-slate-500 border-white/10'
-                  }`}
-                >
-                  {m.label} {active ? '✓' : '✕'}
-                </button>
-              );
-            })}
+            {/* Primary Red Action Button */}
+            <button
+              onClick={() => setCreate((p) => !p)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px',
+                borderRadius: 11, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                background: 'linear-gradient(135deg, #e11d48, #be123c)',
+                color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.15)',
+                boxShadow: '0 4px 18px rgba(225, 29, 72, 0.4)',
+                letterSpacing: 0.3, textTransform: 'uppercase', transition: 'all 0.15s ease',
+              }}
+            >
+              <Plus style={{ width: 15, height: 15, strokeWidth: 2.5 }} />
+              Issue New License
+            </button>
           </div>
         </div>
 
-        <button
-          type="submit"
-          className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold flex items-center gap-2 transition-all shadow-lg shadow-blue-500/25"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Issue License Key</span>
-        </button>
-      </form>
+        {/* ── Create License Drawer ───────────────────────────────────────── */}
+        {showCreate && (
+          <div style={{ ...S.card, padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 14, marginBottom: 18, borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <Sparkles style={{ width: 16, height: 16, color: '#fb7185' }} />
+                <span style={{ fontWeight: 700, fontSize: 14, color: '#f8fafc' }}>Issue Enterprise License Key</span>
+              </div>
+              <button
+                onClick={() => setCreate(false)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px',
+                  borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                  background: 'rgba(255, 255, 255, 0.05)', color: '#94a3b8',
+                  border: '1px solid rgba(255, 255, 255, 0.08)',
+                }}
+              >
+                <X style={{ width: 12, height: 12 }} /> Close
+              </button>
+            </div>
 
-      {/* Licenses Table */}
-      <div className="rounded-2xl bg-[#141a24] border border-white/10 overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/10 flex items-center justify-between">
-          <h2 className="text-base font-bold text-white">Issued Licenses ({licenses.length})</h2>
-        </div>
+            <form onSubmit={create}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 18 }}>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 5 }}>Store / Client Name *</label>
+                  <input type="text" required placeholder="e.g. Al-Madina Cafe" value={newName} onChange={(e) => setNewName(e.target.value)} style={S.input} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 5 }}>WhatsApp Contact</label>
+                  <input type="text" placeholder="+92 300 1234567" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} style={S.input} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 5 }}>Max Terminal Devices</label>
+                  <input type="number" min={1} max={50} value={newMax} onChange={(e) => setNewMax(parseInt(e.target.value, 10) || 1)} style={{ ...S.input, fontWeight: 700 }} />
+                </div>
+              </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-[#1b2331] text-xs font-semibold text-slate-400 uppercase tracking-wider">
-              <tr>
-                <th className="px-6 py-3.5">Store &amp; Contact</th>
-                <th className="px-6 py-3.5">License Key</th>
-                <th className="px-6 py-3.5">Remote Modules (Click to Toggle)</th>
-                <th className="px-6 py-3.5">Active Devices</th>
-                <th className="px-6 py-3.5">Status</th>
-                <th className="px-6 py-3.5 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/5">
-              {licenses.map((lic) => (
-                <tr key={lic.id} className="hover:bg-white/[0.02] transition-colors">
-                  <td className="px-6 py-4">
-                    <div className="font-semibold text-white">{lic.userName}</div>
-                    <div className="text-xs text-slate-400">{lic.whatsappNumber}</div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-2">
-                      <code className="px-2.5 py-1 rounded bg-[#1b2331] border border-white/10 text-xs font-mono text-blue-400 font-bold">
-                        {lic.key}
-                      </code>
+              {/* Initial Module Selectors */}
+              <div style={{ marginBottom: 18 }}>
+                <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 8 }}>Initial Module Authority:</label>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                  {MODULES.map((m) => {
+                    const on = selMods[m.key];
+                    const Ic = m.icon;
+                    return (
                       <button
-                        onClick={() => copyToClipboard(lic.key)}
-                        className="p-1 text-slate-400 hover:text-white"
+                        key={m.key}
+                        type="button"
+                        onClick={() => setSelMods((p) => ({ ...p, [m.key]: !p[m.key] }))}
+                        style={{
+                          display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px',
+                          borderRadius: 10, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                          textAlign: 'left', transition: 'all 0.15s ease',
+                          ...(on ? {
+                            background: 'rgba(225, 29, 72, 0.18)',
+                            border: '1px solid rgba(225, 29, 72, 0.4)',
+                            color: '#fecdd3',
+                          } : {
+                            background: 'rgba(255, 255, 255, 0.025)',
+                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            color: '#64748b',
+                          }),
+                        }}
+                      >
+                        <Ic style={{ width: 13, height: 13, flexShrink: 0, color: on ? '#fb7185' : '#64748b' }} />
+                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setCreate(false)}
+                  style={{ padding: '9px 16px', borderRadius: 10, fontSize: 12, fontWeight: 600, cursor: 'pointer', background: 'transparent', color: '#64748b', border: 'none' }}
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={saving || !newName.trim()}
+                  style={{
+                    padding: '9px 20px', borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                    background: 'linear-gradient(135deg, #e11d48, #be123c)', color: '#ffffff',
+                    border: '1px solid rgba(255, 255, 255, 0.15)', textTransform: 'uppercase',
+                    boxShadow: '0 4px 16px rgba(225, 29, 72, 0.4)', opacity: (saving || !newName.trim()) ? 0.5 : 1,
+                  }}
+                >
+                  {saving ? 'Creating...' : 'Confirm & Issue Key'}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* ── Matte Stats & Search Filter Bar ─────────────────────────────── */}
+        <div style={{ ...S.card, padding: '14px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
+            {[
+              { val: licenses.length, label: 'Total Clients', color: '#f8fafc' },
+              { val: activeN, label: 'Active Licenses', color: '#38bdf8' }, // Secondary Blue
+              { val: licenses.length - activeN, label: 'Suspended', color: '#fb7185' }, // Primary Red
+            ].map((s, i) => (
+              <React.Fragment key={s.label}>
+                {i > 0 && <div style={{ width: 1, height: 30, background: 'rgba(255, 255, 255, 0.08)' }} />}
+                <div>
+                  <p style={{ fontSize: 22, fontWeight: 800, color: s.color, lineHeight: 1, margin: 0 }}>{s.val}</p>
+                  <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1.2, color: '#64748b', margin: '3px 0 0' }}>{s.label}</p>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div style={{ position: 'relative' }}>
+              <Search style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', width: 13, height: 13, color: '#64748b' }} />
+              <input
+                type="text"
+                placeholder="Search store name, license key..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                style={{ ...S.input, width: 250, paddingLeft: 32, paddingRight: 12, height: 34, boxSizing: 'border-box' }}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', padding: 3, borderRadius: 10, background: 'rgba(10, 8, 20, 0.5)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+              {(['all', 'active', 'disabled'] as const).map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  style={{
+                    padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 600,
+                    cursor: 'pointer', textTransform: 'capitalize', transition: 'all 0.15s ease',
+                    ...(filter === f ? {
+                      background: 'rgba(225, 29, 72, 0.22)',
+                      color: '#fecdd3',
+                      border: '1px solid rgba(225, 29, 72, 0.4)',
+                    } : {
+                      background: 'transparent',
+                      color: '#64748b',
+                      border: '1px solid transparent',
+                    }),
+                  }}
+                >
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* ── Client License Cards Stack ──────────────────────────────────── */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+          {shown.length === 0 ? (
+            <div style={{ ...S.card, padding: 50, textAlign: 'center', color: '#64748b', fontSize: 13 }}>
+              No client licenses found matching your search.
+            </div>
+          ) : shown.map((lic) => {
+            const ratio = (lic.activeDevices?.length || 0) / (lic.maxDevices || 1);
+            const enCount = MODULES.filter((m) => lic.modules?.[m.key] === true).length;
+            const initials = lic.userName.slice(0, 2).toUpperCase();
+
+            return (
+              <div key={lic.id} style={lic.isEnabled ? S.card : S.cardSuspended}>
+
+                {/* ── Top Bar of Card ─────────────────────────────────────── */}
+                <div style={{
+                  padding: '18px 24px',
+                  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14,
+                }}>
+                  {/* Left: Client Identity */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                    <div style={{
+                      width: 44, height: 44, borderRadius: 13, flexShrink: 0,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontWeight: 800, fontSize: 15, color: '#ffffff',
+                      ...(lic.isEnabled ? {
+                        background: 'linear-gradient(135deg, #e11d48, #be123c)',
+                        border: '1px solid rgba(255, 255, 255, 0.15)',
+                        boxShadow: '0 4px 14px rgba(225, 29, 72, 0.35)',
+                      } : {
+                        background: 'rgba(225, 29, 72, 0.15)',
+                        color: '#fb7185',
+                        border: '1px solid rgba(225, 29, 72, 0.3)',
+                      }),
+                    }}>
+                      {initials}
+                    </div>
+
+                    <div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                        <h2 style={{ fontSize: 18, fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+                          {lic.userName}
+                        </h2>
+                        {/* Status Badge */}
+                        <span style={{
+                          display: 'inline-flex', alignItems: 'center', gap: 6,
+                          padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
+                          letterSpacing: 0.8, textTransform: 'uppercase',
+                          ...(lic.isEnabled ? {
+                            background: 'rgba(56, 189, 248, 0.14)',
+                            color: '#38bdf8',
+                            border: '1px solid rgba(56, 189, 248, 0.35)',
+                          } : {
+                            background: 'rgba(225, 29, 72, 0.12)',
+                            color: '#fb7185',
+                            border: '1px solid rgba(225, 29, 72, 0.3)',
+                          }),
+                        }}>
+                          <span style={{
+                            width: 6, height: 6, borderRadius: '50%',
+                            background: lic.isEnabled ? '#38bdf8' : '#e11d48',
+                          }} />
+                          {lic.isEnabled ? 'Active License' : 'Suspended'}
+                        </span>
+                      </div>
+
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 3, fontSize: 11, color: '#64748b' }}>
+                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                          <Phone style={{ width: 11, height: 11 }} /> {lic.whatsappNumber || 'No phone'}
+                        </span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.1)' }}>•</span>
+                        <span style={{ fontFamily: 'monospace', color: '#fb7185', fontWeight: 600 }}>
+                          {enCount}/10 modules enabled
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Right: Key Container (Secondary Blue) + Action Button (Primary Red) */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                    {/* License Key Badge (Secondary Blue) */}
+                    <div style={{
+                      display: 'flex', alignItems: 'center', gap: 9, padding: '7px 14px', borderRadius: 10,
+                      background: 'rgba(10, 8, 20, 0.65)',
+                      border: '1px solid rgba(59, 130, 246, 0.25)',
+                    }}>
+                      <KeyRound style={{ width: 13, height: 13, color: '#60a5fa', flexShrink: 0 }} />
+                      <span style={{ fontFamily: 'monospace', fontSize: 12.5, fontWeight: 700, color: '#93c5fd', letterSpacing: 1.5 }}>
+                        {lic.key}
+                      </span>
+                      <button
+                        onClick={() => copyKey(lic.key)}
+                        style={{
+                          display: 'flex', padding: 5, borderRadius: 6, cursor: 'pointer',
+                          background: copied === lic.key ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.06)',
+                          color: copied === lic.key ? '#38bdf8' : '#94a3b8',
+                          border: `1px solid ${copied === lic.key ? 'rgba(56, 189, 248, 0.35)' : 'rgba(255, 255, 255, 0.08)'}`,
+                          transition: 'all 0.15s ease',
+                        }}
                         title="Copy Key"
                       >
-                        {copied === lic.key ? (
-                          <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        ) : (
-                          <Copy className="w-3.5 h-3.5" />
-                        )}
+                        {copied === lic.key ? <Check style={{ width: 12, height: 12 }} /> : <Copy style={{ width: 12, height: 12 }} />}
                       </button>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-1.5 max-w-[340px]">
-                      {ALL_MODULES.map((m) => {
-                        const isEnabled = lic.modules?.[m.key] === true;
-                        return (
-                          <button
-                            key={m.key}
-                            onClick={() => toggleModule(lic, m.key)}
-                            title={`Click to ${isEnabled ? 'Disable' : 'Enable'} ${m.label}`}
-                            className={`px-2 py-0.5 rounded text-[11px] font-semibold border transition-all ${
-                              isEnabled
-                                ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30 hover:bg-red-500/20 hover:text-red-300'
-                                : 'bg-red-500/10 text-red-400/60 border-red-500/20 line-through hover:bg-emerald-500/20 hover:text-emerald-300'
-                            }`}
-                          >
-                            {m.label}
-                          </button>
-                        );
-                      })}
+
+                    {/* Master Power Toggle Button (Primary Red) */}
+                    <button
+                      onClick={() => toggleLic(lic.id, lic.isEnabled, lic.userName)}
+                      style={{
+                        display: 'flex', alignItems: 'center', gap: 7, padding: '8px 16px',
+                        borderRadius: 10, fontSize: 11, fontWeight: 700, cursor: 'pointer',
+                        letterSpacing: 0.5, textTransform: 'uppercase', transition: 'all 0.15s ease',
+                        ...(lic.isEnabled ? {
+                          background: 'rgba(225, 29, 72, 0.14)',
+                          color: '#fb7185',
+                          border: '1px solid rgba(225, 29, 72, 0.35)',
+                        } : {
+                          background: 'rgba(37, 99, 235, 0.18)',
+                          color: '#93c5fd',
+                          border: '1px solid rgba(59, 130, 246, 0.4)',
+                        }),
+                      }}
+                    >
+                      <Power style={{ width: 13, height: 13 }} />
+                      {lic.isEnabled ? 'Suspend' : 'Activate'}
+                    </button>
+                  </div>
+                </div>
+
+                {/* ── Body: Two Panels ─────────────────────────────────────── */}
+                <div style={{ padding: '18px 24px', display: 'grid', gridTemplateColumns: '290px 1fr', gap: 20 }}>
+
+                  {/* LEFT: Hardware Terminals (Matte recessed) */}
+                  <div style={{ ...S.innerPanel, padding: 16 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                        <Cpu style={{ width: 13, height: 13, color: '#fb7185' }} />
+                        <span style={{ fontSize: 11.5, fontWeight: 700, color: '#f8fafc' }}>Hardware Terminals</span>
+                      </div>
+                      <span style={{
+                        fontFamily: 'monospace', fontSize: 10.5, fontWeight: 700,
+                        padding: '2px 8px', borderRadius: 999,
+                        background: ratio >= 1 ? 'rgba(225, 29, 72, 0.15)' : 'rgba(37, 99, 235, 0.15)',
+                        color: ratio >= 1 ? '#fb7185' : '#93c5fd',
+                        border: `1px solid ${ratio >= 1 ? 'rgba(225, 29, 72, 0.3)' : 'rgba(37, 99, 235, 0.3)'}`,
+                      }}>
+                        {lic.activeDevices?.length || 0} / {lic.maxDevices} In Use
+                      </span>
                     </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="text-xs text-slate-300 font-medium mb-1">
-                      {lic.activeDevices.length} / {lic.maxDevices} Devices
+
+                    {/* Primary Red Progress Bar */}
+                    <div style={{ height: 4, borderRadius: 999, background: 'rgba(255, 255, 255, 0.08)', overflow: 'hidden', marginBottom: 14 }}>
+                      <div style={{
+                        height: '100%', borderRadius: 999, transition: 'width 0.4s ease',
+                        width: `${Math.min(100, Math.max(5, ratio * 100))}%`,
+                        background: ratio >= 1 ? '#e11d48' : 'linear-gradient(90deg, #e11d48, #2563eb)',
+                      }} />
                     </div>
-                    {lic.activeDevices.map((dev) => (
+
+                    <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#64748b', margin: '0 0 7px' }}>
+                      Linked HWID Machines:
+                    </p>
+
+                    {!lic.activeDevices?.length ? (
+                      <div style={{
+                        padding: '12px', borderRadius: 10, textAlign: 'center',
+                        background: 'rgba(255, 255, 255, 0.02)',
+                        border: '1px dashed rgba(255, 255, 255, 0.08)',
+                        fontSize: 11, color: '#475569', fontStyle: 'italic',
+                      }}>
+                        No machines registered yet.
+                      </div>
+                    ) : lic.activeDevices.map((dev) => (
                       <div
                         key={dev.hwid}
-                        className="flex items-center justify-between text-[11px] text-slate-400 bg-white/5 px-2 py-1 rounded mb-1 border border-white/5"
+                        style={{
+                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                          padding: '7px 10px', borderRadius: 9, marginBottom: 5,
+                          background: 'rgba(255, 255, 255, 0.03)',
+                          border: '1px solid rgba(255, 255, 255, 0.05)',
+                        }}
                       >
-                        <span className="flex items-center gap-1 font-mono truncate max-w-[120px]" title={dev.hwid}>
-                          <Laptop className="w-3 h-3 text-slate-500" />
-                          {dev.deviceName || dev.hwid.slice(0, 8)}
-                        </span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
+                          <div style={{ padding: 4, borderRadius: 6, background: 'rgba(37, 99, 235, 0.18)', color: '#60a5fa', flexShrink: 0 }}>
+                            <Laptop style={{ width: 12, height: 12 }} />
+                          </div>
+                          <div style={{ minWidth: 0 }}>
+                            <p style={{ fontSize: 11, fontWeight: 600, color: '#f8fafc', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>
+                              {dev.deviceName || 'Cashier PC'}
+                            </p>
+                            <p style={{ fontFamily: 'monospace', fontSize: 9.5, color: '#64748b', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>
+                              {dev.hwid.slice(0, 14)}...
+                            </p>
+                          </div>
+                        </div>
                         <button
-                          onClick={() => removeDevice(lic.id, dev.hwid)}
-                          className="text-red-400 hover:text-red-300 p-0.5"
-                          title="Unlink Device"
+                          onClick={() => removeDevice(lic.id, dev.hwid, dev.deviceName)}
+                          style={{
+                            padding: 4, borderRadius: 6, cursor: 'pointer',
+                            background: 'transparent', color: '#64748b', border: 'none', transition: 'all 0.15s ease',
+                          }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#fb7185'; }}
+                          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#64748b'; }}
+                          title="Unlink Machine"
                         >
-                          <Trash2 className="w-3 h-3" />
+                          <Trash2 style={{ width: 12, height: 12 }} />
                         </button>
                       </div>
                     ))}
-                  </td>
-                  <td className="px-6 py-4">
-                    <span
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold border ${
-                        lic.isEnabled
-                          ? 'bg-emerald-500/15 text-emerald-400 border-emerald-500/20'
-                          : 'bg-red-500/15 text-red-400 border-red-500/20'
-                      }`}
-                    >
-                      {lic.isEnabled ? 'Active' : 'Disabled'}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    <button
-                      onClick={() => toggleLicense(lic.id)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 ml-auto border transition-all ${
-                        lic.isEnabled
-                          ? 'bg-red-500/10 text-red-400 border-red-500/30 hover:bg-red-500/20'
-                          : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
-                      }`}
-                    >
-                      <Power className="w-3.5 h-3.5" />
-                      <span>{lic.isEnabled ? 'Disable License' : 'Enable License'}</span>
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                  </div>
+
+                  {/* RIGHT: Live Module Switchboard (Primary Red Active Theme) */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                        <Sliders style={{ width: 13, height: 13, color: '#fb7185' }} />
+                        <h3 style={{ fontSize: 11, fontWeight: 800, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
+                          Live Module Switchboard
+                        </h3>
+                      </div>
+                      <div style={{ display: 'flex', gap: 7 }}>
+                        {[
+                          { label: 'Enable All', on: true, c: '#fb7185' },
+                          { label: 'Disable All', on: false, c: '#94a3b8' },
+                        ].map((b) => (
+                          <button
+                            key={b.label}
+                            onClick={() => bulkMod(lic, b.on)}
+                            style={{
+                              padding: '4px 10px', borderRadius: 7, fontSize: 10.5, fontWeight: 600, cursor: 'pointer',
+                              background: b.on ? 'rgba(225, 29, 72, 0.16)' : 'rgba(255, 255, 255, 0.04)',
+                              color: b.c,
+                              border: b.on ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+                              transition: 'all 0.15s ease',
+                            }}
+                          >
+                            {b.label}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* 10 Module Grid (Primary Red Active Switch & Icons) */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                      {MODULES.map((m) => {
+                        const on = lic.modules?.[m.key] === true;
+                        const Ic = m.icon;
+                        return (
+                          <div
+                            key={m.key}
+                            onClick={() => toggleMod(lic, m.key)}
+                            style={{
+                              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                              padding: '9px 12px', borderRadius: 12, cursor: 'pointer',
+                              userSelect: 'none', transition: 'all 0.15s ease',
+                              ...(on ? {
+                                background: 'rgba(225, 29, 72, 0.14)',
+                                border: '1px solid rgba(225, 29, 72, 0.35)',
+                              } : {
+                                background: 'rgba(255, 255, 255, 0.025)',
+                                border: '1px solid rgba(255, 255, 255, 0.05)',
+                                opacity: 0.5,
+                              }),
+                            }}
+                          >
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
+                              {/* Primary Red Icon Container */}
+                              <div style={{
+                                width: 30, height: 30, borderRadius: 8, flexShrink: 0,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                ...(on ? {
+                                  background: 'rgba(225, 29, 72, 0.22)',
+                                  color: '#fda4af',
+                                } : {
+                                  background: 'rgba(255, 255, 255, 0.04)',
+                                  color: '#64748b',
+                                }),
+                              }}>
+                                <Ic style={{ width: 14, height: 14 }} />
+                              </div>
+
+                              <div style={{ minWidth: 0 }}>
+                                <p style={{
+                                  fontSize: 11, fontWeight: 600, margin: 0,
+                                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                                  color: on ? '#f8fafc' : '#64748b',
+                                  textDecoration: on ? 'none' : 'line-through',
+                                }}>
+                                  {m.label}
+                                </p>
+                                <p style={{ fontSize: 9.5, margin: 0, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                  {m.desc}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Primary Red Switch */}
+                            <div style={{ paddingLeft: 6, flexShrink: 0 }}>
+                              <div style={{
+                                width: 34, height: 18, borderRadius: 999, padding: 2,
+                                display: 'flex', alignItems: 'center',
+                                transition: 'all 0.2s ease',
+                                ...(on ? {
+                                  background: 'linear-gradient(135deg, #e11d48, #f43f5e)',
+                                  boxShadow: '0 2px 8px rgba(225, 29, 72, 0.4)',
+                                } : {
+                                  background: 'rgba(255, 255, 255, 0.12)',
+                                }),
+                              }}>
+                                <div style={{
+                                  width: 14, height: 14, borderRadius: '50%', background: '#ffffff',
+                                  boxShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
+                                  transform: on ? 'translateX(16px)' : 'translateX(0)',
+                                  transition: 'transform 0.2s ease',
+                                }} />
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            );
+          })}
         </div>
+
       </div>
     </div>
   );

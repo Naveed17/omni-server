@@ -51,15 +51,15 @@ export class OrdersController {
     const linesJson = JSON.stringify(body.lines || []);
 
     const res = await this.db.query(
-      `INSERT INTO orders (id, schema_id, module, discount_percent, total_amount, customer_name, order_type, stage, lines, created_at, updated_at)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, COALESCE($10::timestamptz, NOW()), NOW())
+      `INSERT INTO orders (id, schema_id, module, discount_percent, total_amount, customer_name, order_type, stage, lines, stock_deducted, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9::jsonb, TRUE, COALESCE($10::timestamptz, NOW()), NOW())
        ON CONFLICT (id) DO UPDATE SET
          stage = EXCLUDED.stage,
          total_amount = EXCLUDED.total_amount,
          lines = EXCLUDED.lines,
          schema_id = EXCLUDED.schema_id,
          updated_at = NOW()
-       RETURNING *`,
+       RETURNING *, (xmax = 0) AS is_new_order`,
       [
         id,
         schemaId,
@@ -75,44 +75,50 @@ export class OrdersController {
     );
 
     const orderRow = mapOrderRow(res.rows[0]);
+    const isNewOrder = Boolean(res.rows[0]?.is_new_order);
 
-    // Deduct stock for each sold product in PostgreSQL for this tenant
-    const orderLines = Array.isArray(body.lines)
-      ? body.lines
-      : typeof body.lines === 'string'
-      ? JSON.parse(body.lines || '[]')
-      : [];
+    // Deduct stock for each sold product in PostgreSQL ONLY IF this is a new order
+    // Prevents double-deduction when order sync/push is retried or sent concurrently
+    if (isNewOrder) {
+      const orderLines = Array.isArray(body.lines)
+        ? body.lines
+        : typeof body.lines === 'string'
+        ? JSON.parse(body.lines || '[]')
+        : [];
 
-    for (const line of orderLines) {
-      if (line.productId) {
-        try {
-          const qty = Math.max(0.01, Number(line.quantity || 1));
-          await this.db.query(
-            `UPDATE products
-             SET opening_stock = GREATEST(0, COALESCE(opening_stock, 0) - $1),
-                 updated_at = NOW()
-             WHERE id = $2 AND schema_id = $3`,
-            [qty, String(line.productId), schemaId]
-          );
-        } catch (stockErr) {
-          console.error(`[Inventory] Failed to deduct stock for product ${line.productId}:`, stockErr);
+      for (const line of orderLines) {
+        if (line.productId) {
+          try {
+            const qty = Math.max(0.01, Number(line.quantity || 1));
+            await this.db.query(
+              `UPDATE products
+               SET opening_stock = GREATEST(0, COALESCE(opening_stock, 0) - $1),
+                   updated_at = NOW()
+               WHERE id = $2 AND schema_id = $3`,
+              [qty, String(line.productId), schemaId]
+            );
+          } catch (stockErr) {
+            console.error(`[Inventory] Failed to deduct stock for product ${line.productId}:`, stockErr);
+          }
         }
       }
-    }
 
-    // If Fast Food module, automatically create a KDS Kitchen Ticket for this tenant
-    if (body.module === 'fastfood') {
-      try {
-        const ticketId = `kds_${Date.now()}`;
-        await this.db.query(
-          `INSERT INTO kitchen_tickets (id, schema_id, order_id, status, order_type, notes, created_at, updated_at)
-           VALUES ($1, $2, $3, 'pending', $4, $5, NOW(), NOW())
-           ON CONFLICT (id) DO NOTHING`,
-          [ticketId, schemaId, id, body.orderType || 'Dine-In', body.customerName ? `Customer: ${body.customerName}` : null]
-        );
-      } catch (kdsErr) {
-        console.error('[KDS] Failed to auto-create kitchen ticket:', kdsErr);
+      // If Fast Food module, automatically create a KDS Kitchen Ticket for this tenant
+      if (body.module === 'fastfood') {
+        try {
+          const ticketId = `kds_${Date.now()}`;
+          await this.db.query(
+            `INSERT INTO kitchen_tickets (id, schema_id, order_id, status, order_type, notes, created_at, updated_at)
+             VALUES ($1, $2, $3, 'pending', $4, $5, NOW(), NOW())
+             ON CONFLICT (id) DO NOTHING`,
+            [ticketId, schemaId, id, body.orderType || 'Dine-In', body.customerName ? `Customer: ${body.customerName}` : null]
+          );
+        } catch (kdsErr) {
+          console.error('[KDS] Failed to auto-create kitchen ticket:', kdsErr);
+        }
       }
+    } else {
+      console.log(`[Inventory] Order ${id} already exists in DB. Skipping duplicate stock deduction.`);
     }
 
     return orderRow;
