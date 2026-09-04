@@ -13,12 +13,29 @@ interface LicenseRecord {
   id: string; key: string; userName: string; whatsappNumber: string;
   isEnabled: boolean; maxDevices: number; licenseType: string;
   expiresAt: string | null; modules: Record<string, boolean>;
+  businessProfiles?: string[];
   activeDevices: LicenseDevice[]; createdAt?: string;
 }
 interface ModuleMeta {
   key: string; label: string; desc: string;
   icon: React.ComponentType<{ style?: React.CSSProperties }>;
 }
+
+export interface BusinessProfileMeta {
+  key: string;
+  label: string;
+  shortTag: string;
+  desc: string;
+  color: string;
+}
+
+export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
+  { key: 'standard', label: 'Standard Retail (General / Mart)', shortTag: 'Mart / Grocery', desc: 'General supermarket, packaged items & FMCG', color: '#38bdf8' },
+  { key: 'food', label: 'Restaurant & Fast Food', shortTag: 'Food & Cafe', desc: 'Burgers, pizzas, portions & kitchen items', color: '#fb7185' },
+  { key: 'hardware', label: 'Hardware, Iron & Building', shortTag: 'Hardware & Iron', desc: 'Steel, pipes, keel, sanitary & loose decimals', color: '#f59e0b' },
+  { key: 'apparel', label: 'Apparel & Clothing', shortTag: 'Apparel', desc: 'Garments & clothing with size matrix XS-3XL', color: '#a855f7' },
+  { key: 'footwear', label: 'Footwear & Shoes', shortTag: 'Footwear', desc: 'Shoes, boots & sandals with size 38-45 matrix', color: '#ec4899' },
+];
 
 /* ─── Modules (Primary Red & Secondary Blue Style) ───────────────────────────── */
 const MODULES: ModuleMeta[] = [
@@ -91,6 +108,7 @@ export default function LicensesPage() {
   const [newPhone, setNewPhone]         = useState('');
   const [newMax, setNewMax]             = useState(4);
   const [saving, setSaving]             = useState(false);
+  const [selProfiles, setSelProfiles]   = useState<string[]>(['standard']);
   const [selMods, setSelMods]           = useState<Record<string, boolean>>({
     fastfood: true, omnimart: true, kitchen: true, catalog: true, inventory: true,
     khata: true, expenses: true, reports: true, webStore: false, admin: true,
@@ -126,12 +144,14 @@ export default function LicensesPage() {
           whatsappNumber: newPhone.trim() || '+92 300 0000000',
           maxDevices: newMax,
           modules: selMods,
+          businessProfiles: selProfiles.length > 0 ? selProfiles : ['standard'],
         }),
       });
       if (r.ok) {
         toast.success(`License issued for "${newName}"`);
         setNewName('');
         setNewPhone('');
+        setSelProfiles(['standard']);
         setCreate(false);
         await load();
       } else {
@@ -141,6 +161,32 @@ export default function LicensesPage() {
       toast.error('Server error.');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const toggleProfile = async (lic: LicenseRecord, profileKey: string) => {
+    const current = lic.businessProfiles || ['standard'];
+    const next = current.includes(profileKey)
+      ? current.filter((k) => k !== profileKey)
+      : [...current, profileKey];
+    if (next.length === 0) {
+      toast.error('At least one business profile must remain active.');
+      return;
+    }
+    setLicenses((p) => p.map((l) => (l.id === lic.id ? { ...l, businessProfiles: next } : l)));
+    try {
+      const r = await fetch(`/api/admin/licenses/${lic.id}/profiles`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ businessProfiles: next }),
+      });
+      if (r.ok) {
+        toast.success(`Business profiles updated for ${lic.userName}`);
+      } else {
+        toast.error('Failed to update business profiles');
+      }
+    } catch {
+      toast.error('Network error');
     }
   };
 
@@ -351,6 +397,53 @@ export default function LicensesPage() {
                       >
                         <Ic style={{ width: 13, height: 13, flexShrink: 0, color: on ? '#fb7185' : '#64748b' }} />
                         <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Business Profile Selection (Industry Presets) */}
+              <div style={{ marginBottom: 20 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block' }}>
+                    Assigned Business Profiles (Industry Presets):
+                  </label>
+                  <span style={{ fontSize: 10, color: '#64748b' }}>
+                    Single profile locks category creation, multiple profiles gives options
+                  </span>
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
+                  {BUSINESS_PROFILES.map((bp) => {
+                    const on = selProfiles.includes(bp.key);
+                    return (
+                      <button
+                        key={bp.key}
+                        type="button"
+                        onClick={() => {
+                          setSelProfiles((prev) =>
+                            prev.includes(bp.key)
+                              ? (prev.length > 1 ? prev.filter((k) => k !== bp.key) : prev)
+                              : [...prev, bp.key]
+                          );
+                        }}
+                        style={{
+                          display: 'flex', flexDirection: 'column', gap: 3, padding: '9px 12px',
+                          borderRadius: 10, fontSize: 11, fontWeight: 600, cursor: 'pointer',
+                          textAlign: 'left', transition: 'all 0.15s ease',
+                          ...(on ? {
+                            background: `${bp.color}22`,
+                            border: `1px solid ${bp.color}88`,
+                            color: bp.color,
+                          } : {
+                            background: 'rgba(255, 255, 255, 0.025)',
+                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            color: '#64748b',
+                          }),
+                        }}
+                      >
+                        <span style={{ fontWeight: 700, fontSize: 11.5 }}>{bp.shortTag}</span>
+                        <span style={{ fontSize: 9.5, opacity: 0.8, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{bp.label}</span>
                       </button>
                     );
                   })}
@@ -650,8 +743,52 @@ export default function LicensesPage() {
                     ))}
                   </div>
 
-                  {/* RIGHT: Live Module Switchboard (Primary Red Active Theme) */}
+                  {/* RIGHT: Live Module Switchboard & Business Profile Switchboard */}
                   <div>
+                    {/* Live Business Profile Selector */}
+                    <div style={{ marginBottom: 14 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                          <Tag style={{ width: 13, height: 13, color: '#38bdf8' }} />
+                          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
+                            Business Profiles / Industry Types
+                          </h3>
+                        </div>
+                        <span style={{ fontSize: 10, color: '#94a3b8' }}>
+                          {(lic.businessProfiles || ['standard']).length === 1 ? 'Single Profile (Auto-Locked in Category)' : 'Multi-Profile (Filtered in Category)'}
+                        </span>
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {BUSINESS_PROFILES.map((bp) => {
+                          const active = (lic.businessProfiles || ['standard']).includes(bp.key);
+                          return (
+                            <button
+                              key={bp.key}
+                              type="button"
+                              onClick={() => toggleProfile(lic, bp.key)}
+                              style={{
+                                display: 'flex', alignItems: 'center', gap: 6,
+                                padding: '5px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700,
+                                cursor: 'pointer', transition: 'all 0.15s ease',
+                                ...(active ? {
+                                  background: `${bp.color}20`,
+                                  border: `1px solid ${bp.color}80`,
+                                  color: bp.color,
+                                } : {
+                                  background: 'rgba(255, 255, 255, 0.025)',
+                                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                                  color: '#64748b',
+                                }),
+                              }}
+                            >
+                              <span style={{ width: 6, height: 6, borderRadius: '50%', background: active ? bp.color : '#64748b' }} />
+                              {bp.shortTag}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
                         <Sliders style={{ width: 13, height: 13, color: '#fb7185' }} />

@@ -60,11 +60,14 @@ export class LicenseRepository {
     expiresAt?: Date | string | null;
     modules: Record<string, boolean>;
     schemaId?: string | null;
+    adminUsername?: string;
+    adminPassword?: string;
+    businessProfiles?: string[];
   }): Promise<LicenseRecord> {
     const id = data.id || `lic_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
     const res = await this.db.query(
-      `INSERT INTO licenses (id, key, user_name, whatsapp_number, is_enabled, max_devices, license_type, expires_at, modules, schema_id)
-       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      `INSERT INTO licenses (id, key, user_name, whatsapp_number, is_enabled, max_devices, license_type, expires_at, modules, schema_id, admin_username, admin_password, business_profiles)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
        RETURNING *`,
       [
         id,
@@ -77,6 +80,9 @@ export class LicenseRepository {
         data.expiresAt ? new Date(data.expiresAt) : null,
         JSON.stringify(data.modules),
         data.schemaId || null,
+        data.adminUsername || 'admin',
+        data.adminPassword || '1234',
+        JSON.stringify(data.businessProfiles || ['standard']),
       ]
     );
 
@@ -92,6 +98,7 @@ export class LicenseRepository {
       expiresAt?: Date | string | null;
       modules?: Record<string, boolean>;
       schemaId?: string | null;
+      businessProfiles?: string[];
     }
   ): Promise<LicenseRecord | null> {
     const current = await this.findById(id);
@@ -124,6 +131,10 @@ export class LicenseRepository {
     if (patch.schemaId !== undefined) {
       fields.push(`schema_id = $${idx++}`);
       values.push(patch.schemaId);
+    }
+    if (patch.businessProfiles !== undefined) {
+      fields.push(`business_profiles = $${idx++}`);
+      values.push(JSON.stringify(patch.businessProfiles));
     }
 
     if (fields.length === 0) return current;

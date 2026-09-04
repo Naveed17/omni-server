@@ -27,8 +27,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       console.log(`[DatabaseService] Connected to Neon PostgreSQL at ${res.rows[0].now}`);
 
       await this.initSchema();
-      await this.seedInitialData();
-      console.log('[DatabaseService] Schema and initial seed verified successfully.');
+      console.log('[DatabaseService] Schema verified successfully.');
     } catch (err: any) {
       console.error('[DatabaseService] Failed to connect to Neon PostgreSQL:', err.message);
     }
@@ -189,9 +188,15 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         expires_at TIMESTAMPTZ,
         modules JSONB NOT NULL DEFAULT '{}'::jsonb,
         schema_id TEXT,
+        admin_username TEXT DEFAULT 'admin',
+        admin_password TEXT DEFAULT '1234',
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
+
+      ALTER TABLE licenses ADD COLUMN IF NOT EXISTS admin_username TEXT DEFAULT 'admin';
+      ALTER TABLE licenses ADD COLUMN IF NOT EXISTS admin_password TEXT DEFAULT '1234';
+      ALTER TABLE licenses ADD COLUMN IF NOT EXISTS business_profiles JSONB DEFAULT '["standard"]'::jsonb;
 
       CREATE TABLE IF NOT EXISTS license_devices (
         id TEXT PRIMARY KEY,
@@ -213,171 +218,5 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       VALUES ('default', '+92 300 0000000', 'support@omnipos.pk')
       ON CONFLICT (id) DO NOTHING;
     `);
-  }
-
-  private async seedInitialData() {
-    const prodCountRes = await this.pool.query('SELECT COUNT(*) FROM products');
-    const prodCount = parseInt(prodCountRes.rows[0].count, 10);
-
-    if (prodCount === 0) {
-      const initialProducts = [
-        {
-          id: "prod_ff_1",
-          module: "fastfood",
-          name: "Crispy Zinger Burger",
-          category: "Burger",
-          cost_price: 320,
-          price: 550,
-          sku_code: "SKU-89915275",
-          rack_location: "Kitchen A-01",
-          unit: "PCS",
-          min_threshold: 10,
-          opening_stock: 50,
-          description: "Crispy chicken fillet with Mayo & Lettuce",
-          image_url: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=600&q=80",
-        },
-        {
-          id: "prod_ff_2",
-          module: "fastfood",
-          name: "Double Cheese Burger",
-          category: "Burger",
-          cost_price: 450,
-          price: 720,
-          sku_code: "SKU-61339903",
-          rack_location: "Kitchen A-02",
-          unit: "PCS",
-          min_threshold: 10,
-          opening_stock: 40,
-          description: "Two beef patties with double cheddar cheese",
-          image_url: "https://images.unsplash.com/photo-1586190848861-99aa4a171e90?auto=format&fit=crop&w=600&q=80",
-        },
-        {
-          id: "prod_mm_1",
-          module: "minimart",
-          name: "seal 80*10",
-          category: "General",
-          cost_price: 18,
-          price: 25,
-          sku_code: "SKU-89915275",
-          rack_location: "Rack A-01",
-          unit: "PCS",
-          min_threshold: 10,
-          opening_stock: 50,
-          description: "Industrial Seal 80x10",
-          image_url: "https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=600&q=80",
-        },
-        {
-          id: "prod_mm_2",
-          module: "minimart",
-          name: "Oil Filter Premium",
-          category: "Automotive",
-          cost_price: 850,
-          price: 1200,
-          sku_code: "SKU-61339903",
-          rack_location: "Rack B-03",
-          unit: "PCS",
-          min_threshold: 5,
-          opening_stock: 25,
-          description: "Universal High Flow Oil Filter",
-          image_url: "https://images.unsplash.com/photo-1486006920555-c77dce18193b?auto=format&fit=crop&w=600&q=80",
-        }
-      ];
-
-      for (const p of initialProducts) {
-        await this.pool.query(
-          `INSERT INTO products (id, module, name, category, cost_price, price, sku_code, rack_location, unit, min_threshold, opening_stock, description, image_url)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13)
-           ON CONFLICT (id) DO NOTHING`,
-          [p.id, p.module, p.name, p.category, p.cost_price, p.price, p.sku_code, p.rack_location, p.unit, p.min_threshold, p.opening_stock, p.description, p.image_url]
-        );
-      }
-    }
-
-    const catCountRes = await this.pool.query('SELECT COUNT(*) FROM categories');
-    const catCount = parseInt(catCountRes.rows[0].count, 10);
-
-    if (catCount === 0) {
-      const initialCategories = [
-        { id: "cat_1", module: "fastfood", name: "Burger" },
-        { id: "cat_2", module: "fastfood", name: "Pizza" },
-        { id: "cat_3", module: "fastfood", name: "Beverages" },
-        { id: "cat_4", module: "minimart", name: "General" },
-        { id: "cat_5", module: "minimart", name: "Automotive" },
-      ];
-
-      for (const c of initialCategories) {
-        await this.pool.query(
-          `INSERT INTO categories (id, module, name) VALUES ($1, $2, $3) ON CONFLICT (id) DO NOTHING`,
-          [c.id, c.module, c.name]
-        );
-      }
-    }
-
-    const licCountRes = await this.pool.query('SELECT COUNT(*) FROM licenses');
-    const licCount = parseInt(licCountRes.rows[0].count, 10);
-
-    if (licCount === 0) {
-      console.log('[DatabaseService] Seeding default Omnipos licenses...');
-      const defaultModules = {
-        fastfood: true,
-        omnimart: true,
-        kitchen: true,
-        catalog: true,
-        inventory: true,
-        khata: true,
-        expenses: true,
-        reports: true,
-        webStore: false,
-        admin: true,
-      };
-
-      await this.pool.query(
-        `INSERT INTO licenses (id, key, user_name, whatsapp_number, is_enabled, max_devices, license_type, expires_at, modules)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-         ON CONFLICT (key) DO NOTHING`,
-        [
-          'lic_demo_01',
-          'OMNI-DEMO-2026-LIVE',
-          'Omnipos Live Demo',
-          '+923001234567',
-          true,
-          10,
-          'annual',
-          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-          JSON.stringify(defaultModules),
-        ]
-      );
-
-      // A test license with fastfood & kitchen only (no omnimart, no khata) to verify module gating
-      const fastFoodOnlyModules = {
-        fastfood: true,
-        omnimart: false,
-        kitchen: true,
-        catalog: true,
-        inventory: true,
-        khata: false,
-        expenses: true,
-        reports: true,
-        webStore: false,
-        admin: true,
-      };
-
-      await this.pool.query(
-        `INSERT INTO licenses (id, key, user_name, whatsapp_number, is_enabled, max_devices, license_type, expires_at, modules)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-         ON CONFLICT (key) DO NOTHING`,
-        [
-          'lic_ff_02',
-          'OMNI-FAST-FOOD-ONLY',
-          'Fast Food Express',
-          '+923009876543',
-          true,
-          5,
-          'annual',
-          new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString(),
-          JSON.stringify(fastFoodOnlyModules),
-        ]
-      );
-    }
   }
 }

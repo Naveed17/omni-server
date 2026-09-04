@@ -22,6 +22,9 @@ export class AdminLicenseController {
       licenseType?: string;
       modules?: Partial<OmniposModuleFlags>;
       expiresAt?: string | null;
+      adminUsername?: string;
+      adminPassword?: string;
+      businessProfiles?: string[];
     },
   ) {
     return await this.licenseService.createLicense(body);
@@ -35,9 +38,17 @@ export class AdminLicenseController {
   @Post(':id/modules')
   async updateModules(
     @Param('id') id: string,
-    @Body('modules') modules: Partial<OmniposModuleFlags>,
+    @Body() body: { modules?: Partial<OmniposModuleFlags>; businessProfiles?: string[] },
   ) {
-    return await this.licenseService.updateModules(id, modules);
+    return await this.licenseService.updateModules(id, body.modules, body.businessProfiles);
+  }
+
+  @Post(':id/profiles')
+  async updateProfiles(
+    @Param('id') id: string,
+    @Body('businessProfiles') businessProfiles: string[],
+  ) {
+    return await this.licenseService.updateProfiles(id, businessProfiles);
   }
 
   @Delete(':id/devices/:hwid')

@@ -60,6 +60,13 @@ export class LicenseService {
         modules: normalizeModules(license.modules),
         databaseMode: 'online' as const,
         schemaId,
+        businessProfiles: license.businessProfiles || ['standard'],
+        adminUser: {
+          username: license.adminUsername || 'admin',
+          password: license.adminPassword || '1234',
+          name: license.userName || 'Store Manager (Admin)',
+          role: 'admin' as const,
+        },
       },
     };
   }
@@ -113,6 +120,13 @@ export class LicenseService {
         modules: normalizeModules(found.modules),
         databaseMode: 'online' as const,
         schemaId,
+        businessProfiles: found.businessProfiles || ['standard'],
+        adminUser: {
+          username: found.adminUsername || 'admin',
+          password: found.adminPassword || '1234',
+          name: found.userName || 'Store Manager (Admin)',
+          role: 'admin' as const,
+        },
       },
     };
   }
@@ -145,6 +159,7 @@ export class LicenseService {
       body: {
         ok: true,
         modules: normalizeModules(found.modules),
+        businessProfiles: found.businessProfiles || ['standard'],
         expiresAt: found.expiresAt ?? null,
       },
     };
@@ -175,6 +190,9 @@ export class LicenseService {
     licenseType?: string;
     modules?: Partial<OmniposModuleFlags>;
     expiresAt?: string | null;
+    adminUsername?: string;
+    adminPassword?: string;
+    businessProfiles?: string[];
   }) {
     if (!body.userName || !body.whatsappNumber) {
       throw new BadRequestException('userName and whatsappNumber are required');
@@ -183,6 +201,17 @@ export class LicenseService {
     let key = generateKey();
     while (await this.licenses.existsKey(key)) {
       key = generateKey();
+    }
+
+    const adminUsername = body.adminUsername?.trim() || 'admin';
+    const adminPassword = body.adminPassword?.trim() || '1234';
+
+    let profiles = body.businessProfiles;
+    if (!profiles || !Array.isArray(profiles) || profiles.length === 0) {
+      const norm = normalizeModules(body.modules);
+      if (norm.fastfood && !norm.omnimart) profiles = ['food'];
+      else if (!norm.fastfood && norm.omnimart) profiles = ['standard'];
+      else profiles = ['standard', 'food'];
     }
 
     const license = await this.licenses.create({
@@ -195,9 +224,12 @@ export class LicenseService {
       expiresAt: body.expiresAt ? new Date(body.expiresAt) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
       modules: normalizeModules(body.modules),
       schemaId: schemaIdForLicenseKey(key),
+      adminUsername,
+      adminPassword,
+      businessProfiles: profiles,
     });
 
-    return { success: true, message: 'License created successfully', data: license };
+    return { success: true, message: 'License created successfully with Admin credentials', data: license };
   }
 
   async toggleLicense(id: string) {
@@ -212,19 +244,38 @@ export class LicenseService {
     };
   }
 
-  async updateModules(id: string, modules?: Partial<OmniposModuleFlags>) {
-    if (!modules || typeof modules !== 'object') {
-      throw new BadRequestException('modules object is required');
+  async updateModules(id: string, modules?: Partial<OmniposModuleFlags>, businessProfiles?: string[]) {
+    const license = await this.licenses.findById(id);
+    if (!license) throw new NotFoundException('License not found');
+
+    const patch: any = {};
+    if (modules && typeof modules === 'object') {
+      patch.modules = normalizeModules({ ...license.modules, ...modules });
+    }
+    if (businessProfiles && Array.isArray(businessProfiles)) {
+      patch.businessProfiles = businessProfiles;
+    }
+
+    const updated = await this.licenses.saveFlags(id, patch);
+
+    return {
+      success: true,
+      message: 'Modules and profiles updated successfully',
+      data: updated,
+    };
+  }
+
+  async updateProfiles(id: string, businessProfiles: string[]) {
+    if (!businessProfiles || !Array.isArray(businessProfiles)) {
+      throw new BadRequestException('businessProfiles array is required');
     }
     const license = await this.licenses.findById(id);
     if (!license) throw new NotFoundException('License not found');
 
-    const merged = normalizeModules({ ...license.modules, ...modules });
-    const updated = await this.licenses.saveFlags(id, { modules: merged });
-
+    const updated = await this.licenses.saveFlags(id, { businessProfiles });
     return {
       success: true,
-      message: 'Modules updated successfully',
+      message: 'Business profiles updated successfully',
       data: updated,
     };
   }
