@@ -20,19 +20,19 @@ export default function LiveSyncPage() {
     <div className="p-8 space-y-8 flex-1 overflow-y-auto max-h-screen">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">Live Sync Stream</h1>
-          <p className="text-sm text-slate-400 mt-1">
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white">Live Sync Stream</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             Real-time incoming transactions received from cashier registers operating offline
           </p>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold">
+        <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 text-xs font-semibold">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span> Live Ingestion Active
         </div>
       </div>
 
-      <div className="rounded-2xl bg-[#141a24] border border-white/10 overflow-hidden">
-        <table className="w-full text-left text-sm text-slate-300">
-          <thead className="bg-[#1b2331] text-xs font-semibold text-slate-400 uppercase tracking-wider">
+      <div className="rounded-2xl bg-white/90 dark:bg-[#141a24]/90 border border-slate-200/80 dark:border-white/10 shadow-sm dark:shadow-none overflow-hidden transition-colors">
+        <table className="w-full text-left text-sm text-slate-700 dark:text-slate-300">
+          <thead className="bg-slate-100 dark:bg-[#1b2331] text-xs font-semibold text-slate-600 dark:text-slate-400 uppercase tracking-wider transition-colors">
             <tr>
               <th className="px-6 py-3.5">Transaction ID</th>
               <th className="px-6 py-3.5">Originating Store</th>
@@ -43,20 +43,20 @@ export default function LiveSyncPage() {
               <th className="px-6 py-3.5 text-right">Time</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-white/5">
+          <tbody className="divide-y divide-slate-200/60 dark:divide-white/5">
             {syncTransactions.map((tx) => (
-              <tr key={tx.id} className="hover:bg-white/[0.02] transition-colors">
-                <td className="px-6 py-4 font-mono text-xs text-blue-400">{tx.id}</td>
-                <td className="px-6 py-4 font-semibold text-white">{tx.store}</td>
+              <tr key={tx.id} className="hover:bg-slate-50/80 dark:hover:bg-white/[0.02] transition-colors">
+                <td className="px-6 py-4 font-mono text-xs text-blue-600 dark:text-blue-400">{tx.id}</td>
+                <td className="px-6 py-4 font-semibold text-slate-900 dark:text-white">{tx.store}</td>
                 <td className="px-6 py-4">{tx.type}</td>
-                <td className="px-6 py-4 font-bold text-white">{tx.amount}</td>
+                <td className="px-6 py-4 font-bold text-slate-900 dark:text-white">{tx.amount}</td>
                 <td className="px-6 py-4">
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-[#1b2331] text-slate-300 border border-white/10">
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-medium bg-slate-100 dark:bg-[#1b2331] text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10">
                     {tx.stage}
                   </span>
                 </td>
                 <td className="px-6 py-4">
-                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5 w-fit">
+                  <span className="px-2.5 py-1 rounded-lg text-xs font-bold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center gap-1.5 w-fit">
                     <CheckCircle2 className="w-3 h-3" /> {tx.status}
                   </span>
                 </td>

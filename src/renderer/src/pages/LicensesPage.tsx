@@ -3,9 +3,10 @@ import {
   KeyRound, Plus, Copy, Check, Power, Laptop, Trash2, Search,
   Phone, RefreshCw, Sliders, Sparkles, Cpu,
   UtensilsCrossed, ShoppingCart, ChefHat, Tag, Package,
-  BookOpen, Receipt, BarChart3, Globe, Settings, X,
+  BookOpen, Receipt, BarChart3, Globe, Settings, X, Sun, Moon,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useTheme } from '../context/ThemeContext';
 
 /* ─── Types ─────────────────────────────────────────────────────────────────── */
 interface LicenseDevice { hwid: string; deviceName: string; activatedAt: string; }
