@@ -19,7 +19,7 @@ interface LicenseRecord {
 }
 interface ModuleMeta {
   key: string; label: string; desc: string;
-  icon: React.ComponentType<{ style?: React.CSSProperties }>;
+  icon: React.ComponentType<{ className?: string }>;
 }
 
 export interface BusinessProfileMeta {
@@ -28,14 +28,56 @@ export interface BusinessProfileMeta {
   shortTag: string;
   desc: string;
   color: string;
+  activeClasses: string;
+  dotColor: string;
 }
 
 export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
-  { key: 'standard', label: 'Standard Retail (General / Mart)', shortTag: 'Mart / Grocery', desc: 'General supermarket, packaged items & FMCG', color: '#38bdf8' },
-  { key: 'food', label: 'Restaurant & Fast Food', shortTag: 'Food & Cafe', desc: 'Burgers, pizzas, portions & kitchen items', color: '#fb7185' },
-  { key: 'hardware', label: 'Hardware, Iron & Building', shortTag: 'Hardware & Iron', desc: 'Steel, pipes, keel, sanitary & loose decimals', color: '#f59e0b' },
-  { key: 'apparel', label: 'Apparel & Clothing', shortTag: 'Apparel', desc: 'Garments & clothing with size matrix XS-3XL', color: '#a855f7' },
-  { key: 'footwear', label: 'Footwear & Shoes', shortTag: 'Footwear', desc: 'Shoes, boots & sandals with size 38-45 matrix', color: '#ec4899' },
+  {
+    key: 'standard',
+    label: 'Standard Retail (General / Mart)',
+    shortTag: 'Mart / Grocery',
+    desc: 'General supermarket, packaged items & FMCG',
+    color: '#38bdf8',
+    activeClasses: 'bg-sky-500/15 border-sky-500/40 text-sky-600 dark:text-sky-400',
+    dotColor: 'bg-sky-500',
+  },
+  {
+    key: 'food',
+    label: 'Restaurant & Fast Food',
+    shortTag: 'Food & Cafe',
+    desc: 'Burgers, pizzas, portions & kitchen items',
+    color: '#fb7185',
+    activeClasses: 'bg-rose-500/15 border-rose-500/40 text-rose-600 dark:text-rose-400',
+    dotColor: 'bg-rose-500',
+  },
+  {
+    key: 'hardware',
+    label: 'Hardware, Iron & Building',
+    shortTag: 'Hardware & Iron',
+    desc: 'Steel, pipes, keel, sanitary & loose decimals',
+    color: '#f59e0b',
+    activeClasses: 'bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400',
+    dotColor: 'bg-amber-500',
+  },
+  {
+    key: 'apparel',
+    label: 'Apparel & Clothing',
+    shortTag: 'Apparel',
+    desc: 'Garments & clothing with size matrix XS-3XL',
+    color: '#a855f7',
+    activeClasses: 'bg-purple-500/15 border-purple-500/40 text-purple-600 dark:text-purple-400',
+    dotColor: 'bg-purple-500',
+  },
+  {
+    key: 'footwear',
+    label: 'Footwear & Shoes',
+    shortTag: 'Footwear',
+    desc: 'Shoes, boots & sandals with size 38-45 matrix',
+    color: '#ec4899',
+    activeClasses: 'bg-pink-500/15 border-pink-500/40 text-pink-600 dark:text-pink-400',
+    dotColor: 'bg-pink-500',
+  },
 ];
 
 /* ─── Modules (Primary Red & Secondary Blue Style) ───────────────────────────── */
@@ -52,51 +94,8 @@ const MODULES: ModuleMeta[] = [
   { key: 'admin',     label: 'Admin Settings',   desc: 'Staff roles & print layout',    icon: Settings },
 ];
 
-/* ─── Matte Glassy Design Tokens ─────────────────────────────────────────────── */
-/* ─── Component ──────────────────────────────────────────────────────────────── */
 export default function LicensesPage() {
   const { isDark, toggleTheme } = useTheme();
-
-  const S = useMemo(() => ({
-    card: {
-      background: isDark ? 'rgba(20, 12, 26, 0.65)' : 'rgba(255, 255, 255, 0.90)',
-      backdropFilter: 'blur(26px)',
-      WebkitBackdropFilter: 'blur(26px)',
-      border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
-      borderRadius: 20,
-      boxShadow: isDark ? '0 16px 40px -12px rgba(0, 0, 0, 0.55)' : '0 12px 32px -8px rgba(0, 0, 0, 0.07)',
-    } as React.CSSProperties,
-
-    cardSuspended: {
-      background: isDark ? 'rgba(38, 10, 20, 0.60)' : 'rgba(255, 241, 242, 0.90)',
-      backdropFilter: 'blur(26px)',
-      WebkitBackdropFilter: 'blur(26px)',
-      border: '1px solid rgba(225, 29, 72, 0.35)',
-      borderRadius: 20,
-      boxShadow: isDark ? '0 16px 40px -12px rgba(0, 0, 0, 0.55)' : '0 12px 32px -8px rgba(225, 29, 72, 0.08)',
-    } as React.CSSProperties,
-
-    innerPanel: {
-      background: isDark ? 'rgba(10, 8, 20, 0.60)' : 'rgba(248, 250, 252, 0.92)',
-      backdropFilter: 'blur(16px)',
-      WebkitBackdropFilter: 'blur(16px)',
-      border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.06)',
-      borderRadius: 16,
-    } as React.CSSProperties,
-
-    input: {
-      background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#ffffff',
-      backdropFilter: 'blur(12px)',
-      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.14)',
-      borderRadius: 10,
-      color: isDark ? '#f8fafc' : '#0f172a',
-      outline: 'none',
-      padding: '9px 14px',
-      fontSize: 13,
-      width: '100%',
-      transition: 'border-color 0.15s, background-color 0.15s, color 0.15s',
-    } as React.CSSProperties,
-  }), [isDark]);
 
   const [licenses, setLicenses]         = useState<LicenseRecord[]>([]);
   const [loading, setLoading]           = useState(false);
@@ -259,592 +258,501 @@ export default function LicensesPage() {
 
   /* ── Render ────────────────────────────────────────────────────────────── */
   return (
-    <div style={{ flex: 1, overflowY: 'auto', height: '100%', scrollbarWidth: 'thin', scrollbarColor: 'rgba(225, 29, 72, 0.25) transparent' }}>
-      <div style={{ padding: '26px 32px', maxWidth: 1380, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="flex-1 overflow-y-auto h-full p-8 max-w-[1400px] mx-auto space-y-6">
 
-        {/* ── Top Header ─────────────────────────────────────────────────── */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-            {/* Primary Red Emblem with Blue secondary halo */}
-            <div style={{
-              width: 46, height: 46, borderRadius: 14, flexShrink: 0,
-              background: 'linear-gradient(135deg, #e11d48 0%, #be123c 60%, #2563eb 100%)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 4px 20px rgba(225, 29, 72, 0.45)',
-              border: '1px solid rgba(255, 255, 255, 0.15)',
-            }}>
-              <KeyRound style={{ width: 22, height: 22, color: '#ffffff' }} />
-            </div>
-            <div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <h1 style={{ fontSize: 22, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', letterSpacing: '-0.3px', margin: 0 }}>
-                  Client Licenses
-                </h1>
-                {/* Secondary Blue Pill */}
-                <span style={{
-                  padding: '2px 9px', borderRadius: 999, fontSize: 9, fontWeight: 800,
-                  letterSpacing: 1.2, textTransform: 'uppercase',
-                  background: 'rgba(37, 99, 235, 0.18)', color: isDark ? '#93c5fd' : '#2563eb',
-                  border: '1px solid rgba(59, 130, 246, 0.35)',
-                }}>
-                  Control Hub
-                </span>
-              </div>
-              <p style={{ fontSize: 12, color: '#64748b', margin: '3px 0 0' }}>
-                Remote module authority, client management &amp; HWID terminal locking
-              </p>
-            </div>
+      {/* ── Top Header ─────────────────────────────────────────────────── */}
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3.5">
+          {/* Emblem */}
+          <div className="w-12 h-12 rounded-2xl shrink-0 bg-gradient-to-br from-rose-600 via-rose-700 to-blue-600 flex items-center justify-center shadow-lg shadow-rose-600/30 border border-white/20">
+            <KeyRound className="w-6 h-6 text-white" />
           </div>
+          <div>
+            <div className="flex items-center gap-2.5">
+              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight m-0">
+                Client Licenses
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+                Control Hub
+              </span>
+            </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 m-0">
+              Remote module authority, client management &amp; HWID terminal locking
+            </p>
+          </div>
+        </div>
 
-          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
-            {/* Theme Switcher Button */}
+        <div className="flex items-center gap-2.5">
+          {/* Theme Switcher Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer bg-white/90 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 shadow-sm backdrop-blur-md hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
+            title="Toggle Light / Dark Mode"
+          >
+            {isDark ? (
+              <Sun className="w-3.5 h-3.5 text-amber-500" />
+            ) : (
+              <Moon className="w-3.5 h-3.5 text-sky-600" />
+            )}
+            <span>{isDark ? 'Light' : 'Dark'}</span>
+          </button>
+
+          {/* Refresh Action */}
+          <button
+            type="button"
+            onClick={load}
+            disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/90 dark:bg-white/5 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 shadow-sm backdrop-blur-md hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-sky-500 ${loading ? 'animate-spin' : ''}`} />
+            {loading ? 'Syncing...' : 'Refresh'}
+          </button>
+
+          {/* Issue New License Action */}
+          <button
+            type="button"
+            onClick={() => setCreate((p) => !p)}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white cursor-pointer bg-gradient-to-br from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 border border-rose-500/40 shadow-lg shadow-rose-600/30 transition-all"
+          >
+            <Plus className="w-4 h-4 stroke-[2.5]" />
+            Issue New License
+          </button>
+        </div>
+      </div>
+
+      {/* ── Create License Drawer ───────────────────────────────────────── */}
+      {showCreate && (
+        <div className="p-6 rounded-2xl bg-white/95 dark:bg-[#140c1a]/85 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-xl space-y-5">
+          <div className="flex items-center justify-between pb-3.5 border-b border-slate-200/60 dark:border-white/10">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-rose-500" />
+              <span className="font-bold text-sm text-slate-900 dark:text-white">Issue Enterprise License Key</span>
+            </div>
             <button
               type="button"
-              onClick={toggleTheme}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 7, padding: '9px 14px',
-                borderRadius: 11, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#ffffff',
-                color: isDark ? '#f8fafc' : '#0f172a',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.09)' : '1px solid rgba(0, 0, 0, 0.12)',
-                boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.05)',
-                backdropFilter: 'blur(16px)', transition: 'all 0.15s ease',
-              }}
-              title="Toggle Light / Dark Mode"
+              onClick={() => setCreate(false)}
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold cursor-pointer bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10"
             >
-              {isDark ? (
-                <Sun style={{ width: 14, height: 14, color: '#f59e0b' }} />
-              ) : (
-                <Moon style={{ width: 14, height: 14, color: '#2563eb' }} />
-              )}
-              <span>{isDark ? 'Light' : 'Dark'}</span>
-            </button>
-
-            {/* Secondary Blue Action */}
-            <button
-              onClick={load}
-              disabled={loading}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
-                borderRadius: 11, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#ffffff',
-                color: isDark ? '#cbd5e1' : '#334155',
-                border: isDark ? '1px solid rgba(255, 255, 255, 0.09)' : '1px solid rgba(0, 0, 0, 0.12)',
-                boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.05)',
-                backdropFilter: 'blur(16px)', transition: 'all 0.15s ease',
-              }}
-            >
-              <RefreshCw style={{ width: 13, height: 13, color: '#38bdf8', ...(loading ? { animation: 'spin 1s linear infinite' } : {}) }} />
-              {loading ? 'Syncing...' : 'Refresh'}
-            </button>
-
-            {/* Primary Red Action Button */}
-            <button
-              onClick={() => setCreate((p) => !p)}
-              style={{
-                display: 'flex', alignItems: 'center', gap: 8, padding: '9px 18px',
-                borderRadius: 11, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                background: 'linear-gradient(135deg, #e11d48, #be123c)',
-                color: '#ffffff', border: '1px solid rgba(255, 255, 255, 0.15)',
-                boxShadow: '0 4px 18px rgba(225, 29, 72, 0.4)',
-                letterSpacing: 0.3, textTransform: 'uppercase', transition: 'all 0.15s ease',
-              }}
-            >
-              <Plus style={{ width: 15, height: 15, strokeWidth: 2.5 }} />
-              Issue New License
+              <X className="w-3 h-3" /> Close
             </button>
           </div>
-        </div>
 
-        {/* ── Create License Drawer ───────────────────────────────────────── */}
-        {showCreate && (
-          <div style={{ ...S.card, padding: 24 }}>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: 14, marginBottom: 18, borderBottom: '1px solid rgba(255, 255, 255, 0.06)' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <Sparkles style={{ width: 16, height: 16, color: '#fb7185' }} />
-                <span style={{ fontWeight: 700, fontSize: 14, color: '#f8fafc' }}>Issue Enterprise License Key</span>
+          <form onSubmit={create} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Store / Client Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="e.g. Al-Madina Cafe"
+                  value={newName}
+                  onChange={(e) => setNewName(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40 transition-colors"
+                />
               </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">WhatsApp Contact</label>
+                <input
+                  type="text"
+                  placeholder="+92 300 1234567"
+                  value={newPhone}
+                  onChange={(e) => setNewPhone(e.target.value)}
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40 transition-colors"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1.5">Max Terminal Devices</label>
+                <input
+                  type="number"
+                  min={1}
+                  max={50}
+                  value={newMax}
+                  onChange={(e) => setNewMax(parseInt(e.target.value, 10) || 1)}
+                  className="w-full px-3.5 py-2 text-xs font-bold rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40 transition-colors"
+                />
+              </div>
+            </div>
+
+            {/* Initial Module Selectors */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-2">Initial Module Authority:</label>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                {MODULES.map((m) => {
+                  const on = selMods[m.key];
+                  const Ic = m.icon;
+                  return (
+                    <button
+                      key={m.key}
+                      type="button"
+                      onClick={() => setSelMods((p) => ({ ...p, [m.key]: !p[m.key] }))}
+                      className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold cursor-pointer text-left transition-all duration-150 ${
+                        on
+                          ? 'bg-rose-500/15 border border-rose-500/40 text-rose-700 dark:text-rose-200'
+                          : 'bg-slate-100/80 dark:bg-white/5 border border-slate-200/80 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/10'
+                      }`}
+                    >
+                      <Ic className={`w-3.5 h-3.5 shrink-0 ${on ? 'text-rose-500' : 'text-slate-400'}`} />
+                      <span className="truncate">{m.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Business Profile Selection */}
+            <div>
+              <div className="flex justify-between items-center mb-2">
+                <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400">
+                  Assigned Business Profiles (Industry Presets):
+                </label>
+                <span className="text-[11px] text-slate-500">
+                  Single profile locks category creation, multiple profiles gives options
+                </span>
+              </div>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+                {BUSINESS_PROFILES.map((bp) => {
+                  const on = selProfiles.includes(bp.key);
+                  return (
+                    <button
+                      key={bp.key}
+                      type="button"
+                      onClick={() => {
+                        setSelProfiles((prev) =>
+                          prev.includes(bp.key)
+                            ? (prev.length > 1 ? prev.filter((k) => k !== bp.key) : prev)
+                            : [...prev, bp.key]
+                        );
+                      }}
+                      className={`flex flex-col gap-1 p-2.5 rounded-xl text-xs font-semibold cursor-pointer text-left transition-all duration-150 border ${
+                        on
+                          ? bp.activeClasses
+                          : 'bg-slate-100/80 dark:bg-white/5 border-slate-200/80 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/10'
+                      }`}
+                    >
+                      <span className="font-bold text-xs">{bp.shortTag}</span>
+                      <span className="text-[10px] opacity-75 truncate">{bp.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex justify-end gap-2.5 pt-2">
               <button
+                type="button"
                 onClick={() => setCreate(false)}
-                style={{
-                  display: 'flex', alignItems: 'center', gap: 5, padding: '5px 10px',
-                  borderRadius: 8, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                  background: 'rgba(255, 255, 255, 0.05)', color: '#94a3b8',
-                  border: '1px solid rgba(255, 255, 255, 0.08)',
-                }}
+                className="px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-transparent text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 transition-colors"
               >
-                <X style={{ width: 12, height: 12 }} /> Close
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={saving || !newName.trim()}
+                className="px-5 py-2 rounded-xl text-xs font-bold uppercase cursor-pointer bg-gradient-to-br from-rose-600 to-rose-700 text-white border border-white/15 shadow-lg shadow-rose-600/30 disabled:opacity-50 transition-all"
+              >
+                {saving ? 'Creating...' : 'Confirm & Issue Key'}
               </button>
             </div>
+          </form>
+        </div>
+      )}
 
-            <form onSubmit={create}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14, marginBottom: 18 }}>
-                <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 5 }}>Store / Client Name *</label>
-                  <input type="text" required placeholder="e.g. Al-Madina Cafe" value={newName} onChange={(e) => setNewName(e.target.value)} style={S.input} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 5 }}>WhatsApp Contact</label>
-                  <input type="text" placeholder="+92 300 1234567" value={newPhone} onChange={(e) => setNewPhone(e.target.value)} style={S.input} />
-                </div>
-                <div>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 5 }}>Max Terminal Devices</label>
-                  <input type="number" min={1} max={50} value={newMax} onChange={(e) => setNewMax(parseInt(e.target.value, 10) || 1)} style={{ ...S.input, fontWeight: 700 }} />
-                </div>
-              </div>
-
-              {/* Initial Module Selectors */}
-              <div style={{ marginBottom: 18 }}>
-                <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block', marginBottom: 8 }}>Initial Module Authority:</label>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
-                  {MODULES.map((m) => {
-                    const on = selMods[m.key];
-                    const Ic = m.icon;
-                    return (
-                      <button
-                        key={m.key}
-                        type="button"
-                        onClick={() => setSelMods((p) => ({ ...p, [m.key]: !p[m.key] }))}
-                        style={{
-                          display: 'flex', alignItems: 'center', gap: 8, padding: '9px 12px',
-                          borderRadius: 10, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                          textAlign: 'left', transition: 'all 0.15s ease',
-                          ...(on ? {
-                            background: isDark ? 'rgba(225, 29, 72, 0.18)' : 'rgba(225, 29, 72, 0.1)',
-                            border: isDark ? '1px solid rgba(225, 29, 72, 0.4)' : '1px solid rgba(225, 29, 72, 0.3)',
-                            color: isDark ? '#fecdd3' : '#be123c',
-                          } : {
-                            background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.03)',
-                            border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
-                            color: '#64748b',
-                          }),
-                        }}
-                      >
-                        <Ic style={{ width: 13, height: 13, flexShrink: 0, color: on ? '#fb7185' : '#64748b' }} />
-                        <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* Business Profile Selection (Industry Presets) */}
-              <div style={{ marginBottom: 20 }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                  <label style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', display: 'block' }}>
-                    Assigned Business Profiles (Industry Presets):
-                  </label>
-                  <span style={{ fontSize: 10, color: '#64748b' }}>
-                    Single profile locks category creation, multiple profiles gives options
-                  </span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 8 }}>
-                  {BUSINESS_PROFILES.map((bp) => {
-                    const on = selProfiles.includes(bp.key);
-                    return (
-                      <button
-                        key={bp.key}
-                        type="button"
-                        onClick={() => {
-                          setSelProfiles((prev) =>
-                            prev.includes(bp.key)
-                              ? (prev.length > 1 ? prev.filter((k) => k !== bp.key) : prev)
-                              : [...prev, bp.key]
-                          );
-                        }}
-                        style={{
-                          display: 'flex', flexDirection: 'column', gap: 3, padding: '9px 12px',
-                          borderRadius: 10, fontSize: 11, fontWeight: 600, cursor: 'pointer',
-                          textAlign: 'left', transition: 'all 0.15s ease',
-                          ...(on ? {
-                            background: isDark ? `${bp.color}22` : `${bp.color}15`,
-                            border: `1px solid ${bp.color}88`,
-                            color: bp.color,
-                          } : {
-                            background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.03)',
-                            border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
-                            color: '#64748b',
-                          }),
-                        }}
-                      >
-                        <span style={{ fontWeight: 700, fontSize: 11.5 }}>{bp.shortTag}</span>
-                        <span style={{ fontSize: 9.5, opacity: 0.8, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{bp.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 10 }}>
-                <button
-                  type="button"
-                  onClick={() => setCreate(false)}
-                  style={{ padding: '9px 16px', borderRadius: 10, fontSize: 12, fontWeight: 600, cursor: 'pointer', background: 'transparent', color: '#64748b', border: 'none' }}
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={saving || !newName.trim()}
-                  style={{
-                    padding: '9px 20px', borderRadius: 10, fontSize: 12, fontWeight: 700, cursor: 'pointer',
-                    background: 'linear-gradient(135deg, #e11d48, #be123c)', color: '#ffffff',
-                    border: '1px solid rgba(255, 255, 255, 0.15)', textTransform: 'uppercase',
-                    boxShadow: '0 4px 16px rgba(225, 29, 72, 0.4)', opacity: (saving || !newName.trim()) ? 0.5 : 1,
-                  }}
-                >
-                  {saving ? 'Creating...' : 'Confirm & Issue Key'}
-                </button>
-              </div>
-            </form>
-          </div>
-        )}
-
-        {/* ── Matte Stats & Search Filter Bar ─────────────────────────────── */}
-        <div style={{ ...S.card, padding: '14px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
-            {[
-              { val: licenses.length, label: 'Total Clients', color: isDark ? '#f8fafc' : '#0f172a' },
-              { val: activeN, label: 'Active Licenses', color: isDark ? '#38bdf8' : '#0284c7' }, // Secondary Blue
-              { val: licenses.length - activeN, label: 'Suspended', color: isDark ? '#fb7185' : '#e11d48' }, // Primary Red
-            ].map((s, i) => (
-              <React.Fragment key={s.label}>
-                {i > 0 && <div style={{ width: 1, height: 30, background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)' }} />}
-                <div>
-                  <p style={{ fontSize: 22, fontWeight: 800, color: s.color, lineHeight: 1, margin: 0 }}>{s.val}</p>
-                  <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1.2, color: '#64748b', margin: '3px 0 0' }}>{s.label}</p>
-                </div>
-              </React.Fragment>
-            ))}
-          </div>
-
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div style={{ position: 'relative' }}>
-              <Search style={{ position: 'absolute', left: 11, top: '50%', transform: 'translateY(-50%)', width: 13, height: 13, color: '#64748b' }} />
-              <input
-                type="text"
-                placeholder="Search store name, license key..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                style={{ ...S.input, width: 250, paddingLeft: 32, paddingRight: 12, height: 34, boxSizing: 'border-box' }}
-              />
+      {/* ── Stats & Search Filter Bar ─────────────────────────────── */}
+      <div className="p-4 px-6 rounded-2xl bg-white/95 dark:bg-[#140c1a]/85 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-sm flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-6">
+          <div className="flex items-center gap-6">
+            <div>
+              <p className="text-2xl font-extrabold text-slate-900 dark:text-white leading-none m-0">{licenses.length}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-1 m-0">Total Clients</p>
             </div>
-
-            <div style={{ display: 'flex', alignItems: 'center', padding: 3, borderRadius: 10, background: isDark ? 'rgba(10, 8, 20, 0.5)' : 'rgba(241, 245, 249, 0.9)', border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)' }}>
-              {(['all', 'active', 'disabled'] as const).map((f) => (
-                <button
-                  key={f}
-                  onClick={() => setFilter(f)}
-                  style={{
-                    padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 600,
-                    cursor: 'pointer', textTransform: 'capitalize', transition: 'all 0.15s ease',
-                    ...(filter === f ? {
-                      background: isDark ? 'rgba(225, 29, 72, 0.22)' : 'rgba(225, 29, 72, 0.12)',
-                      color: isDark ? '#fecdd3' : '#e11d48',
-                      border: isDark ? '1px solid rgba(225, 29, 72, 0.4)' : '1px solid rgba(225, 29, 72, 0.25)',
-                    } : {
-                      background: 'transparent',
-                      color: '#64748b',
-                      border: '1px solid transparent',
-                    }),
-                  }}
-                >
-                  {f}
-                </button>
-              ))}
+            <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
+            <div>
+              <p className="text-2xl font-extrabold text-sky-600 dark:text-sky-400 leading-none m-0">{activeN}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-1 m-0">Active Licenses</p>
+            </div>
+            <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
+            <div>
+              <p className="text-2xl font-extrabold text-rose-600 dark:text-rose-400 leading-none m-0">{licenses.length - activeN}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-1 m-0">Suspended</p>
             </div>
           </div>
         </div>
 
-        {/* ── Client License Cards Stack ──────────────────────────────────── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-          {shown.length === 0 ? (
-            <div style={{ ...S.card, padding: 50, textAlign: 'center', color: '#64748b', fontSize: 13 }}>
-              No client licenses found matching your search.
-            </div>
-          ) : shown.map((lic) => {
-            const ratio = (lic.activeDevices?.length || 0) / (lic.maxDevices || 1);
-            const enCount = MODULES.filter((m) => lic.modules?.[m.key] === true).length;
-            const initials = lic.userName.slice(0, 2).toUpperCase();
+        <div className="flex items-center gap-2.5">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+            <input
+              type="text"
+              placeholder="Search store name, license key..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-64 pl-9 pr-3 h-8.5 text-xs rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-rose-500/50 transition-colors"
+            />
+          </div>
 
-            return (
-              <div key={lic.id} style={lic.isEnabled ? S.card : S.cardSuspended}>
+          <div className="flex items-center p-1 rounded-xl bg-slate-100 dark:bg-black/40 border border-slate-200 dark:border-white/10">
+            {(['all', 'active', 'disabled'] as const).map((f) => (
+              <button
+                key={f}
+                onClick={() => setFilter(f)}
+                className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer capitalize transition-all duration-150 ${
+                  filter === f
+                    ? 'bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                }`}
+              >
+                {f}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
 
-                {/* ── Top Bar of Card ─────────────────────────────────────── */}
-                <div style={{
-                  padding: '18px 24px',
-                  borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.06)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14,
-                }}>
-                  {/* Left: Client Identity */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
-                    <div style={{
-                      width: 44, height: 44, borderRadius: 13, flexShrink: 0,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontWeight: 800, fontSize: 15, color: '#ffffff',
-                      ...(lic.isEnabled ? {
-                        background: 'linear-gradient(135deg, #e11d48, #be123c)',
-                        border: '1px solid rgba(255, 255, 255, 0.15)',
-                        boxShadow: '0 4px 14px rgba(225, 29, 72, 0.35)',
-                      } : {
-                        background: isDark ? 'rgba(225, 29, 72, 0.15)' : 'rgba(225, 29, 72, 0.1)',
-                        color: isDark ? '#fb7185' : '#e11d48',
-                        border: isDark ? '1px solid rgba(225, 29, 72, 0.3)' : '1px solid rgba(225, 29, 72, 0.25)',
-                      }),
-                    }}>
-                      {initials}
-                    </div>
+      {/* ── Client License Cards Stack ──────────────────────────────────── */}
+      <div className="flex flex-col gap-4">
+        {shown.length === 0 ? (
+          <div className="p-12 text-center text-slate-500 text-sm rounded-2xl bg-white/95 dark:bg-[#140c1a]/85 border border-slate-200/80 dark:border-white/10">
+            No client licenses found matching your search.
+          </div>
+        ) : shown.map((lic) => {
+          const ratio = (lic.activeDevices?.length || 0) / (lic.maxDevices || 1);
+          const enCount = MODULES.filter((m) => lic.modules?.[m.key] === true).length;
+          const initials = lic.userName.slice(0, 2).toUpperCase();
 
-                    <div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                        <h2 style={{ fontSize: 18, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', margin: 0 }}>
-                          {lic.userName}
-                        </h2>
-                        {/* Status Badge */}
-                        <span style={{
-                          display: 'inline-flex', alignItems: 'center', gap: 6,
-                          padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
-                          letterSpacing: 0.8, textTransform: 'uppercase',
-                          ...(lic.isEnabled ? {
-                            background: isDark ? 'rgba(56, 189, 248, 0.14)' : 'rgba(2, 132, 199, 0.12)',
-                            color: isDark ? '#38bdf8' : '#0284c7',
-                            border: isDark ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid rgba(2, 132, 199, 0.3)',
-                          } : {
-                            background: isDark ? 'rgba(225, 29, 72, 0.12)' : 'rgba(225, 29, 72, 0.1)',
-                            color: isDark ? '#fb7185' : '#e11d48',
-                            border: isDark ? '1px solid rgba(225, 29, 72, 0.3)' : '1px solid rgba(225, 29, 72, 0.25)',
-                          }),
-                        }}>
-                          <span style={{
-                            width: 6, height: 6, borderRadius: '50%',
-                            background: lic.isEnabled ? (isDark ? '#38bdf8' : '#0284c7') : '#e11d48',
-                          }} />
-                          {lic.isEnabled ? 'Active License' : 'Suspended'}
-                        </span>
-                      </div>
-
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginTop: 3, fontSize: 11, color: '#64748b' }}>
-                        <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                          <Phone style={{ width: 11, height: 11 }} /> {lic.whatsappNumber || 'No phone'}
-                        </span>
-                        <span style={{ color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.15)' }}>•</span>
-                        <span style={{ fontFamily: 'monospace', color: isDark ? '#fb7185' : '#e11d48', fontWeight: 600 }}>
-                          {enCount}/10 modules enabled
-                        </span>
-                      </div>
-                    </div>
+          return (
+            <div
+              key={lic.id}
+              className={`rounded-2xl backdrop-blur-2xl border shadow-sm transition-all duration-200 overflow-hidden ${
+                lic.isEnabled
+                  ? 'bg-white/95 dark:bg-[#140c1a]/85 border-slate-200/80 dark:border-white/10 shadow-slate-200/40 dark:shadow-none'
+                  : 'bg-rose-50/70 dark:bg-rose-950/20 border-rose-500/30 shadow-none'
+              }`}
+            >
+              {/* ── Top Bar of Card ─────────────────────────────────────── */}
+              <div className="p-5 px-6 border-b border-slate-200/60 dark:border-white/5 flex items-center justify-between flex-wrap gap-4">
+                {/* Left: Client Identity */}
+                <div className="flex items-center gap-3.5">
+                  <div
+                    className={`w-11 h-11 rounded-xl shrink-0 flex items-center justify-center font-extrabold text-sm text-white ${
+                      lic.isEnabled
+                        ? 'bg-gradient-to-br from-rose-600 to-rose-700 shadow-md shadow-rose-600/30 border border-white/20'
+                        : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
+                    }`}
+                  >
+                    {initials}
                   </div>
 
-                  {/* Right: Key Container (Secondary Blue) + Action Button (Primary Red) */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                    {/* License Key Badge (Secondary Blue) */}
-                    <div style={{
-                      display: 'flex', alignItems: 'center', gap: 9, padding: '7px 14px', borderRadius: 10,
-                      background: isDark ? 'rgba(10, 8, 20, 0.65)' : 'rgba(239, 246, 255, 0.9)',
-                      border: isDark ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid rgba(59, 130, 246, 0.35)',
-                    }}>
-                      <KeyRound style={{ width: 13, height: 13, color: isDark ? '#60a5fa' : '#2563eb', flexShrink: 0 }} />
-                      <span style={{ fontFamily: 'monospace', fontSize: 12.5, fontWeight: 700, color: isDark ? '#93c5fd' : '#1d4ed8', letterSpacing: 1.5 }}>
-                        {lic.key}
-                      </span>
-                      <button
-                        onClick={() => copyKey(lic.key)}
-                        style={{
-                          display: 'flex', padding: 5, borderRadius: 6, cursor: 'pointer',
-                          background: copied === lic.key ? (isDark ? 'rgba(56, 189, 248, 0.2)' : 'rgba(2, 132, 199, 0.15)') : (isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)'),
-                          color: copied === lic.key ? (isDark ? '#38bdf8' : '#0284c7') : '#94a3b8',
-                          border: `1px solid ${copied === lic.key ? (isDark ? 'rgba(56, 189, 248, 0.35)' : 'rgba(2, 132, 199, 0.35)') : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)')}`,
-                          transition: 'all 0.15s ease',
-                        }}
-                        title="Copy Key"
+                  <div>
+                    <div className="flex items-center gap-2.5 flex-wrap">
+                      <h2 className="text-lg font-extrabold text-slate-900 dark:text-white m-0">
+                        {lic.userName}
+                      </h2>
+                      {/* Status Badge */}
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                          lic.isEnabled
+                            ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30'
+                            : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                        }`}
                       >
-                        {copied === lic.key ? <Check style={{ width: 12, height: 12 }} /> : <Copy style={{ width: 12, height: 12 }} />}
-                      </button>
+                        <span className={`w-1.5 h-1.5 rounded-full ${lic.isEnabled ? 'bg-sky-500' : 'bg-rose-500'}`} />
+                        {lic.isEnabled ? 'Active License' : 'Suspended'}
+                      </span>
                     </div>
 
-                    {/* Master Power Toggle Button (Primary Red) */}
-                    <button
-                      onClick={() => toggleLic(lic.id, lic.isEnabled, lic.userName)}
-                      style={{
-                        display: 'flex', alignItems: 'center', gap: 7, padding: '8px 16px',
-                        borderRadius: 10, fontSize: 11, fontWeight: 700, cursor: 'pointer',
-                        letterSpacing: 0.5, textTransform: 'uppercase', transition: 'all 0.15s ease',
-                        ...(lic.isEnabled ? {
-                          background: isDark ? 'rgba(225, 29, 72, 0.14)' : 'rgba(225, 29, 72, 0.1)',
-                          color: isDark ? '#fb7185' : '#e11d48',
-                          border: isDark ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(225, 29, 72, 0.25)',
-                        } : {
-                          background: isDark ? 'rgba(37, 99, 235, 0.18)' : 'rgba(37, 99, 235, 0.1)',
-                          color: isDark ? '#93c5fd' : '#2563eb',
-                          border: isDark ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(59, 130, 246, 0.3)',
-                        }),
-                      }}
-                    >
-                      <Power style={{ width: 13, height: 13 }} />
-                      {lic.isEnabled ? 'Suspend' : 'Activate'}
-                    </button>
+                    <div className="flex items-center gap-2.5 mt-1 text-xs text-slate-500">
+                      <span className="flex items-center gap-1">
+                        <Phone className="w-3 h-3" /> {lic.whatsappNumber || 'No phone'}
+                      </span>
+                      <span className="opacity-40">•</span>
+                      <span className="font-mono text-rose-600 dark:text-rose-400 font-semibold">
+                        {enCount}/10 modules enabled
+                      </span>
+                    </div>
                   </div>
                 </div>
 
-                {/* ── Body: Two Panels ─────────────────────────────────────── */}
-                <div style={{ padding: '18px 24px', display: 'grid', gridTemplateColumns: '290px 1fr', gap: 20 }}>
-
-                  {/* LEFT: Hardware Terminals (Matte recessed) */}
-                  <div style={{ ...S.innerPanel, padding: 16 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <Cpu style={{ width: 13, height: 13, color: isDark ? '#fb7185' : '#e11d48' }} />
-                        <span style={{ fontSize: 11.5, fontWeight: 700, color: isDark ? '#f8fafc' : '#0f172a' }}>Hardware Terminals</span>
-                      </div>
-                      <span style={{
-                        fontFamily: 'monospace', fontSize: 10.5, fontWeight: 700,
-                        padding: '2px 8px', borderRadius: 999,
-                        background: ratio >= 1 ? (isDark ? 'rgba(225, 29, 72, 0.15)' : 'rgba(225, 29, 72, 0.1)') : (isDark ? 'rgba(37, 99, 235, 0.15)' : 'rgba(37, 99, 235, 0.1)'),
-                        color: ratio >= 1 ? (isDark ? '#fb7185' : '#e11d48') : (isDark ? '#93c5fd' : '#2563eb'),
-                        border: `1px solid ${ratio >= 1 ? (isDark ? 'rgba(225, 29, 72, 0.3)' : 'rgba(225, 29, 72, 0.25)') : (isDark ? 'rgba(37, 99, 235, 0.3)' : 'rgba(37, 99, 235, 0.25)')}`,
-                      }}>
-                        {lic.activeDevices?.length || 0} / {lic.maxDevices} In Use
-                      </span>
-                    </div>
-
-                    {/* Primary Red Progress Bar */}
-                    <div style={{ height: 4, borderRadius: 999, background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)', overflow: 'hidden', marginBottom: 14 }}>
-                      <div style={{
-                        height: '100%', borderRadius: 999, transition: 'width 0.4s ease',
-                        width: `${Math.min(100, Math.max(5, ratio * 100))}%`,
-                        background: ratio >= 1 ? '#e11d48' : 'linear-gradient(90deg, #e11d48, #2563eb)',
-                      }} />
-                    </div>
-
-                    <p style={{ fontSize: 9, fontWeight: 700, letterSpacing: 1.5, textTransform: 'uppercase', color: '#64748b', margin: '0 0 7px' }}>
-                      Linked HWID Machines:
-                    </p>
-
-                    {!lic.activeDevices?.length ? (
-                      <div style={{
-                        padding: '12px', borderRadius: 10, textAlign: 'center',
-                        background: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)',
-                        border: isDark ? '1px dashed rgba(255, 255, 255, 0.08)' : '1px dashed rgba(0, 0, 0, 0.1)',
-                        fontSize: 11, color: isDark ? '#475569' : '#94a3b8', fontStyle: 'italic',
-                      }}>
-                        No machines registered yet.
-                      </div>
-                    ) : lic.activeDevices.map((dev) => (
-                      <div
-                        key={dev.hwid}
-                        style={{
-                          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                          padding: '7px 10px', borderRadius: 9, marginBottom: 5,
-                          background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(241, 245, 249, 0.7)',
-                          border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.06)',
-                        }}
-                      >
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
-                          <div style={{ padding: 4, borderRadius: 6, background: isDark ? 'rgba(37, 99, 235, 0.18)' : 'rgba(37, 99, 235, 0.12)', color: isDark ? '#60a5fa' : '#2563eb', flexShrink: 0 }}>
-                            <Laptop style={{ width: 12, height: 12 }} />
-                          </div>
-                          <div style={{ minWidth: 0 }}>
-                            <p style={{ fontSize: 11, fontWeight: 600, color: isDark ? '#f8fafc' : '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>
-                              {dev.deviceName || 'Cashier PC'}
-                            </p>
-                            <p style={{ fontFamily: 'monospace', fontSize: 9.5, color: '#64748b', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>
-                              {dev.hwid.slice(0, 14)}...
-                            </p>
-                          </div>
-                        </div>
-                        <button
-                          onClick={() => removeDevice(lic.id, dev.hwid, dev.deviceName)}
-                          style={{
-                            padding: 4, borderRadius: 6, cursor: 'pointer',
-                            background: 'transparent', color: '#64748b', border: 'none', transition: 'all 0.15s ease',
-                          }}
-                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = isDark ? '#fb7185' : '#e11d48'; }}
-                          onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#64748b'; }}
-                          title="Unlink Machine"
-                        >
-                          <Trash2 style={{ width: 12, height: 12 }} />
-                        </button>
-                      </div>
-                    ))}
+                {/* Right: Key Container + Power Button */}
+                <div className="flex items-center gap-2.5 flex-wrap">
+                  {/* License Key Badge */}
+                  <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-blue-50/80 dark:bg-black/60 border border-blue-500/25 dark:border-blue-500/30">
+                    <KeyRound className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                    <span className="font-mono text-xs font-bold text-blue-700 dark:text-blue-300 tracking-wider">
+                      {lic.key}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => copyKey(lic.key)}
+                      className={`p-1 rounded-md cursor-pointer transition-colors border ${
+                        copied === lic.key
+                          ? 'bg-sky-500/20 text-sky-600 dark:text-sky-400 border-sky-500/30'
+                          : 'bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-white'
+                      }`}
+                      title="Copy Key"
+                    >
+                      {copied === lic.key ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                    </button>
                   </div>
 
-                  {/* RIGHT: Live Module Switchboard & Business Profile Switchboard */}
-                  <div>
-                    {/* Live Business Profile Selector */}
-                    <div style={{ marginBottom: 14 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                          <Tag style={{ width: 13, height: 13, color: isDark ? '#38bdf8' : '#0284c7' }} />
-                          <h3 style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
-                            Business Profiles / Industry Types
-                          </h3>
-                        </div>
-                        <span style={{ fontSize: 10, color: '#94a3b8' }}>
-                          {(lic.businessProfiles || ['standard']).length === 1 ? 'Single Profile (Auto-Locked in Category)' : 'Multi-Profile (Filtered in Category)'}
-                        </span>
-                      </div>
-                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                        {BUSINESS_PROFILES.map((bp) => {
-                          const active = (lic.businessProfiles || ['standard']).includes(bp.key);
-                          return (
-                            <button
-                              key={bp.key}
-                              type="button"
-                              onClick={() => toggleProfile(lic, bp.key)}
-                              style={{
-                                display: 'flex', alignItems: 'center', gap: 6,
-                                padding: '5px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700,
-                                cursor: 'pointer', transition: 'all 0.15s ease',
-                                ...(active ? {
-                                  background: isDark ? `${bp.color}20` : `${bp.color}15`,
-                                  border: `1px solid ${bp.color}80`,
-                                  color: bp.color,
-                                } : {
-                                  background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.03)',
-                                  border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.08)',
-                                  color: '#64748b',
-                                }),
-                              }}
-                            >
-                              <span style={{ width: 6, height: 6, borderRadius: '50%', background: active ? bp.color : '#64748b' }} />
-                              {bp.shortTag}
-                            </button>
-                          );
-                        })}
-                      </div>
-                    </div>
+                  {/* Power Button */}
+                  <button
+                    type="button"
+                    onClick={() => toggleLic(lic.id, lic.isEnabled, lic.userName)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer transition-all duration-150 border ${
+                      lic.isEnabled
+                        ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30 hover:bg-rose-500/25'
+                        : 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30 hover:bg-sky-500/25'
+                    }`}
+                  >
+                    <Power className="w-3.5 h-3.5" />
+                    {lic.isEnabled ? 'Suspend' : 'Activate'}
+                  </button>
+                </div>
+              </div>
 
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <Sliders style={{ width: 13, height: 13, color: isDark ? '#fb7185' : '#e11d48' }} />
-                        <h3 style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
+              {/* ── Body: Two Panels ─────────────────────────────────────── */}
+              <div className="p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
+
+                {/* LEFT: Hardware Terminals */}
+                <div className="p-4 rounded-xl bg-slate-50/90 dark:bg-black/40 border border-slate-200/80 dark:border-white/5 space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Cpu className="w-3.5 h-3.5 text-rose-500" />
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">Hardware Terminals</span>
+                    </div>
+                    <span
+                      className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded-full border ${
+                        ratio >= 1
+                          ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                          : 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                      }`}
+                    >
+                      {lic.activeDevices?.length || 0} / {lic.maxDevices} In Use
+                    </span>
+                  </div>
+
+                  {/* Progress Bar Container */}
+                  <div className="h-1 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                    <div
+                      className={`h-full rounded-full transition-all duration-300 ${
+                        ratio >= 1
+                          ? 'w-full bg-rose-600'
+                          : ratio >= 0.75
+                          ? 'w-3/4 bg-gradient-to-r from-rose-600 to-blue-600'
+                          : ratio >= 0.5
+                          ? 'w-1/2 bg-gradient-to-r from-rose-600 to-blue-600'
+                          : ratio > 0
+                          ? 'w-1/4 bg-gradient-to-r from-rose-600 to-blue-600'
+                          : 'w-0'
+                      }`}
+                    />
+                  </div>
+
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 m-0">
+                    Linked HWID Machines:
+                  </p>
+
+                  {!lic.activeDevices?.length ? (
+                    <div className="p-3 rounded-lg text-center bg-slate-100/60 dark:bg-white/5 border border-dashed border-slate-200 dark:border-white/10 text-xs text-slate-400 italic">
+                      No machines registered yet.
+                    </div>
+                  ) : lic.activeDevices.map((dev) => (
+                    <div
+                      key={dev.hwid}
+                      className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/5"
+                    >
+                      <div className="flex items-center gap-2 min-w-0">
+                        <div className="p-1 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400 shrink-0">
+                          <Laptop className="w-3 h-3" />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-xs font-semibold text-slate-900 dark:text-white m-0 truncate max-w-[130px]">
+                            {dev.deviceName || 'Cashier PC'}
+                          </p>
+                          <p className="font-mono text-[10px] text-slate-500 m-0 truncate max-w-[130px]">
+                            {dev.hwid.slice(0, 14)}...
+                          </p>
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => removeDevice(lic.id, dev.hwid, dev.deviceName)}
+                        className="p-1 rounded cursor-pointer text-slate-400 hover:text-rose-500 transition-colors"
+                        title="Unlink Machine"
+                      >
+                        <Trash2 className="w-3 h-3" />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+
+                {/* RIGHT: Live Module Switchboard & Business Profile Switchboard */}
+                <div className="space-y-4">
+                  {/* Live Business Profile Selector */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="flex items-center gap-2">
+                        <Tag className="w-3.5 h-3.5 text-sky-500" />
+                        <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider m-0">
+                          Business Profiles / Industry Types
+                        </h3>
+                      </div>
+                      <span className="text-[11px] text-slate-500">
+                        {(lic.businessProfiles || ['standard']).length === 1 ? 'Single Profile (Auto-Locked in Category)' : 'Multi-Profile (Filtered in Category)'}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-1.5">
+                      {BUSINESS_PROFILES.map((bp) => {
+                        const active = (lic.businessProfiles || ['standard']).includes(bp.key);
+                        return (
+                          <button
+                            key={bp.key}
+                            type="button"
+                            onClick={() => toggleProfile(lic, bp.key)}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold cursor-pointer transition-all duration-150 border ${
+                              active
+                                ? bp.activeClasses
+                                : 'bg-slate-100/70 dark:bg-white/5 border-slate-200/80 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/10'
+                            }`}
+                          >
+                            <span className={`w-1.5 h-1.5 rounded-full ${active ? bp.dotColor : 'bg-slate-400'}`} />
+                            {bp.shortTag}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* Live Module Switchboard */}
+                  <div>
+                    <div className="flex items-center justify-between mb-2.5">
+                      <div className="flex items-center gap-2">
+                        <Sliders className="w-3.5 h-3.5 text-rose-500" />
+                        <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider m-0">
                           Live Module Switchboard
                         </h3>
                       </div>
-                      <div style={{ display: 'flex', gap: 7 }}>
-                        {[
-                          { label: 'Enable All', on: true, c: isDark ? '#fb7185' : '#e11d48' },
-                          { label: 'Disable All', on: false, c: '#94a3b8' },
-                        ].map((b) => (
-                          <button
-                            key={b.label}
-                            onClick={() => bulkMod(lic, b.on)}
-                            style={{
-                              padding: '4px 10px', borderRadius: 7, fontSize: 10.5, fontWeight: 600, cursor: 'pointer',
-                              background: b.on ? (isDark ? 'rgba(225, 29, 72, 0.16)' : 'rgba(225, 29, 72, 0.1)') : (isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.05)'),
-                              color: b.c,
-                              border: b.on ? (isDark ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(225, 29, 72, 0.25)') : (isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)'),
-                              transition: 'all 0.15s ease',
-                            }}
-                          >
-                            {b.label}
-                          </button>
-                        ))}
+                      <div className="flex gap-2">
+                        <button
+                          type="button"
+                          onClick={() => bulkMod(lic, true)}
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/25 transition-colors"
+                        >
+                          Enable All
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => bulkMod(lic, false)}
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 transition-colors"
+                        >
+                          Disable All
+                        </button>
                       </div>
                     </div>
 
-                    {/* 10 Module Grid (Primary Red Active Switch & Icons) */}
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                    {/* 10 Module Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                       {MODULES.map((m) => {
                         const on = lic.modules?.[m.key] === true;
                         const Ic = m.icon;
@@ -852,70 +760,51 @@ export default function LicensesPage() {
                           <div
                             key={m.key}
                             onClick={() => toggleMod(lic, m.key)}
-                            style={{
-                              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                              padding: '9px 12px', borderRadius: 12, cursor: 'pointer',
-                              userSelect: 'none', transition: 'all 0.15s ease',
-                              ...(on ? {
-                                background: isDark ? 'rgba(225, 29, 72, 0.14)' : 'rgba(225, 29, 72, 0.08)',
-                                border: isDark ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(225, 29, 72, 0.25)',
-                              } : {
-                                background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.025)',
-                                border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.06)',
-                                opacity: 0.6,
-                              }),
-                            }}
+                            className={`flex items-center justify-between p-2.5 rounded-xl cursor-pointer select-none transition-all duration-150 border ${
+                              on
+                                ? 'bg-rose-500/10 dark:bg-rose-500/15 border-rose-500/30 shadow-xs'
+                                : 'bg-slate-100/50 dark:bg-white/5 border-slate-200/60 dark:border-white/5 opacity-60 hover:opacity-80'
+                            }`}
                           >
-                            <div style={{ display: 'flex', alignItems: 'center', gap: 9, minWidth: 0 }}>
-                              {/* Primary Red Icon Container */}
-                              <div style={{
-                                width: 30, height: 30, borderRadius: 8, flexShrink: 0,
-                                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                                ...(on ? {
-                                  background: isDark ? 'rgba(225, 29, 72, 0.22)' : 'rgba(225, 29, 72, 0.12)',
-                                  color: isDark ? '#fda4af' : '#e11d48',
-                                } : {
-                                  background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
-                                  color: '#64748b',
-                                }),
-                              }}>
-                                <Ic style={{ width: 14, height: 14 }} />
+                            <div className="flex items-center gap-2.5 min-w-0">
+                              <div
+                                className={`w-7.5 h-7.5 rounded-lg shrink-0 flex items-center justify-center ${
+                                  on
+                                    ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400'
+                                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-400'
+                                }`}
+                              >
+                                <Ic className="w-3.5 h-3.5" />
                               </div>
 
-                              <div style={{ minWidth: 0 }}>
-                                <p style={{
-                                  fontSize: 11, fontWeight: 600, margin: 0,
-                                  overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                  color: on ? (isDark ? '#f8fafc' : '#0f172a') : '#64748b',
-                                  textDecoration: on ? 'none' : 'line-through',
-                                }}>
+                              <div className="min-w-0">
+                                <p
+                                  className={`text-xs font-semibold m-0 truncate ${
+                                    on ? 'text-slate-900 dark:text-white' : 'text-slate-500 line-through'
+                                  }`}
+                                >
                                   {m.label}
                                 </p>
-                                <p style={{ fontSize: 9.5, margin: 0, color: '#64748b', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                                <p className="text-[10px] text-slate-400 m-0 truncate">
                                   {m.desc}
                                 </p>
                               </div>
                             </div>
 
-                            {/* Primary Red Switch */}
-                            <div style={{ paddingLeft: 6, flexShrink: 0 }}>
-                              <div style={{
-                                width: 34, height: 18, borderRadius: 999, padding: 2,
-                                display: 'flex', alignItems: 'center',
-                                transition: 'all 0.2s ease',
-                                ...(on ? {
-                                  background: 'linear-gradient(135deg, #e11d48, #f43f5e)',
-                                  boxShadow: '0 2px 8px rgba(225, 29, 72, 0.4)',
-                                } : {
-                                  background: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.15)',
-                                }),
-                              }}>
-                                <div style={{
-                                  width: 14, height: 14, borderRadius: '50%', background: '#ffffff',
-                                  boxShadow: '0 1px 4px rgba(0, 0, 0, 0.3)',
-                                  transform: on ? 'translateX(16px)' : 'translateX(0)',
-                                  transition: 'transform 0.2s ease',
-                                }} />
+                            {/* Switch Pill */}
+                            <div className="pl-1.5 shrink-0">
+                              <div
+                                className={`w-8 h-4.5 rounded-full p-0.5 flex items-center transition-colors duration-200 ${
+                                  on
+                                    ? 'bg-rose-600 shadow-sm shadow-rose-600/40'
+                                    : 'bg-slate-300 dark:bg-white/20'
+                                }`}
+                              >
+                                <div
+                                  className={`w-3.5 h-3.5 rounded-full bg-white shadow-xs transition-transform duration-200 ${
+                                    on ? 'translate-x-3.5' : 'translate-x-0'
+                                  }`}
+                                />
                               </div>
                             </div>
                           </div>
@@ -926,11 +815,11 @@ export default function LicensesPage() {
 
                 </div>
               </div>
-            );
-          })}
-        </div>
-
+            </div>
+          );
+        })}
       </div>
+
     </div>
   );
 }
