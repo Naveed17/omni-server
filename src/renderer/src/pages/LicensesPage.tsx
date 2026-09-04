@@ -53,52 +53,51 @@ const MODULES: ModuleMeta[] = [
 ];
 
 /* ─── Matte Glassy Design Tokens ─────────────────────────────────────────────── */
-const S = {
-  // Main frosted matte glass card
-  card: {
-    background: 'rgba(20, 12, 26, 0.65)',
-    backdropFilter: 'blur(26px)',
-    WebkitBackdropFilter: 'blur(26px)',
-    border: '1px solid rgba(255, 255, 255, 0.08)',
-    borderRadius: 20,
-    boxShadow: '0 16px 40px -12px rgba(0, 0, 0, 0.55)',
-  } as React.CSSProperties,
-
-  cardSuspended: {
-    background: 'rgba(38, 10, 20, 0.60)',
-    backdropFilter: 'blur(26px)',
-    WebkitBackdropFilter: 'blur(26px)',
-    border: '1px solid rgba(225, 29, 72, 0.35)',
-    borderRadius: 20,
-    boxShadow: '0 16px 40px -12px rgba(0, 0, 0, 0.55)',
-  } as React.CSSProperties,
-
-  // Inner recessed panel (matte secondary blue undertone)
-  innerPanel: {
-    background: 'rgba(10, 8, 20, 0.60)',
-    backdropFilter: 'blur(16px)',
-    WebkitBackdropFilter: 'blur(16px)',
-    border: '1px solid rgba(255, 255, 255, 0.05)',
-    borderRadius: 16,
-  } as React.CSSProperties,
-
-  // Matte input
-  input: {
-    background: 'rgba(255, 255, 255, 0.05)',
-    backdropFilter: 'blur(12px)',
-    border: '1px solid rgba(255, 255, 255, 0.1)',
-    borderRadius: 10,
-    color: '#f8fafc',
-    outline: 'none',
-    padding: '9px 14px',
-    fontSize: 13,
-    width: '100%',
-    transition: 'border-color 0.15s',
-  } as React.CSSProperties,
-};
-
 /* ─── Component ──────────────────────────────────────────────────────────────── */
 export default function LicensesPage() {
+  const { isDark, toggleTheme } = useTheme();
+
+  const S = useMemo(() => ({
+    card: {
+      background: isDark ? 'rgba(20, 12, 26, 0.65)' : 'rgba(255, 255, 255, 0.90)',
+      backdropFilter: 'blur(26px)',
+      WebkitBackdropFilter: 'blur(26px)',
+      border: isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)',
+      borderRadius: 20,
+      boxShadow: isDark ? '0 16px 40px -12px rgba(0, 0, 0, 0.55)' : '0 12px 32px -8px rgba(0, 0, 0, 0.07)',
+    } as React.CSSProperties,
+
+    cardSuspended: {
+      background: isDark ? 'rgba(38, 10, 20, 0.60)' : 'rgba(255, 241, 242, 0.90)',
+      backdropFilter: 'blur(26px)',
+      WebkitBackdropFilter: 'blur(26px)',
+      border: '1px solid rgba(225, 29, 72, 0.35)',
+      borderRadius: 20,
+      boxShadow: isDark ? '0 16px 40px -12px rgba(0, 0, 0, 0.55)' : '0 12px 32px -8px rgba(225, 29, 72, 0.08)',
+    } as React.CSSProperties,
+
+    innerPanel: {
+      background: isDark ? 'rgba(10, 8, 20, 0.60)' : 'rgba(248, 250, 252, 0.92)',
+      backdropFilter: 'blur(16px)',
+      WebkitBackdropFilter: 'blur(16px)',
+      border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.06)',
+      borderRadius: 16,
+    } as React.CSSProperties,
+
+    input: {
+      background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#ffffff',
+      backdropFilter: 'blur(12px)',
+      border: isDark ? '1px solid rgba(255, 255, 255, 0.1)' : '1px solid rgba(0, 0, 0, 0.14)',
+      borderRadius: 10,
+      color: isDark ? '#f8fafc' : '#0f172a',
+      outline: 'none',
+      padding: '9px 14px',
+      fontSize: 13,
+      width: '100%',
+      transition: 'border-color 0.15s, background-color 0.15s, color 0.15s',
+    } as React.CSSProperties,
+  }), [isDark]);
+
   const [licenses, setLicenses]         = useState<LicenseRecord[]>([]);
   const [loading, setLoading]           = useState(false);
   const [copied, setCopied]             = useState<string | null>(null);
@@ -278,14 +277,14 @@ export default function LicensesPage() {
             </div>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <h1 style={{ fontSize: 22, fontWeight: 800, color: '#f8fafc', letterSpacing: '-0.3px', margin: 0 }}>
+                <h1 style={{ fontSize: 22, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', letterSpacing: '-0.3px', margin: 0 }}>
                   Client Licenses
                 </h1>
                 {/* Secondary Blue Pill */}
                 <span style={{
                   padding: '2px 9px', borderRadius: 999, fontSize: 9, fontWeight: 800,
                   letterSpacing: 1.2, textTransform: 'uppercase',
-                  background: 'rgba(37, 99, 235, 0.18)', color: '#93c5fd',
+                  background: 'rgba(37, 99, 235, 0.18)', color: isDark ? '#93c5fd' : '#2563eb',
                   border: '1px solid rgba(59, 130, 246, 0.35)',
                 }}>
                   Control Hub
@@ -297,7 +296,30 @@ export default function LicensesPage() {
             </div>
           </div>
 
-          <div style={{ display: 'flex', gap: 10 }}>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            {/* Theme Switcher Button */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              style={{
+                display: 'flex', alignItems: 'center', gap: 7, padding: '9px 14px',
+                borderRadius: 11, fontSize: 12, fontWeight: 700, cursor: 'pointer',
+                background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#ffffff',
+                color: isDark ? '#f8fafc' : '#0f172a',
+                border: isDark ? '1px solid rgba(255, 255, 255, 0.09)' : '1px solid rgba(0, 0, 0, 0.12)',
+                boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.05)',
+                backdropFilter: 'blur(16px)', transition: 'all 0.15s ease',
+              }}
+              title="Toggle Light / Dark Mode"
+            >
+              {isDark ? (
+                <Sun style={{ width: 14, height: 14, color: '#f59e0b' }} />
+              ) : (
+                <Moon style={{ width: 14, height: 14, color: '#2563eb' }} />
+              )}
+              <span>{isDark ? 'Light' : 'Dark'}</span>
+            </button>
+
             {/* Secondary Blue Action */}
             <button
               onClick={load}
@@ -305,8 +327,10 @@ export default function LicensesPage() {
               style={{
                 display: 'flex', alignItems: 'center', gap: 7, padding: '9px 16px',
                 borderRadius: 11, fontSize: 12, fontWeight: 600, cursor: 'pointer',
-                background: 'rgba(255, 255, 255, 0.05)', color: '#cbd5e1',
-                border: '1px solid rgba(255, 255, 255, 0.09)',
+                background: isDark ? 'rgba(255, 255, 255, 0.05)' : '#ffffff',
+                color: isDark ? '#cbd5e1' : '#334155',
+                border: isDark ? '1px solid rgba(255, 255, 255, 0.09)' : '1px solid rgba(0, 0, 0, 0.12)',
+                boxShadow: isDark ? 'none' : '0 2px 8px rgba(0, 0, 0, 0.05)',
                 backdropFilter: 'blur(16px)', transition: 'all 0.15s ease',
               }}
             >
@@ -386,12 +410,12 @@ export default function LicensesPage() {
                           borderRadius: 10, fontSize: 11, fontWeight: 600, cursor: 'pointer',
                           textAlign: 'left', transition: 'all 0.15s ease',
                           ...(on ? {
-                            background: 'rgba(225, 29, 72, 0.18)',
-                            border: '1px solid rgba(225, 29, 72, 0.4)',
-                            color: '#fecdd3',
+                            background: isDark ? 'rgba(225, 29, 72, 0.18)' : 'rgba(225, 29, 72, 0.1)',
+                            border: isDark ? '1px solid rgba(225, 29, 72, 0.4)' : '1px solid rgba(225, 29, 72, 0.3)',
+                            color: isDark ? '#fecdd3' : '#be123c',
                           } : {
-                            background: 'rgba(255, 255, 255, 0.025)',
-                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.03)',
+                            border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
                             color: '#64748b',
                           }),
                         }}
@@ -433,12 +457,12 @@ export default function LicensesPage() {
                           borderRadius: 10, fontSize: 11, fontWeight: 600, cursor: 'pointer',
                           textAlign: 'left', transition: 'all 0.15s ease',
                           ...(on ? {
-                            background: `${bp.color}22`,
+                            background: isDark ? `${bp.color}22` : `${bp.color}15`,
                             border: `1px solid ${bp.color}88`,
                             color: bp.color,
                           } : {
-                            background: 'rgba(255, 255, 255, 0.025)',
-                            border: '1px solid rgba(255, 255, 255, 0.06)',
+                            background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.03)',
+                            border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)',
                             color: '#64748b',
                           }),
                         }}
@@ -480,12 +504,12 @@ export default function LicensesPage() {
         <div style={{ ...S.card, padding: '14px 22px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 24 }}>
             {[
-              { val: licenses.length, label: 'Total Clients', color: '#f8fafc' },
-              { val: activeN, label: 'Active Licenses', color: '#38bdf8' }, // Secondary Blue
-              { val: licenses.length - activeN, label: 'Suspended', color: '#fb7185' }, // Primary Red
+              { val: licenses.length, label: 'Total Clients', color: isDark ? '#f8fafc' : '#0f172a' },
+              { val: activeN, label: 'Active Licenses', color: isDark ? '#38bdf8' : '#0284c7' }, // Secondary Blue
+              { val: licenses.length - activeN, label: 'Suspended', color: isDark ? '#fb7185' : '#e11d48' }, // Primary Red
             ].map((s, i) => (
               <React.Fragment key={s.label}>
-                {i > 0 && <div style={{ width: 1, height: 30, background: 'rgba(255, 255, 255, 0.08)' }} />}
+                {i > 0 && <div style={{ width: 1, height: 30, background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)' }} />}
                 <div>
                   <p style={{ fontSize: 22, fontWeight: 800, color: s.color, lineHeight: 1, margin: 0 }}>{s.val}</p>
                   <p style={{ fontSize: 10, fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1.2, color: '#64748b', margin: '3px 0 0' }}>{s.label}</p>
@@ -506,7 +530,7 @@ export default function LicensesPage() {
               />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', padding: 3, borderRadius: 10, background: 'rgba(10, 8, 20, 0.5)', border: '1px solid rgba(255, 255, 255, 0.06)' }}>
+            <div style={{ display: 'flex', alignItems: 'center', padding: 3, borderRadius: 10, background: isDark ? 'rgba(10, 8, 20, 0.5)' : 'rgba(241, 245, 249, 0.9)', border: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.08)' }}>
               {(['all', 'active', 'disabled'] as const).map((f) => (
                 <button
                   key={f}
@@ -515,9 +539,9 @@ export default function LicensesPage() {
                     padding: '5px 12px', borderRadius: 7, fontSize: 11, fontWeight: 600,
                     cursor: 'pointer', textTransform: 'capitalize', transition: 'all 0.15s ease',
                     ...(filter === f ? {
-                      background: 'rgba(225, 29, 72, 0.22)',
-                      color: '#fecdd3',
-                      border: '1px solid rgba(225, 29, 72, 0.4)',
+                      background: isDark ? 'rgba(225, 29, 72, 0.22)' : 'rgba(225, 29, 72, 0.12)',
+                      color: isDark ? '#fecdd3' : '#e11d48',
+                      border: isDark ? '1px solid rgba(225, 29, 72, 0.4)' : '1px solid rgba(225, 29, 72, 0.25)',
                     } : {
                       background: 'transparent',
                       color: '#64748b',
