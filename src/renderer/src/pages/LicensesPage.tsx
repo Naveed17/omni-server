@@ -573,7 +573,7 @@ export default function LicensesPage() {
                 {/* ── Top Bar of Card ─────────────────────────────────────── */}
                 <div style={{
                   padding: '18px 24px',
-                  borderBottom: '1px solid rgba(255, 255, 255, 0.06)',
+                  borderBottom: isDark ? '1px solid rgba(255, 255, 255, 0.06)' : '1px solid rgba(0, 0, 0, 0.06)',
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 14,
                 }}>
                   {/* Left: Client Identity */}
@@ -587,9 +587,9 @@ export default function LicensesPage() {
                         border: '1px solid rgba(255, 255, 255, 0.15)',
                         boxShadow: '0 4px 14px rgba(225, 29, 72, 0.35)',
                       } : {
-                        background: 'rgba(225, 29, 72, 0.15)',
-                        color: '#fb7185',
-                        border: '1px solid rgba(225, 29, 72, 0.3)',
+                        background: isDark ? 'rgba(225, 29, 72, 0.15)' : 'rgba(225, 29, 72, 0.1)',
+                        color: isDark ? '#fb7185' : '#e11d48',
+                        border: isDark ? '1px solid rgba(225, 29, 72, 0.3)' : '1px solid rgba(225, 29, 72, 0.25)',
                       }),
                     }}>
                       {initials}
@@ -597,7 +597,7 @@ export default function LicensesPage() {
 
                     <div>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                        <h2 style={{ fontSize: 18, fontWeight: 800, color: '#f8fafc', margin: 0 }}>
+                        <h2 style={{ fontSize: 18, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', margin: 0 }}>
                           {lic.userName}
                         </h2>
                         {/* Status Badge */}
@@ -606,18 +606,18 @@ export default function LicensesPage() {
                           padding: '2px 8px', borderRadius: 999, fontSize: 10, fontWeight: 700,
                           letterSpacing: 0.8, textTransform: 'uppercase',
                           ...(lic.isEnabled ? {
-                            background: 'rgba(56, 189, 248, 0.14)',
-                            color: '#38bdf8',
-                            border: '1px solid rgba(56, 189, 248, 0.35)',
+                            background: isDark ? 'rgba(56, 189, 248, 0.14)' : 'rgba(2, 132, 199, 0.12)',
+                            color: isDark ? '#38bdf8' : '#0284c7',
+                            border: isDark ? '1px solid rgba(56, 189, 248, 0.35)' : '1px solid rgba(2, 132, 199, 0.3)',
                           } : {
-                            background: 'rgba(225, 29, 72, 0.12)',
-                            color: '#fb7185',
-                            border: '1px solid rgba(225, 29, 72, 0.3)',
+                            background: isDark ? 'rgba(225, 29, 72, 0.12)' : 'rgba(225, 29, 72, 0.1)',
+                            color: isDark ? '#fb7185' : '#e11d48',
+                            border: isDark ? '1px solid rgba(225, 29, 72, 0.3)' : '1px solid rgba(225, 29, 72, 0.25)',
                           }),
                         }}>
                           <span style={{
                             width: 6, height: 6, borderRadius: '50%',
-                            background: lic.isEnabled ? '#38bdf8' : '#e11d48',
+                            background: lic.isEnabled ? (isDark ? '#38bdf8' : '#0284c7') : '#e11d48',
                           }} />
                           {lic.isEnabled ? 'Active License' : 'Suspended'}
                         </span>
@@ -627,8 +627,8 @@ export default function LicensesPage() {
                         <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
                           <Phone style={{ width: 11, height: 11 }} /> {lic.whatsappNumber || 'No phone'}
                         </span>
-                        <span style={{ color: 'rgba(255, 255, 255, 0.1)' }}>•</span>
-                        <span style={{ fontFamily: 'monospace', color: '#fb7185', fontWeight: 600 }}>
+                        <span style={{ color: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.15)' }}>•</span>
+                        <span style={{ fontFamily: 'monospace', color: isDark ? '#fb7185' : '#e11d48', fontWeight: 600 }}>
                           {enCount}/10 modules enabled
                         </span>
                       </div>
@@ -640,20 +640,20 @@ export default function LicensesPage() {
                     {/* License Key Badge (Secondary Blue) */}
                     <div style={{
                       display: 'flex', alignItems: 'center', gap: 9, padding: '7px 14px', borderRadius: 10,
-                      background: 'rgba(10, 8, 20, 0.65)',
-                      border: '1px solid rgba(59, 130, 246, 0.25)',
+                      background: isDark ? 'rgba(10, 8, 20, 0.65)' : 'rgba(239, 246, 255, 0.9)',
+                      border: isDark ? '1px solid rgba(59, 130, 246, 0.25)' : '1px solid rgba(59, 130, 246, 0.35)',
                     }}>
-                      <KeyRound style={{ width: 13, height: 13, color: '#60a5fa', flexShrink: 0 }} />
-                      <span style={{ fontFamily: 'monospace', fontSize: 12.5, fontWeight: 700, color: '#93c5fd', letterSpacing: 1.5 }}>
+                      <KeyRound style={{ width: 13, height: 13, color: isDark ? '#60a5fa' : '#2563eb', flexShrink: 0 }} />
+                      <span style={{ fontFamily: 'monospace', fontSize: 12.5, fontWeight: 700, color: isDark ? '#93c5fd' : '#1d4ed8', letterSpacing: 1.5 }}>
                         {lic.key}
                       </span>
                       <button
                         onClick={() => copyKey(lic.key)}
                         style={{
                           display: 'flex', padding: 5, borderRadius: 6, cursor: 'pointer',
-                          background: copied === lic.key ? 'rgba(56, 189, 248, 0.2)' : 'rgba(255, 255, 255, 0.06)',
-                          color: copied === lic.key ? '#38bdf8' : '#94a3b8',
-                          border: `1px solid ${copied === lic.key ? 'rgba(56, 189, 248, 0.35)' : 'rgba(255, 255, 255, 0.08)'}`,
+                          background: copied === lic.key ? (isDark ? 'rgba(56, 189, 248, 0.2)' : 'rgba(2, 132, 199, 0.15)') : (isDark ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.05)'),
+                          color: copied === lic.key ? (isDark ? '#38bdf8' : '#0284c7') : '#94a3b8',
+                          border: `1px solid ${copied === lic.key ? (isDark ? 'rgba(56, 189, 248, 0.35)' : 'rgba(2, 132, 199, 0.35)') : (isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)')}`,
                           transition: 'all 0.15s ease',
                         }}
                         title="Copy Key"
@@ -670,13 +670,13 @@ export default function LicensesPage() {
                         borderRadius: 10, fontSize: 11, fontWeight: 700, cursor: 'pointer',
                         letterSpacing: 0.5, textTransform: 'uppercase', transition: 'all 0.15s ease',
                         ...(lic.isEnabled ? {
-                          background: 'rgba(225, 29, 72, 0.14)',
-                          color: '#fb7185',
-                          border: '1px solid rgba(225, 29, 72, 0.35)',
+                          background: isDark ? 'rgba(225, 29, 72, 0.14)' : 'rgba(225, 29, 72, 0.1)',
+                          color: isDark ? '#fb7185' : '#e11d48',
+                          border: isDark ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(225, 29, 72, 0.25)',
                         } : {
-                          background: 'rgba(37, 99, 235, 0.18)',
-                          color: '#93c5fd',
-                          border: '1px solid rgba(59, 130, 246, 0.4)',
+                          background: isDark ? 'rgba(37, 99, 235, 0.18)' : 'rgba(37, 99, 235, 0.1)',
+                          color: isDark ? '#93c5fd' : '#2563eb',
+                          border: isDark ? '1px solid rgba(59, 130, 246, 0.4)' : '1px solid rgba(59, 130, 246, 0.3)',
                         }),
                       }}
                     >
@@ -693,22 +693,22 @@ export default function LicensesPage() {
                   <div style={{ ...S.innerPanel, padding: 16 }}>
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <Cpu style={{ width: 13, height: 13, color: '#fb7185' }} />
-                        <span style={{ fontSize: 11.5, fontWeight: 700, color: '#f8fafc' }}>Hardware Terminals</span>
+                        <Cpu style={{ width: 13, height: 13, color: isDark ? '#fb7185' : '#e11d48' }} />
+                        <span style={{ fontSize: 11.5, fontWeight: 700, color: isDark ? '#f8fafc' : '#0f172a' }}>Hardware Terminals</span>
                       </div>
                       <span style={{
                         fontFamily: 'monospace', fontSize: 10.5, fontWeight: 700,
                         padding: '2px 8px', borderRadius: 999,
-                        background: ratio >= 1 ? 'rgba(225, 29, 72, 0.15)' : 'rgba(37, 99, 235, 0.15)',
-                        color: ratio >= 1 ? '#fb7185' : '#93c5fd',
-                        border: `1px solid ${ratio >= 1 ? 'rgba(225, 29, 72, 0.3)' : 'rgba(37, 99, 235, 0.3)'}`,
+                        background: ratio >= 1 ? (isDark ? 'rgba(225, 29, 72, 0.15)' : 'rgba(225, 29, 72, 0.1)') : (isDark ? 'rgba(37, 99, 235, 0.15)' : 'rgba(37, 99, 235, 0.1)'),
+                        color: ratio >= 1 ? (isDark ? '#fb7185' : '#e11d48') : (isDark ? '#93c5fd' : '#2563eb'),
+                        border: `1px solid ${ratio >= 1 ? (isDark ? 'rgba(225, 29, 72, 0.3)' : 'rgba(225, 29, 72, 0.25)') : (isDark ? 'rgba(37, 99, 235, 0.3)' : 'rgba(37, 99, 235, 0.25)')}`,
                       }}>
                         {lic.activeDevices?.length || 0} / {lic.maxDevices} In Use
                       </span>
                     </div>
 
                     {/* Primary Red Progress Bar */}
-                    <div style={{ height: 4, borderRadius: 999, background: 'rgba(255, 255, 255, 0.08)', overflow: 'hidden', marginBottom: 14 }}>
+                    <div style={{ height: 4, borderRadius: 999, background: isDark ? 'rgba(255, 255, 255, 0.08)' : 'rgba(0, 0, 0, 0.08)', overflow: 'hidden', marginBottom: 14 }}>
                       <div style={{
                         height: '100%', borderRadius: 999, transition: 'width 0.4s ease',
                         width: `${Math.min(100, Math.max(5, ratio * 100))}%`,
@@ -723,9 +723,9 @@ export default function LicensesPage() {
                     {!lic.activeDevices?.length ? (
                       <div style={{
                         padding: '12px', borderRadius: 10, textAlign: 'center',
-                        background: 'rgba(255, 255, 255, 0.02)',
-                        border: '1px dashed rgba(255, 255, 255, 0.08)',
-                        fontSize: 11, color: '#475569', fontStyle: 'italic',
+                        background: isDark ? 'rgba(255, 255, 255, 0.02)' : 'rgba(0, 0, 0, 0.02)',
+                        border: isDark ? '1px dashed rgba(255, 255, 255, 0.08)' : '1px dashed rgba(0, 0, 0, 0.1)',
+                        fontSize: 11, color: isDark ? '#475569' : '#94a3b8', fontStyle: 'italic',
                       }}>
                         No machines registered yet.
                       </div>
@@ -735,16 +735,16 @@ export default function LicensesPage() {
                         style={{
                           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                           padding: '7px 10px', borderRadius: 9, marginBottom: 5,
-                          background: 'rgba(255, 255, 255, 0.03)',
-                          border: '1px solid rgba(255, 255, 255, 0.05)',
+                          background: isDark ? 'rgba(255, 255, 255, 0.03)' : 'rgba(241, 245, 249, 0.7)',
+                          border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.06)',
                         }}
                       >
                         <div style={{ display: 'flex', alignItems: 'center', gap: 7, minWidth: 0 }}>
-                          <div style={{ padding: 4, borderRadius: 6, background: 'rgba(37, 99, 235, 0.18)', color: '#60a5fa', flexShrink: 0 }}>
+                          <div style={{ padding: 4, borderRadius: 6, background: isDark ? 'rgba(37, 99, 235, 0.18)' : 'rgba(37, 99, 235, 0.12)', color: isDark ? '#60a5fa' : '#2563eb', flexShrink: 0 }}>
                             <Laptop style={{ width: 12, height: 12 }} />
                           </div>
                           <div style={{ minWidth: 0 }}>
-                            <p style={{ fontSize: 11, fontWeight: 600, color: '#f8fafc', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>
+                            <p style={{ fontSize: 11, fontWeight: 600, color: isDark ? '#f8fafc' : '#0f172a', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>
                               {dev.deviceName || 'Cashier PC'}
                             </p>
                             <p style={{ fontFamily: 'monospace', fontSize: 9.5, color: '#64748b', margin: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: 125 }}>
@@ -758,7 +758,7 @@ export default function LicensesPage() {
                             padding: 4, borderRadius: 6, cursor: 'pointer',
                             background: 'transparent', color: '#64748b', border: 'none', transition: 'all 0.15s ease',
                           }}
-                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = '#fb7185'; }}
+                          onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.color = isDark ? '#fb7185' : '#e11d48'; }}
                           onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.color = '#64748b'; }}
                           title="Unlink Machine"
                         >
@@ -774,8 +774,8 @@ export default function LicensesPage() {
                     <div style={{ marginBottom: 14 }}>
                       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 8 }}>
                         <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                          <Tag style={{ width: 13, height: 13, color: '#38bdf8' }} />
-                          <h3 style={{ fontSize: 11, fontWeight: 800, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
+                          <Tag style={{ width: 13, height: 13, color: isDark ? '#38bdf8' : '#0284c7' }} />
+                          <h3 style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
                             Business Profiles / Industry Types
                           </h3>
                         </div>
@@ -796,12 +796,12 @@ export default function LicensesPage() {
                                 padding: '5px 10px', borderRadius: 8, fontSize: 11, fontWeight: 700,
                                 cursor: 'pointer', transition: 'all 0.15s ease',
                                 ...(active ? {
-                                  background: `${bp.color}20`,
+                                  background: isDark ? `${bp.color}20` : `${bp.color}15`,
                                   border: `1px solid ${bp.color}80`,
                                   color: bp.color,
                                 } : {
-                                  background: 'rgba(255, 255, 255, 0.025)',
-                                  border: '1px solid rgba(255, 255, 255, 0.05)',
+                                  background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.03)',
+                                  border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.08)',
                                   color: '#64748b',
                                 }),
                               }}
@@ -816,14 +816,14 @@ export default function LicensesPage() {
 
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                        <Sliders style={{ width: 13, height: 13, color: '#fb7185' }} />
-                        <h3 style={{ fontSize: 11, fontWeight: 800, color: '#f8fafc', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
+                        <Sliders style={{ width: 13, height: 13, color: isDark ? '#fb7185' : '#e11d48' }} />
+                        <h3 style={{ fontSize: 11, fontWeight: 800, color: isDark ? '#f8fafc' : '#0f172a', textTransform: 'uppercase', letterSpacing: 1.2, margin: 0 }}>
                           Live Module Switchboard
                         </h3>
                       </div>
                       <div style={{ display: 'flex', gap: 7 }}>
                         {[
-                          { label: 'Enable All', on: true, c: '#fb7185' },
+                          { label: 'Enable All', on: true, c: isDark ? '#fb7185' : '#e11d48' },
                           { label: 'Disable All', on: false, c: '#94a3b8' },
                         ].map((b) => (
                           <button
@@ -831,9 +831,9 @@ export default function LicensesPage() {
                             onClick={() => bulkMod(lic, b.on)}
                             style={{
                               padding: '4px 10px', borderRadius: 7, fontSize: 10.5, fontWeight: 600, cursor: 'pointer',
-                              background: b.on ? 'rgba(225, 29, 72, 0.16)' : 'rgba(255, 255, 255, 0.04)',
+                              background: b.on ? (isDark ? 'rgba(225, 29, 72, 0.16)' : 'rgba(225, 29, 72, 0.1)') : (isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.05)'),
                               color: b.c,
-                              border: b.on ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(255, 255, 255, 0.08)',
+                              border: b.on ? (isDark ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(225, 29, 72, 0.25)') : (isDark ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.08)'),
                               transition: 'all 0.15s ease',
                             }}
                           >
@@ -857,12 +857,12 @@ export default function LicensesPage() {
                               padding: '9px 12px', borderRadius: 12, cursor: 'pointer',
                               userSelect: 'none', transition: 'all 0.15s ease',
                               ...(on ? {
-                                background: 'rgba(225, 29, 72, 0.14)',
-                                border: '1px solid rgba(225, 29, 72, 0.35)',
+                                background: isDark ? 'rgba(225, 29, 72, 0.14)' : 'rgba(225, 29, 72, 0.08)',
+                                border: isDark ? '1px solid rgba(225, 29, 72, 0.35)' : '1px solid rgba(225, 29, 72, 0.25)',
                               } : {
-                                background: 'rgba(255, 255, 255, 0.025)',
-                                border: '1px solid rgba(255, 255, 255, 0.05)',
-                                opacity: 0.5,
+                                background: isDark ? 'rgba(255, 255, 255, 0.025)' : 'rgba(0, 0, 0, 0.025)',
+                                border: isDark ? '1px solid rgba(255, 255, 255, 0.05)' : '1px solid rgba(0, 0, 0, 0.06)',
+                                opacity: 0.6,
                               }),
                             }}
                           >
@@ -872,10 +872,10 @@ export default function LicensesPage() {
                                 width: 30, height: 30, borderRadius: 8, flexShrink: 0,
                                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                                 ...(on ? {
-                                  background: 'rgba(225, 29, 72, 0.22)',
-                                  color: '#fda4af',
+                                  background: isDark ? 'rgba(225, 29, 72, 0.22)' : 'rgba(225, 29, 72, 0.12)',
+                                  color: isDark ? '#fda4af' : '#e11d48',
                                 } : {
-                                  background: 'rgba(255, 255, 255, 0.04)',
+                                  background: isDark ? 'rgba(255, 255, 255, 0.04)' : 'rgba(0, 0, 0, 0.04)',
                                   color: '#64748b',
                                 }),
                               }}>
@@ -886,7 +886,7 @@ export default function LicensesPage() {
                                 <p style={{
                                   fontSize: 11, fontWeight: 600, margin: 0,
                                   overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
-                                  color: on ? '#f8fafc' : '#64748b',
+                                  color: on ? (isDark ? '#f8fafc' : '#0f172a') : '#64748b',
                                   textDecoration: on ? 'none' : 'line-through',
                                 }}>
                                   {m.label}
@@ -907,7 +907,7 @@ export default function LicensesPage() {
                                   background: 'linear-gradient(135deg, #e11d48, #f43f5e)',
                                   boxShadow: '0 2px 8px rgba(225, 29, 72, 0.4)',
                                 } : {
-                                  background: 'rgba(255, 255, 255, 0.12)',
+                                  background: isDark ? 'rgba(255, 255, 255, 0.12)' : 'rgba(0, 0, 0, 0.15)',
                                 }),
                               }}>
                                 <div style={{
