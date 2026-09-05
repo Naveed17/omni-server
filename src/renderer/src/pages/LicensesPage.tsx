@@ -18,8 +18,18 @@ interface LicenseRecord {
   activeDevices: LicenseDevice[]; createdAt?: string;
 }
 interface ModuleMeta {
-  key: string; label: string; desc: string;
+  key: string;
+  label: string;
+  desc: string;
   icon: React.ComponentType<{ className?: string }>;
+  accent: {
+    activeBg: string;
+    activeBorder: string;
+    activeText: string;
+    iconBg: string;
+    iconText: string;
+    pillBg: string;
+  };
 }
 
 export interface BusinessProfileMeta {
@@ -38,60 +48,190 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     label: 'Standard Retail (General / Mart)',
     shortTag: 'Mart / Grocery',
     desc: 'General supermarket, packaged items & FMCG',
-    color: '#38bdf8',
-    activeClasses: 'bg-sky-500/15 border-sky-500/40 text-sky-600 dark:text-sky-400',
-    dotColor: 'bg-sky-500',
+    color: '#06b6d4',
+    activeClasses: 'bg-cyan-500/10 border-cyan-500/40 text-cyan-600 dark:text-cyan-400 shadow-[0_0_10px_rgba(6,182,212,0.15)]',
+    dotColor: 'bg-cyan-400',
   },
   {
     key: 'food',
     label: 'Restaurant & Fast Food',
     shortTag: 'Food & Cafe',
     desc: 'Burgers, pizzas, portions & kitchen items',
-    color: '#fb7185',
-    activeClasses: 'bg-rose-500/15 border-rose-500/40 text-rose-600 dark:text-rose-400',
-    dotColor: 'bg-rose-500',
+    color: '#f59e0b',
+    activeClasses: 'bg-amber-500/10 border-amber-500/40 text-amber-600 dark:text-amber-400 shadow-[0_0_10px_rgba(245,158,11,0.15)]',
+    dotColor: 'bg-amber-400',
   },
   {
     key: 'hardware',
     label: 'Hardware, Iron & Building',
     shortTag: 'Hardware & Iron',
     desc: 'Steel, pipes, keel, sanitary & loose decimals',
-    color: '#f59e0b',
-    activeClasses: 'bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400',
-    dotColor: 'bg-amber-500',
+    color: '#10b981',
+    activeClasses: 'bg-emerald-500/10 border-emerald-500/40 text-emerald-600 dark:text-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.15)]',
+    dotColor: 'bg-emerald-400',
   },
   {
     key: 'apparel',
     label: 'Apparel & Clothing',
     shortTag: 'Apparel',
     desc: 'Garments & clothing with size matrix XS-3XL',
-    color: '#a855f7',
-    activeClasses: 'bg-purple-500/15 border-purple-500/40 text-purple-600 dark:text-purple-400',
-    dotColor: 'bg-purple-500',
+    color: '#8b5cf6',
+    activeClasses: 'bg-violet-500/10 border-violet-500/40 text-violet-600 dark:text-violet-400 shadow-[0_0_10px_rgba(139,92,246,0.15)]',
+    dotColor: 'bg-violet-400',
   },
   {
     key: 'footwear',
     label: 'Footwear & Shoes',
     shortTag: 'Footwear',
     desc: 'Shoes, boots & sandals with size 38-45 matrix',
-    color: '#ec4899',
-    activeClasses: 'bg-pink-500/15 border-pink-500/40 text-pink-600 dark:text-pink-400',
-    dotColor: 'bg-pink-500',
+    color: '#d946ef',
+    activeClasses: 'bg-fuchsia-500/10 border-fuchsia-500/40 text-fuchsia-600 dark:text-fuchsia-400 shadow-[0_0_10px_rgba(217,70,239,0.15)]',
+    dotColor: 'bg-fuchsia-400',
   },
 ];
 
-/* ─── Modules (Primary Red & Secondary Blue Style) ───────────────────────────── */
+/* ─── Modules with Distinct Cyber Accents ──────────────────────────────────── */
 const MODULES: ModuleMeta[] = [
-  { key: 'fastfood',  label: 'Fast Food POS',    desc: 'Dine-In, Takeaway, KDS',       icon: UtensilsCrossed },
-  { key: 'omnimart',  label: 'Omnimart Retail',  desc: 'Barcode & wholesale billing',   icon: ShoppingCart },
-  { key: 'kitchen',   label: 'Kitchen KDS',      desc: 'Chef order display tickets',    icon: ChefHat },
-  { key: 'catalog',   label: 'Product Catalog',  desc: 'Items, variants & categories',  icon: Tag },
-  { key: 'inventory', label: 'Stock Control',    desc: 'In/Out audit & low stock',      icon: Package },
-  { key: 'khata',     label: 'Customer Khata',   desc: 'Udhaar ledger & credit',        icon: BookOpen },
-  { key: 'expenses',  label: 'Expense Tracker',  desc: 'Daily outflows & cash drawer',  icon: Receipt },
-  { key: 'reports',   label: 'Profit Analytics', desc: 'Gross margin, COGS & sales',    icon: BarChart3 },
-  { key: 'webStore',  label: 'Online Web Store', desc: 'Public customer ordering',      icon: Globe },
-  { key: 'admin',     label: 'Admin Settings',   desc: 'Staff roles & print layout',    icon: Settings },
+  {
+    key: 'fastfood',
+    label: 'Fast Food POS',
+    desc: 'Dine-In, Takeaway, KDS',
+    icon: UtensilsCrossed,
+    accent: {
+      activeBg: 'bg-cyan-500/10 dark:bg-cyan-500/15',
+      activeBorder: 'border-cyan-500/40',
+      activeText: 'text-cyan-700 dark:text-cyan-200',
+      iconBg: 'bg-cyan-500/20',
+      iconText: 'text-cyan-600 dark:text-cyan-300',
+      pillBg: 'bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)]',
+    },
+  },
+  {
+    key: 'omnimart',
+    label: 'Omnimart Retail',
+    desc: 'Barcode & wholesale billing',
+    icon: ShoppingCart,
+    accent: {
+      activeBg: 'bg-emerald-500/10 dark:bg-emerald-500/15',
+      activeBorder: 'border-emerald-500/40',
+      activeText: 'text-emerald-700 dark:text-emerald-200',
+      iconBg: 'bg-emerald-500/20',
+      iconText: 'text-emerald-600 dark:text-emerald-300',
+      pillBg: 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.8)]',
+    },
+  },
+  {
+    key: 'kitchen',
+    label: 'Kitchen KDS',
+    desc: 'Chef order display tickets',
+    icon: ChefHat,
+    accent: {
+      activeBg: 'bg-amber-500/10 dark:bg-amber-500/15',
+      activeBorder: 'border-amber-500/40',
+      activeText: 'text-amber-700 dark:text-amber-200',
+      iconBg: 'bg-amber-500/20',
+      iconText: 'text-amber-600 dark:text-amber-300',
+      pillBg: 'bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.8)]',
+    },
+  },
+  {
+    key: 'catalog',
+    label: 'Product Catalog',
+    desc: 'Items, variants & categories',
+    icon: Tag,
+    accent: {
+      activeBg: 'bg-violet-500/10 dark:bg-violet-500/15',
+      activeBorder: 'border-violet-500/40',
+      activeText: 'text-violet-700 dark:text-violet-200',
+      iconBg: 'bg-violet-500/20',
+      iconText: 'text-violet-600 dark:text-violet-300',
+      pillBg: 'bg-violet-500 shadow-[0_0_8px_rgba(139,92,246,0.8)]',
+    },
+  },
+  {
+    key: 'inventory',
+    label: 'Stock Control',
+    desc: 'In/Out audit & low stock',
+    icon: Package,
+    accent: {
+      activeBg: 'bg-indigo-500/10 dark:bg-indigo-500/15',
+      activeBorder: 'border-indigo-500/40',
+      activeText: 'text-indigo-700 dark:text-indigo-200',
+      iconBg: 'bg-indigo-500/20',
+      iconText: 'text-indigo-600 dark:text-indigo-300',
+      pillBg: 'bg-indigo-500 shadow-[0_0_8px_rgba(99,102,241,0.8)]',
+    },
+  },
+  {
+    key: 'khata',
+    label: 'Customer Khata',
+    desc: 'Udhaar ledger & credit',
+    icon: BookOpen,
+    accent: {
+      activeBg: 'bg-blue-500/10 dark:bg-blue-500/15',
+      activeBorder: 'border-blue-500/40',
+      activeText: 'text-blue-700 dark:text-blue-200',
+      iconBg: 'bg-blue-500/20',
+      iconText: 'text-blue-600 dark:text-blue-300',
+      pillBg: 'bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.8)]',
+    },
+  },
+  {
+    key: 'expenses',
+    label: 'Expense Tracker',
+    desc: 'Daily outflows & cash drawer',
+    icon: Receipt,
+    accent: {
+      activeBg: 'bg-rose-500/10 dark:bg-rose-500/15',
+      activeBorder: 'border-rose-500/40',
+      activeText: 'text-rose-700 dark:text-rose-200',
+      iconBg: 'bg-rose-500/20',
+      iconText: 'text-rose-600 dark:text-rose-300',
+      pillBg: 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.8)]',
+    },
+  },
+  {
+    key: 'reports',
+    label: 'Profit Analytics',
+    desc: 'Gross margin, COGS & sales',
+    icon: BarChart3,
+    accent: {
+      activeBg: 'bg-teal-500/10 dark:bg-teal-500/15',
+      activeBorder: 'border-teal-500/40',
+      activeText: 'text-teal-700 dark:text-teal-200',
+      iconBg: 'bg-teal-500/20',
+      iconText: 'text-teal-600 dark:text-teal-300',
+      pillBg: 'bg-teal-500 shadow-[0_0_8px_rgba(20,184,166,0.8)]',
+    },
+  },
+  {
+    key: 'webStore',
+    label: 'Online Web Store',
+    desc: 'Public customer ordering',
+    icon: Globe,
+    accent: {
+      activeBg: 'bg-fuchsia-500/10 dark:bg-fuchsia-500/15',
+      activeBorder: 'border-fuchsia-500/40',
+      activeText: 'text-fuchsia-700 dark:text-fuchsia-200',
+      iconBg: 'bg-fuchsia-500/20',
+      iconText: 'text-fuchsia-600 dark:text-fuchsia-300',
+      pillBg: 'bg-fuchsia-500 shadow-[0_0_8px_rgba(217,70,239,0.8)]',
+    },
+  },
+  {
+    key: 'admin',
+    label: 'Admin Settings',
+    desc: 'Staff roles & print layout',
+    icon: Settings,
+    accent: {
+      activeBg: 'bg-slate-500/10 dark:bg-slate-400/15',
+      activeBorder: 'border-slate-500/40',
+      activeText: 'text-slate-800 dark:text-slate-200',
+      iconBg: 'bg-slate-500/20',
+      iconText: 'text-slate-600 dark:text-slate-300',
+      pillBg: 'bg-slate-400 dark:bg-slate-500 shadow-[0_0_8px_rgba(148,163,184,0.6)]',
+    },
+  },
 ];
 
 export default function LicensesPage() {
@@ -264,15 +404,16 @@ export default function LicensesPage() {
       <div className="flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-3.5">
           {/* Emblem */}
-          <div className="w-12 h-12 rounded-2xl shrink-0 bg-gradient-to-br from-rose-600 via-rose-700 to-blue-600 flex items-center justify-center shadow-lg shadow-rose-600/30 border border-white/20">
+          <div className="w-12 h-12 rounded-2xl shrink-0 bg-gradient-to-br from-cyan-500 via-blue-600 to-indigo-700 flex items-center justify-center shadow-lg shadow-cyan-500/25 border border-white/25">
             <KeyRound className="w-6 h-6 text-white" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight m-0">
+              <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight m-0">
                 Client Licenses
               </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase tracking-widest bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30">
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
                 Control Hub
               </span>
             </div>
@@ -287,13 +428,13 @@ export default function LicensesPage() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer bg-white/90 dark:bg-white/5 text-slate-900 dark:text-white border border-slate-200 dark:border-white/10 shadow-sm backdrop-blur-md hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
-            title="Toggle Light / Dark Mode"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold cursor-pointer bg-white/90 dark:bg-white/5 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-white/10 shadow-sm backdrop-blur-md hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
+            title="Toggle Theme"
           >
             {isDark ? (
               <Sun className="w-3.5 h-3.5 text-amber-500" />
             ) : (
-              <Moon className="w-3.5 h-3.5 text-sky-600" />
+              <Moon className="w-3.5 h-3.5 text-cyan-500" />
             )}
             <span>{isDark ? 'Light' : 'Dark'}</span>
           </button>
@@ -305,7 +446,7 @@ export default function LicensesPage() {
             disabled={loading}
             className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/90 dark:bg-white/5 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10 shadow-sm backdrop-blur-md hover:bg-slate-50 dark:hover:bg-white/10 transition-colors"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-sky-500 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-cyan-500 ${loading ? 'animate-spin' : ''}`} />
             {loading ? 'Syncing...' : 'Refresh'}
           </button>
 
@@ -313,7 +454,7 @@ export default function LicensesPage() {
           <button
             type="button"
             onClick={() => setCreate((p) => !p)}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white cursor-pointer bg-gradient-to-br from-rose-600 to-rose-700 hover:from-rose-500 hover:to-rose-600 border border-rose-500/40 shadow-lg shadow-rose-600/30 transition-all"
+            className="flex items-center gap-2 px-4.5 py-2 rounded-xl text-xs font-bold uppercase tracking-wider text-white cursor-pointer bg-gradient-to-r from-cyan-600 via-blue-600 to-indigo-600 hover:from-cyan-500 hover:to-indigo-500 border border-cyan-400/30 shadow-lg shadow-cyan-600/30 transition-all"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             Issue New License
@@ -323,10 +464,10 @@ export default function LicensesPage() {
 
       {/* ── Create License Drawer ───────────────────────────────────────── */}
       {showCreate && (
-        <div className="p-6 rounded-2xl bg-white/95 dark:bg-[#140c1a]/85 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-xl space-y-5">
+        <div className="p-6 rounded-2xl bg-white/95 dark:bg-[#0D1424]/95 backdrop-blur-2xl border border-cyan-500/20 dark:border-cyan-500/30 shadow-2xl space-y-5">
           <div className="flex items-center justify-between pb-3.5 border-b border-slate-200/60 dark:border-white/10">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-rose-500" />
+              <Sparkles className="w-4 h-4 text-cyan-400" />
               <span className="font-bold text-sm text-slate-900 dark:text-white">Issue Enterprise License Key</span>
             </div>
             <button
@@ -348,7 +489,7 @@ export default function LicensesPage() {
                   placeholder="e.g. Al-Madina Cafe"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40 transition-colors"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 transition-colors"
                 />
               </div>
               <div>
@@ -358,7 +499,7 @@ export default function LicensesPage() {
                   placeholder="+92 300 1234567"
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40 transition-colors"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 transition-colors"
                 />
               </div>
               <div>
@@ -369,7 +510,7 @@ export default function LicensesPage() {
                   max={50}
                   value={newMax}
                   onChange={(e) => setNewMax(parseInt(e.target.value, 10) || 1)}
-                  className="w-full px-3.5 py-2 text-xs font-bold rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-rose-500/40 transition-colors"
+                  className="w-full px-3.5 py-2 text-xs font-bold rounded-xl bg-white dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 transition-colors"
                 />
               </div>
             </div>
@@ -386,13 +527,13 @@ export default function LicensesPage() {
                       key={m.key}
                       type="button"
                       onClick={() => setSelMods((p) => ({ ...p, [m.key]: !p[m.key] }))}
-                      className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold cursor-pointer text-left transition-all duration-150 ${
+                      className={`flex items-center gap-2 p-2.5 rounded-xl text-xs font-semibold cursor-pointer text-left transition-all duration-150 border ${
                         on
-                          ? 'bg-rose-500/15 border border-rose-500/40 text-rose-700 dark:text-rose-200'
-                          : 'bg-slate-100/80 dark:bg-white/5 border border-slate-200/80 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/10'
+                          ? `${m.accent.activeBg} ${m.accent.activeBorder} ${m.accent.activeText}`
+                          : 'bg-slate-100/80 dark:bg-white/5 border-slate-200/80 dark:border-white/5 text-slate-500 dark:text-slate-400 hover:bg-slate-200/60 dark:hover:bg-white/10'
                       }`}
                     >
-                      <Ic className={`w-3.5 h-3.5 shrink-0 ${on ? 'text-rose-500' : 'text-slate-400'}`} />
+                      <Ic className={`w-3.5 h-3.5 shrink-0 ${on ? m.accent.iconText : 'text-slate-400'}`} />
                       <span className="truncate">{m.label}</span>
                     </button>
                   );
@@ -449,7 +590,7 @@ export default function LicensesPage() {
               <button
                 type="submit"
                 disabled={saving || !newName.trim()}
-                className="px-5 py-2 rounded-xl text-xs font-bold uppercase cursor-pointer bg-gradient-to-br from-rose-600 to-rose-700 text-white border border-white/15 shadow-lg shadow-rose-600/30 disabled:opacity-50 transition-all"
+                className="px-5 py-2 rounded-xl text-xs font-bold uppercase cursor-pointer bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white border border-cyan-400/30 shadow-lg shadow-cyan-600/30 disabled:opacity-50 transition-all"
               >
                 {saving ? 'Creating...' : 'Confirm & Issue Key'}
               </button>
@@ -459,22 +600,22 @@ export default function LicensesPage() {
       )}
 
       {/* ── Stats & Search Filter Bar ─────────────────────────────── */}
-      <div className="p-4 px-6 rounded-2xl bg-white/95 dark:bg-[#140c1a]/85 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-sm flex items-center justify-between flex-wrap gap-4">
+      <div className="p-4 px-6 rounded-2xl bg-white/85 dark:bg-[#0C1222]/85 backdrop-blur-2xl border border-slate-200/80 dark:border-white/10 shadow-sm flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-6">
             <div>
-              <p className="text-2xl font-extrabold text-slate-900 dark:text-white leading-none m-0">{licenses.length}</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-1 m-0">Total Clients</p>
+              <p className="text-2xl font-black text-slate-900 dark:text-white leading-none m-0">{licenses.length}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1 m-0">Total Clients</p>
             </div>
             <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
             <div>
-              <p className="text-2xl font-extrabold text-sky-600 dark:text-sky-400 leading-none m-0">{activeN}</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-1 m-0">Active Licenses</p>
+              <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400 leading-none m-0">{activeN}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1 m-0">Active Licenses</p>
             </div>
             <div className="w-px h-8 bg-slate-200 dark:bg-white/10" />
             <div>
-              <p className="text-2xl font-extrabold text-rose-600 dark:text-rose-400 leading-none m-0">{licenses.length - activeN}</p>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mt-1 m-0">Suspended</p>
+              <p className="text-2xl font-black text-rose-600 dark:text-rose-400 leading-none m-0">{licenses.length - activeN}</p>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mt-1 m-0">Suspended</p>
             </div>
           </div>
         </div>
@@ -487,7 +628,7 @@ export default function LicensesPage() {
               placeholder="Search store name, license key..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-64 pl-9 pr-3 h-8.5 text-xs rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-1 focus:ring-rose-500/50 transition-colors"
+              className="w-64 pl-9 pr-3 h-8.5 text-xs rounded-xl bg-slate-100/90 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/40 transition-colors"
             />
           </div>
 
@@ -498,7 +639,7 @@ export default function LicensesPage() {
                 onClick={() => setFilter(f)}
                 className={`px-3 py-1 rounded-lg text-xs font-semibold cursor-pointer capitalize transition-all duration-150 ${
                   filter === f
-                    ? 'bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30'
+                    ? 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 font-bold shadow-xs'
                     : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
@@ -510,9 +651,9 @@ export default function LicensesPage() {
       </div>
 
       {/* ── Client License Cards Stack ──────────────────────────────────── */}
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-5">
         {shown.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 text-sm rounded-2xl bg-white/95 dark:bg-[#140c1a]/85 border border-slate-200/80 dark:border-white/10">
+          <div className="p-12 text-center text-slate-500 text-sm rounded-2xl bg-white/80 dark:bg-[#0C1222]/85 border border-slate-200/80 dark:border-white/10">
             No client licenses found matching your search.
           </div>
         ) : shown.map((lic) => {
@@ -523,20 +664,29 @@ export default function LicensesPage() {
           return (
             <div
               key={lic.id}
-              className={`rounded-2xl backdrop-blur-2xl border shadow-sm transition-all duration-200 overflow-hidden ${
+              className={`rounded-2xl backdrop-blur-2xl border transition-all duration-200 overflow-hidden relative group ${
                 lic.isEnabled
-                  ? 'bg-white/95 dark:bg-[#140c1a]/85 border-slate-200/80 dark:border-white/10 shadow-slate-200/40 dark:shadow-none'
-                  : 'bg-rose-50/70 dark:bg-rose-950/20 border-rose-500/30 shadow-none'
+                  ? 'bg-white/85 dark:bg-[#0C1222]/85 border-slate-200/90 dark:border-white/10 shadow-lg shadow-black/5 dark:shadow-[0_8px_30px_rgba(0,0,0,0.4)]'
+                  : 'bg-rose-50/50 dark:bg-rose-950/20 border-rose-500/30 shadow-none'
               }`}
             >
+              {/* Futuristic Top Glowing Accent Line */}
+              <div
+                className={`absolute top-0 left-0 right-0 h-[2px] ${
+                  lic.isEnabled
+                    ? 'bg-gradient-to-r from-transparent via-cyan-500/60 to-transparent'
+                    : 'bg-gradient-to-r from-transparent via-rose-500/60 to-transparent'
+                }`}
+              />
+
               {/* ── Top Bar of Card ─────────────────────────────────────── */}
               <div className="p-5 px-6 border-b border-slate-200/60 dark:border-white/5 flex items-center justify-between flex-wrap gap-4">
                 {/* Left: Client Identity */}
                 <div className="flex items-center gap-3.5">
                   <div
-                    className={`w-11 h-11 rounded-xl shrink-0 flex items-center justify-center font-extrabold text-sm text-white ${
+                    className={`w-11 h-11 rounded-xl shrink-0 flex items-center justify-center font-black text-sm text-white ${
                       lic.isEnabled
-                        ? 'bg-gradient-to-br from-rose-600 to-rose-700 shadow-md shadow-rose-600/30 border border-white/20'
+                        ? 'bg-gradient-to-br from-cyan-600 via-blue-600 to-indigo-700 shadow-md shadow-cyan-600/30 border border-white/20'
                         : 'bg-rose-500/20 text-rose-500 border border-rose-500/30'
                     }`}
                   >
@@ -545,29 +695,29 @@ export default function LicensesPage() {
 
                   <div>
                     <div className="flex items-center gap-2.5 flex-wrap">
-                      <h2 className="text-lg font-extrabold text-slate-900 dark:text-white m-0">
+                      <h2 className="text-lg font-black text-slate-900 dark:text-white m-0 tracking-tight">
                         {lic.userName}
                       </h2>
                       {/* Status Badge */}
                       <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border ${
+                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider border ${
                           lic.isEnabled
-                            ? 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30'
-                            : 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30'
+                            ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/25 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
+                            : 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/25'
                         }`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${lic.isEnabled ? 'bg-sky-500' : 'bg-rose-500'}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full ${lic.isEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
                         {lic.isEnabled ? 'Active License' : 'Suspended'}
                       </span>
                     </div>
 
                     <div className="flex items-center gap-2.5 mt-1 text-xs text-slate-500">
                       <span className="flex items-center gap-1">
-                        <Phone className="w-3 h-3" /> {lic.whatsappNumber || 'No phone'}
+                        <Phone className="w-3 h-3 text-slate-400" /> {lic.whatsappNumber || 'No phone'}
                       </span>
                       <span className="opacity-40">•</span>
-                      <span className="font-mono text-rose-600 dark:text-rose-400 font-semibold">
-                        {enCount}/10 modules enabled
+                      <span className="font-mono text-cyan-600 dark:text-cyan-400 font-bold bg-cyan-500/10 dark:bg-cyan-500/15 px-2 py-0.5 rounded-md border border-cyan-500/20">
+                        {enCount}/10 modules active
                       </span>
                     </div>
                   </div>
@@ -575,10 +725,10 @@ export default function LicensesPage() {
 
                 {/* Right: Key Container + Power Button */}
                 <div className="flex items-center gap-2.5 flex-wrap">
-                  {/* License Key Badge */}
-                  <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-blue-50/80 dark:bg-black/60 border border-blue-500/25 dark:border-blue-500/30">
-                    <KeyRound className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
-                    <span className="font-mono text-xs font-bold text-blue-700 dark:text-blue-300 tracking-wider">
+                  {/* Encrypted License Key Badge */}
+                  <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-slate-100/90 dark:bg-[#070B14] border border-slate-200 dark:border-white/10 shadow-inner">
+                    <KeyRound className="w-3.5 h-3.5 text-cyan-500 shrink-0" />
+                    <span className="font-mono text-xs font-bold text-slate-800 dark:text-cyan-300 tracking-wider">
                       {lic.key}
                     </span>
                     <button
@@ -586,7 +736,7 @@ export default function LicensesPage() {
                       onClick={() => copyKey(lic.key)}
                       className={`p-1 rounded-md cursor-pointer transition-colors border ${
                         copied === lic.key
-                          ? 'bg-sky-500/20 text-sky-600 dark:text-sky-400 border-sky-500/30'
+                          ? 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-300 border-cyan-500/40 shadow-[0_0_8px_rgba(6,182,212,0.4)]'
                           : 'bg-slate-200/60 dark:bg-white/10 text-slate-600 dark:text-slate-400 border-transparent hover:text-slate-900 dark:hover:text-white'
                       }`}
                       title="Copy Key"
@@ -601,8 +751,8 @@ export default function LicensesPage() {
                     onClick={() => toggleLic(lic.id, lic.isEnabled, lic.userName)}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer transition-all duration-150 border ${
                       lic.isEnabled
-                        ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30 hover:bg-rose-500/25'
-                        : 'bg-sky-500/15 text-sky-600 dark:text-sky-400 border-sky-500/30 hover:bg-sky-500/25'
+                        ? 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:bg-rose-500/15 hover:text-rose-600 dark:hover:text-rose-400 hover:border-rose-500/30'
+                        : 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/25'
                     }`}
                   >
                     <Power className="w-3.5 h-3.5" />
@@ -615,17 +765,17 @@ export default function LicensesPage() {
               <div className="p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
 
                 {/* LEFT: Hardware Terminals */}
-                <div className="p-4 rounded-xl bg-slate-50/90 dark:bg-black/40 border border-slate-200/80 dark:border-white/5 space-y-3">
+                <div className="p-4 rounded-xl bg-slate-50/80 dark:bg-[#080D1A]/80 border border-slate-200/80 dark:border-white/5 space-y-3.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Cpu className="w-3.5 h-3.5 text-rose-500" />
+                      <Cpu className="w-3.5 h-3.5 text-cyan-500" />
                       <span className="text-xs font-bold text-slate-900 dark:text-white">Hardware Terminals</span>
                     </div>
                     <span
                       className={`font-mono text-[11px] font-bold px-2 py-0.5 rounded-full border ${
                         ratio >= 1
                           ? 'bg-rose-500/15 text-rose-600 dark:text-rose-400 border-rose-500/30'
-                          : 'bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/30'
+                          : 'bg-cyan-500/15 text-cyan-600 dark:text-cyan-400 border-cyan-500/30'
                       }`}
                     >
                       {lic.activeDevices?.length || 0} / {lic.maxDevices} In Use
@@ -633,23 +783,23 @@ export default function LicensesPage() {
                   </div>
 
                   {/* Progress Bar Container */}
-                  <div className="h-1 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${
                         ratio >= 1
-                          ? 'w-full bg-rose-600'
+                          ? 'w-full bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.6)]'
                           : ratio >= 0.75
-                          ? 'w-3/4 bg-gradient-to-r from-rose-600 to-blue-600'
+                          ? 'w-3/4 bg-gradient-to-r from-cyan-500 to-blue-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]'
                           : ratio >= 0.5
-                          ? 'w-1/2 bg-gradient-to-r from-rose-600 to-blue-600'
+                          ? 'w-1/2 bg-gradient-to-r from-cyan-500 to-blue-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]'
                           : ratio > 0
-                          ? 'w-1/4 bg-gradient-to-r from-rose-600 to-blue-600'
+                          ? 'w-1/4 bg-gradient-to-r from-cyan-500 to-blue-500 shadow-[0_0_8px_rgba(6,182,212,0.5)]'
                           : 'w-0'
                       }`}
                     />
                   </div>
 
-                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 m-0">
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 m-0">
                     Linked HWID Machines:
                   </p>
 
@@ -660,17 +810,17 @@ export default function LicensesPage() {
                   ) : lic.activeDevices.map((dev) => (
                     <div
                       key={dev.hwid}
-                      className="flex items-center justify-between p-2 rounded-lg bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/5"
+                      className="flex items-center justify-between p-2.5 rounded-lg bg-white dark:bg-white/5 border border-slate-200/80 dark:border-white/5"
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="p-1 rounded bg-blue-500/15 text-blue-600 dark:text-blue-400 shrink-0">
-                          <Laptop className="w-3 h-3" />
+                        <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 shrink-0">
+                          <Laptop className="w-3.5 h-3.5" />
                         </div>
                         <div className="min-w-0">
                           <p className="text-xs font-semibold text-slate-900 dark:text-white m-0 truncate max-w-[130px]">
                             {dev.deviceName || 'Cashier PC'}
                           </p>
-                          <p className="font-mono text-[10px] text-slate-500 m-0 truncate max-w-[130px]">
+                          <p className="font-mono text-[10px] text-slate-400 dark:text-slate-500 m-0 truncate max-w-[130px]">
                             {dev.hwid.slice(0, 14)}...
                           </p>
                         </div>
@@ -678,10 +828,10 @@ export default function LicensesPage() {
                       <button
                         type="button"
                         onClick={() => removeDevice(lic.id, dev.hwid, dev.deviceName)}
-                        className="p-1 rounded cursor-pointer text-slate-400 hover:text-rose-500 transition-colors"
+                        className="p-1.5 rounded-md cursor-pointer text-slate-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors"
                         title="Unlink Machine"
                       >
-                        <Trash2 className="w-3 h-3" />
+                        <Trash2 className="w-3.5 h-3.5" />
                       </button>
                     </div>
                   ))}
@@ -693,7 +843,7 @@ export default function LicensesPage() {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Tag className="w-3.5 h-3.5 text-sky-500" />
+                        <Tag className="w-3.5 h-3.5 text-cyan-500" />
                         <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider m-0">
                           Business Profiles / Industry Types
                         </h3>
@@ -728,7 +878,7 @@ export default function LicensesPage() {
                   <div>
                     <div className="flex items-center justify-between mb-2.5">
                       <div className="flex items-center gap-2">
-                        <Sliders className="w-3.5 h-3.5 text-rose-500" />
+                        <Sliders className="w-3.5 h-3.5 text-cyan-500" />
                         <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider m-0">
                           Live Module Switchboard
                         </h3>
@@ -737,7 +887,7 @@ export default function LicensesPage() {
                         <button
                           type="button"
                           onClick={() => bulkMod(lic, true)}
-                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 hover:bg-rose-500/25 transition-colors"
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-bold cursor-pointer bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/30 hover:bg-cyan-500/20 transition-colors"
                         >
                           Enable All
                         </button>
@@ -751,8 +901,8 @@ export default function LicensesPage() {
                       </div>
                     </div>
 
-                    {/* 10 Module Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                    {/* 10 Module Grid with Individual Cyber Accents */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
                       {MODULES.map((m) => {
                         const on = lic.modules?.[m.key] === true;
                         const Ic = m.icon;
@@ -762,42 +912,42 @@ export default function LicensesPage() {
                             onClick={() => toggleMod(lic, m.key)}
                             className={`flex items-center justify-between p-2.5 rounded-xl cursor-pointer select-none transition-all duration-150 border ${
                               on
-                                ? 'bg-rose-500/10 dark:bg-rose-500/15 border-rose-500/30 shadow-xs'
-                                : 'bg-slate-100/50 dark:bg-white/5 border-slate-200/60 dark:border-white/5 opacity-60 hover:opacity-80'
+                                ? `${m.accent.activeBg} ${m.accent.activeBorder} shadow-sm`
+                                : 'bg-slate-100/40 dark:bg-white/[0.02] border-slate-200/60 dark:border-white/5 opacity-60 hover:opacity-85'
                             }`}
                           >
                             <div className="flex items-center gap-2.5 min-w-0">
                               <div
-                                className={`w-7.5 h-7.5 rounded-lg shrink-0 flex items-center justify-center ${
+                                className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center transition-colors ${
                                   on
-                                    ? 'bg-rose-500/20 text-rose-600 dark:text-rose-400'
-                                    : 'bg-slate-200/70 dark:bg-white/10 text-slate-400'
+                                    ? `${m.accent.iconBg} ${m.accent.iconText}`
+                                    : 'bg-slate-200/60 dark:bg-white/5 text-slate-400'
                                 }`}
                               >
-                                <Ic className="w-3.5 h-3.5" />
+                                <Ic className="w-4 h-4" />
                               </div>
 
                               <div className="min-w-0">
                                 <p
-                                  className={`text-xs font-semibold m-0 truncate ${
-                                    on ? 'text-slate-900 dark:text-white' : 'text-slate-500 line-through'
+                                  className={`text-xs font-bold m-0 truncate ${
+                                    on ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-slate-500'
                                   }`}
                                 >
                                   {m.label}
                                 </p>
-                                <p className="text-[10px] text-slate-400 m-0 truncate">
+                                <p className="text-[10px] text-slate-400 dark:text-slate-500 m-0 truncate">
                                   {m.desc}
                                 </p>
                               </div>
                             </div>
 
-                            {/* Switch Pill */}
+                            {/* Futuristic Cyber Switch Pill */}
                             <div className="pl-1.5 shrink-0">
                               <div
                                 className={`w-8 h-4.5 rounded-full p-0.5 flex items-center transition-colors duration-200 ${
                                   on
-                                    ? 'bg-rose-600 shadow-sm shadow-rose-600/40'
-                                    : 'bg-slate-300 dark:bg-white/20'
+                                    ? m.accent.pillBg
+                                    : 'bg-slate-300 dark:bg-white/15'
                                 }`}
                               >
                                 <div

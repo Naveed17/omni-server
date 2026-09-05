@@ -18,34 +18,35 @@ export function Sidebar() {
   ];
 
   return (
-    <aside className="w-[220px] flex flex-col h-screen shrink-0 relative z-20 bg-white/85 dark:bg-[#0e0810]/75 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/10 shadow-sm dark:shadow-[inset_-1px_0_0_rgba(255,255,255,0.03)] transition-colors duration-200">
+    <aside className="w-[230px] flex flex-col h-screen shrink-0 relative z-20 bg-white/70 dark:bg-[#0A0E1A]/80 backdrop-blur-2xl border-r border-slate-200/80 dark:border-white/10 shadow-sm dark:shadow-[inset_-1px_0_0_rgba(255,255,255,0.04)] transition-colors duration-200">
       {/* Brand Header */}
-      <div className="p-5 pb-4 border-b border-slate-200/60 dark:border-white/5 flex items-center gap-3">
+      <div className="p-4 pb-4 border-b border-slate-200/60 dark:border-white/5 flex items-center gap-3">
         <div className="relative">
-          <div className="w-9.5 h-9.5 rounded-xl bg-gradient-to-br from-rose-600 to-rose-700 flex items-center justify-center font-black text-white text-xs tracking-tighter shadow-lg shadow-rose-600/40 border border-blue-500/30">
+          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-cyan-600 via-blue-600 to-indigo-600 flex items-center justify-center font-black text-white text-xs tracking-tighter shadow-lg shadow-cyan-500/20 border border-white/20">
             OP
           </div>
-          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-sky-400 border-2 border-white dark:border-[#0e0810] shadow-[0_0_6px_rgba(56,189,248,0.7)]" />
+          <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-white dark:border-[#0A0E1A] shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
         </div>
         <div>
           <div className="flex items-center gap-1.5">
             <span className="font-extrabold text-sm text-slate-900 dark:text-white tracking-tight">
-              Omni<span className="text-rose-600">Pos</span>
+              Omni<span className="text-cyan-600 dark:text-cyan-400">Pos</span>
             </span>
-            <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/30 tracking-wider">
-              CLOUD
+            <span className="px-1.5 py-0.5 rounded text-[9px] font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/25 tracking-widest uppercase">
+              Cloud
             </span>
           </div>
-          <p className="text-[10px] text-slate-500 font-medium mt-0.5">
+          <p className="text-[10px] text-slate-500 font-medium mt-0.5 tracking-wide">
             Provider Control Center
           </p>
         </div>
       </div>
 
       {/* Nav Menu */}
-      <nav className="p-3 flex-1 flex flex-col gap-1">
-        <div className="text-[9px] font-extrabold tracking-widest text-slate-400 dark:text-slate-500 px-2 pb-2 uppercase">
-          Main Console
+      <nav className="p-3 flex-1 flex flex-col gap-1.5">
+        <div className="text-[9px] font-black tracking-widest text-slate-400 dark:text-slate-500 px-2.5 pt-1 pb-1.5 uppercase flex items-center justify-between">
+          <span>Main Console</span>
+          <span className="w-1.5 h-1.5 rounded-full bg-cyan-500/50" />
         </div>
         {navItems.map((item) => {
           const Icon = item.icon;
@@ -54,21 +55,30 @@ export function Sidebar() {
               key={item.to}
               to={item.to}
               className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold no-underline transition-all duration-150 ${
+                `group relative flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold no-underline transition-all duration-150 ${
                   isActive
-                    ? 'bg-rose-500/15 text-rose-600 dark:text-rose-300 border border-rose-500/35 shadow-sm'
-                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border border-transparent'
+                    ? 'bg-cyan-500/10 dark:bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/30 shadow-[0_0_15px_rgba(6,182,212,0.1)] font-bold'
+                    : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100/80 dark:hover:bg-white/5 border border-transparent'
                 }`
               }
             >
-              <div className="flex items-center gap-2.5">
-                <Icon className="w-4 h-4" />
-                <span>{item.label}</span>
-              </div>
-              {item.badge && (
-                <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-blue-500/15 text-blue-600 dark:text-blue-400 border border-blue-500/30 tracking-wide">
-                  {item.badge}
-                </span>
+              {({ isActive }) => (
+                <>
+                  <div className="flex items-center gap-2.5">
+                    {/* Active Pip Indicator */}
+                    {isActive && (
+                      <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 rounded-r-full bg-cyan-500 shadow-[0_0_8px_rgba(6,182,212,0.8)]" />
+                    )}
+                    <Icon className={`w-4 h-4 transition-transform group-hover:scale-110 ${isActive ? 'text-cyan-500 dark:text-cyan-400' : 'text-slate-400 dark:text-slate-500'}`} />
+                    <span>{item.label}</span>
+                  </div>
+                  {item.badge && (
+                    <span className="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/25 tracking-wide flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                      {item.badge}
+                    </span>
+                  )}
+                </>
               )}
             </NavLink>
           );
@@ -76,31 +86,31 @@ export function Sidebar() {
       </nav>
 
       {/* Theme Mode Toggle Button */}
-      <div className="mx-2.5 mb-2.5">
+      <div className="mx-3 mb-2.5">
         <button
           type="button"
           onClick={toggleTheme}
-          className="w-full flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-all duration-150 bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white hover:bg-slate-200/70 dark:hover:bg-white/10"
+          className="w-full flex items-center justify-between px-3 py-2 rounded-xl cursor-pointer transition-all duration-150 bg-slate-100/80 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-800 dark:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-white/10"
         >
           <div className="flex items-center gap-2 text-xs font-bold">
             {isDark ? (
-              <Moon className="w-3.5 h-3.5 text-sky-400" />
+              <Moon className="w-3.5 h-3.5 text-cyan-400" />
             ) : (
               <Sun className="w-3.5 h-3.5 text-amber-500" />
             )}
-            <span>{isDark ? 'Dark Theme' : 'Light Theme'}</span>
+            <span>{isDark ? 'Cyber Dark' : 'Arctic Light'}</span>
           </div>
-          <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded-md bg-sky-500/15 dark:bg-sky-500/15 text-sky-600 dark:text-sky-400 uppercase">
+          <span className="text-[9px] font-black px-1.5 py-0.5 rounded-md bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border border-cyan-500/20 uppercase tracking-wider">
             {isDark ? 'DARK' : 'LIGHT'}
           </span>
         </button>
       </div>
 
-      {/* Telemetry Footer */}
-      <div className="mx-2.5 mb-3.5 p-3 rounded-xl bg-slate-100/90 dark:bg-[#0c0810]/70 border border-slate-200/80 dark:border-white/5">
+      {/* Futuristic Telemetry Footer */}
+      <div className="mx-3 mb-3.5 p-3 rounded-xl bg-slate-100/70 dark:bg-[#0B101E]/90 border border-slate-200/80 dark:border-white/10 shadow-xs">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="p-1.5 rounded-lg bg-blue-500/15 text-sky-500 flex">
+            <div className="p-1.5 rounded-lg bg-cyan-500/10 text-cyan-500 flex">
               <Server className="w-3.5 h-3.5" />
             </div>
             <div>
@@ -109,14 +119,14 @@ export function Sidebar() {
             </div>
           </div>
           <span className="relative flex w-2 h-2">
-            <span className="absolute inline-flex w-full h-full rounded-full bg-sky-400 opacity-75 animate-ping" />
-            <span className="relative inline-flex w-2 h-2 rounded-full bg-sky-400" />
+            <span className="absolute inline-flex w-full h-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+            <span className="relative inline-flex w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]" />
           </span>
         </div>
         <div className="mt-2 pt-2 border-t border-slate-200/60 dark:border-white/5 flex items-center justify-between text-[10px] font-mono">
           <span className="text-slate-500">Neon Postgres</span>
-          <span className="text-sky-600 dark:text-sky-400 font-semibold flex items-center gap-1">
-            <Zap className="w-2.5 h-2.5" /> Online
+          <span className="text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
+            <Zap className="w-2.5 h-2.5" /> Synced
           </span>
         </div>
       </div>

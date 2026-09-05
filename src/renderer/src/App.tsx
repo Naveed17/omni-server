@@ -9,14 +9,15 @@ import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function ShellLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex w-full h-screen overflow-hidden shell-gradient-bg relative transition-colors duration-300">
-      {/* Ambient Glow Mesh */}
+    <div className="flex w-full h-screen overflow-hidden shell-gradient-bg cyber-grid relative transition-colors duration-300">
+      {/* Ambient Cyber Lighting */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Primary Red Glow */}
-        <div className="absolute -top-[15%] -right-[5%] w-[750px] h-[750px] rounded-full bg-rose-500/15 dark:bg-rose-500/25 blur-3xl" />
-        <div className="absolute -top-[10%] -left-[5%] w-[650px] h-[650px] rounded-full bg-rose-500/10 dark:bg-rose-500/20 blur-3xl" />
-        {/* Secondary Blue Depth Glow */}
-        <div className="absolute -bottom-[15%] left-[20%] w-[800px] h-[800px] rounded-full bg-sky-500/15 dark:bg-blue-600/25 blur-3xl" />
+        {/* Electric Cyan Beacon */}
+        <div className="absolute -top-[20%] right-[10%] w-[600px] h-[600px] rounded-full bg-cyan-500/8 dark:bg-cyan-500/12 blur-[140px]" />
+        {/* Deep Indigo Tech Mesh */}
+        <div className="absolute top-[30%] -left-[10%] w-[700px] h-[700px] rounded-full bg-indigo-500/6 dark:bg-indigo-600/12 blur-[160px]" />
+        {/* Subtle Violet Accent */}
+        <div className="absolute -bottom-[20%] right-[25%] w-[600px] h-[600px] rounded-full bg-blue-500/6 dark:bg-violet-600/10 blur-[150px]" />
       </div>
 
       <Sidebar />
@@ -34,7 +35,7 @@ export default function App() {
         <Toaster
           position="top-right"
           toastOptions={{
-            className: '!bg-slate-900/95 dark:!bg-slate-900/95 !text-white !border !border-rose-500/30 !rounded-xl !backdrop-blur-xl !shadow-2xl',
+            className: '!bg-slate-950/95 dark:!bg-[#0B0F19]/95 !text-slate-100 !border !border-cyan-500/30 !rounded-xl !backdrop-blur-xl !shadow-[0_10px_30px_rgba(0,0,0,0.6)] !text-xs !font-semibold',
           }}
         />
         <ShellLayout>
