@@ -12,6 +12,11 @@ export class AdminLicenseController {
     return { success: true, count: licenses.length, data: licenses };
   }
 
+  @Get('overview')
+  async getOverview() {
+    return await this.licenseService.getOverviewStats();
+  }
+
   @Post()
   async createLicense(
     @Body()
@@ -57,5 +62,15 @@ export class AdminLicenseController {
     @Param('hwid') hwid: string,
   ) {
     return await this.licenseService.removeDevice(id, hwid);
+  }
+}
+
+@Controller('api/admin/overview')
+export class AdminOverviewController {
+  constructor(private readonly licenseService: LicenseService) {}
+
+  @Get()
+  async getOverview() {
+    return await this.licenseService.getOverviewStats();
   }
 }

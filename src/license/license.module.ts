@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { LicenseRepository } from './license.repository';
 import { LicenseService } from './license.service';
 import { LicenseController } from './license.controller';
-import { AdminLicenseController } from './admin-license.controller';
+import { AdminLicenseController, AdminOverviewController } from './admin-license.controller';
 
 @Module({
-  controllers: [LicenseController, AdminLicenseController],
+  controllers: [LicenseController, AdminLicenseController, AdminOverviewController],
   providers: [LicenseRepository, LicenseService],
   exports: [LicenseService, LicenseRepository],
 })

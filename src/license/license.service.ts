@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { LicenseRepository } from './license.repository';
+import { DatabaseService } from '../database/database.service';
 import { normalizeModules, OmniposModuleFlags } from '../common/modules';
 import { schemaIdForLicenseKey } from '../common/database-mode';
 import { LicenseRecord } from './license.types';
@@ -13,7 +14,10 @@ function generateKey(): string {
 
 @Injectable()
 export class LicenseService {
-  constructor(private readonly licenses: LicenseRepository) {}
+  constructor(
+    private readonly licenses: LicenseRepository,
+    private readonly db: DatabaseService,
+  ) {}
 
   async activate(body: { key?: string; hwid?: string; deviceName?: string }) {
     const { key, hwid, deviceName } = body;
@@ -181,6 +185,103 @@ export class LicenseService {
 
   async getAllLicenses(): Promise<LicenseRecord[]> {
     return await this.licenses.findAll();
+  }
+
+  async getOverviewStats() {
+    const licenses = await this.licenses.findAll();
+    const activeLicenses = licenses.filter((l) => l.isEnabled).length;
+    const totalDevices = licenses.reduce((sum, l) => sum + (l.activeDevices?.length || 0), 0);
+
+    let orderCount = 0;
+    let volumeSum = 0;
+    let recentOrders: any[] = [];
+    try {
+      const statsRes = await this.db.query(
+        'SELECT count(*)::int as count, coalesce(sum(total_amount), 0)::numeric as volume FROM orders'
+      );
+      if (statsRes.rows && statsRes.rows.length) {
+        orderCount = parseInt(statsRes.rows[0].count, 10) || 0;
+        volumeSum = parseFloat(statsRes.rows[0].volume) || 0;
+      }
+
+      const ordersRes = await this.db.query(
+        'SELECT id, schema_id, module, total_amount, stage, customer_name, created_at FROM orders ORDER BY created_at DESC LIMIT 50'
+      );
+      recentOrders = (ordersRes.rows || []).map((r) => {
+        const matchingLic = licenses.find((l) => l.schemaId === r.schema_id);
+        const storeName = matchingLic
+          ? matchingLic.userName
+          : (r.schema_id === 'lic_demo' ? 'Omnipos Live Demo' : (r.schema_id || 'Cashier Counter'));
+
+        const dateObj = new Date(r.created_at);
+        const timeStr = !isNaN(dateObj.getTime())
+          ? dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+          : 'Just now';
+
+        return {
+          id: r.id,
+          store: storeName,
+          type:
+            r.module === 'fastfood'
+              ? 'Fast Food Order'
+              : r.module === 'omnimart'
+              ? 'Retail Barcode Sale'
+              : r.module
+              ? `${r.module} order`
+              : 'Counter Sale',
+          amount: `PKR ${parseFloat(r.total_amount || 0).toLocaleString()}`,
+          stage: r.stage ? r.stage.charAt(0).toUpperCase() + r.stage.slice(1) : 'Paid',
+          status: 'Synced',
+          customerName: r.customer_name || 'Walk-in Customer',
+          time: timeStr,
+          rawTime: r.created_at,
+        };
+      });
+    } catch (e) {
+      console.error('[getOverviewStats] Error querying orders:', e);
+    }
+
+    const stores = licenses.map((l) => {
+      const activeDevCount = l.activeDevices?.length || 0;
+      const firstDev = l.activeDevices?.[0];
+      let deviceLabel = `${activeDevCount} ${activeDevCount === 1 ? 'Register' : 'Registers'}`;
+      if (firstDev?.deviceName) {
+        deviceLabel += ` (${firstDev.deviceName})`;
+      }
+
+      let lastSynced = 'Never';
+      if (firstDev?.activatedAt) {
+        const d = new Date(firstDev.activatedAt);
+        if (!isNaN(d.getTime())) {
+          lastSynced = d.toLocaleDateString();
+        }
+      }
+
+      return {
+        id: l.id,
+        name: l.userName,
+        license: l.key,
+        type: l.businessProfiles && l.businessProfiles[0] ? l.businessProfiles[0].toUpperCase() : 'RETAIL',
+        devices: deviceLabel,
+        devicesCount: activeDevCount,
+        status: l.isEnabled ? 'Active' : 'Suspended',
+        synced: lastSynced,
+      };
+    });
+
+    return {
+      success: true,
+      data: {
+        activeLicenses,
+        totalLicenses: licenses.length,
+        connectedDevices: totalDevices,
+        totalOrders: orderCount,
+        volume: volumeSum,
+        formattedVolume: `PKR ${Math.round(volumeSum).toLocaleString()}`,
+        stores,
+        recentOrders,
+      },
+    };
   }
 
   async createLicense(body: {
