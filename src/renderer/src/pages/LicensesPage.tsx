@@ -103,7 +103,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-blue-500/20',
       iconText: 'text-blue-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -117,7 +117,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-emerald-500/20',
       iconText: 'text-emerald-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -131,7 +131,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-amber-500/20',
       iconText: 'text-amber-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -145,7 +145,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-violet-500/20',
       iconText: 'text-violet-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -159,7 +159,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-indigo-500/20',
       iconText: 'text-indigo-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -173,7 +173,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-sky-500/20',
       iconText: 'text-sky-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -187,7 +187,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-pink-500/20',
       iconText: 'text-pink-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -201,7 +201,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-teal-500/20',
       iconText: 'text-teal-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -215,7 +215,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-purple-500/20',
       iconText: 'text-purple-400',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
   {
@@ -229,7 +229,7 @@ const MODULES: ModuleMeta[] = [
       activeText: 'text-white',
       iconBg: 'bg-slate-500/20',
       iconText: 'text-slate-300',
-      pillBg: 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]',
+      pillBg: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
     },
   },
 ];
@@ -402,22 +402,19 @@ export default function LicensesPage() {
 
       {/* ── Top Header ─────────────────────────────────────────────────── */}
       <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-3.5">
-          {/* Emblem */}
-          <div className="w-12 h-12 rounded-2xl shrink-0 bg-gradient-to-tr from-indigo-500 via-purple-600 to-pink-500 flex items-center justify-center shadow-lg shadow-indigo-500/25 border border-white/20">
-            <KeyRound className="w-6 h-6 text-white" />
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/25 dark:border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.25)]">
+            <KeyRound className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
           </div>
           <div>
             <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl font-semibold text-white tracking-tight m-0">
-                Client Licenses
-              </h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">Client Licenses</h1>
+              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/25 dark:border-indigo-500/30 flex items-center gap-1.5">
+                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
                 Control Hub
               </span>
             </div>
-            <p className="text-sm text-indigo-200/60 mt-0.5 m-0">
+            <p className="text-sm text-slate-500 dark:text-indigo-200/60 mt-0.5 m-0">
               Remote module authority, client management &amp; HWID terminal locking
             </p>
           </div>
@@ -428,13 +425,13 @@ export default function LicensesPage() {
           <button
             type="button"
             onClick={toggleTheme}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-medium cursor-pointer bg-white/5 text-indigo-200/80 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:text-white transition-all duration-150"
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/80 dark:bg-white/5 text-slate-700 dark:text-indigo-200/80 border border-indigo-200/80 dark:border-white/10 backdrop-blur-md hover:bg-indigo-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all duration-150 shadow-xs"
             title="Toggle Theme"
           >
             {isDark ? (
-              <Sun className="w-3.5 h-3.5 text-amber-400" />
+              <Sun className="w-3.5 h-3.5 text-amber-500" />
             ) : (
-              <Moon className="w-3.5 h-3.5 text-indigo-400" />
+              <Moon className="w-3.5 h-3.5 text-indigo-500" />
             )}
             <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
           </button>
@@ -444,9 +441,9 @@ export default function LicensesPage() {
             type="button"
             onClick={load}
             disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-medium cursor-pointer bg-white/5 text-indigo-200/80 border border-white/10 backdrop-blur-md hover:bg-white/10 hover:text-white transition-all duration-150"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/80 dark:bg-white/5 text-slate-700 dark:text-indigo-200/80 border border-indigo-200/80 dark:border-white/10 backdrop-blur-md hover:bg-indigo-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all duration-150 shadow-xs"
           >
-            <RefreshCw className={`w-3.5 h-3.5 text-indigo-400 ${loading ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 ${loading ? 'animate-spin' : ''}`} />
             {loading ? 'Syncing...' : 'Refresh'}
           </button>
 
@@ -454,7 +451,7 @@ export default function LicensesPage() {
           <button
             type="button"
             onClick={() => setCreate((p) => !p)}
-            className="flex items-center gap-2 px-4.5 py-2 rounded-xl text-xs font-medium tracking-wide text-white cursor-pointer bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 border border-white/20 shadow-lg shadow-indigo-500/25 transition-all duration-200"
+            className="flex items-center gap-2 px-4.5 py-2 rounded-xl text-xs font-semibold tracking-wide text-white cursor-pointer bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 border border-white/20 shadow-lg shadow-indigo-500/25 transition-all duration-200"
           >
             <Plus className="w-4 h-4 stroke-[2.5]" />
             Issue New License
@@ -464,16 +461,16 @@ export default function LicensesPage() {
 
       {/* ── Create License Drawer (Glassmorphic Card) ────────────────────── */}
       {showCreate && (
-        <div className="p-6 rounded-2xl bg-white/[0.06] backdrop-blur-xl border border-white/10 shadow-2xl space-y-5 transition-all duration-300">
-          <div className="flex items-center justify-between pb-3.5 border-b border-white/10">
+        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-5 transition-all duration-300">
+          <div className="flex items-center justify-between pb-3.5 border-b border-indigo-100 dark:border-white/10">
             <div className="flex items-center gap-2.5">
-              <Sparkles className="w-4 h-4 text-indigo-400" />
-              <span className="font-semibold text-sm text-white">Issue Enterprise License Key</span>
+              <Sparkles className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
+              <span className="font-bold text-sm text-slate-900 dark:text-white">Issue Enterprise License Key</span>
             </div>
             <button
               type="button"
               onClick={() => setCreate(false)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer bg-white/5 text-indigo-200/60 border border-white/10 hover:bg-white/10 hover:text-white"
+              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-indigo-200/60 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
             >
               <X className="w-3 h-3" /> Close
             </button>
@@ -482,42 +479,42 @@ export default function LicensesPage() {
           <form onSubmit={create} className="space-y-5">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-indigo-200/70 mb-1.5">Store / Client Name *</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-1.5">Store / Client Name *</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Al-Madina Cafe"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-colors"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors shadow-xs"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-indigo-200/70 mb-1.5">WhatsApp Contact</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-1.5">WhatsApp Contact</label>
                 <input
                   type="text"
                   placeholder="+92 300 1234567"
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-colors"
+                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors shadow-xs"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-indigo-200/70 mb-1.5">Max Terminal Devices</label>
+                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-1.5">Max Terminal Devices</label>
                 <input
                   type="number"
                   min={1}
                   max={50}
                   value={newMax}
                   onChange={(e) => setNewMax(parseInt(e.target.value, 10) || 1)}
-                  className="w-full px-3.5 py-2 text-xs font-semibold rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-colors"
+                  className="w-full px-3.5 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors shadow-xs"
                 />
               </div>
             </div>
 
             {/* Initial Module Selectors */}
             <div>
-              <label className="block text-xs font-medium text-indigo-200/70 mb-2">Initial Module Authority:</label>
+              <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-2">Initial Module Authority:</label>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
                 {MODULES.map((m) => {
                   const on = selMods[m.key];
@@ -529,8 +526,8 @@ export default function LicensesPage() {
                       onClick={() => setSelMods((p) => ({ ...p, [m.key]: !p[m.key] }))}
                       className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-medium cursor-pointer text-left transition-all duration-200 border ${
                         on
-                          ? 'bg-black/30 border-white/15 text-white shadow-sm'
-                          : 'bg-black/10 border-white/5 text-indigo-200/50 hover:bg-black/20 hover:text-white'
+                          ? 'bg-indigo-50 dark:bg-white/[0.07] border-indigo-200 dark:border-white/15 text-slate-900 dark:text-white shadow-xs'
+                          : 'bg-slate-50/80 dark:bg-white/[0.02] border-slate-200 dark:border-white/5 text-slate-500 dark:text-indigo-200/50 hover:bg-slate-100 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       <div className={`p-1.5 rounded-lg ${m.accent.iconBg} ${m.accent.iconText}`}>
@@ -546,10 +543,10 @@ export default function LicensesPage() {
             {/* Business Profile Selection */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="block text-xs font-medium text-indigo-200/70">
+                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70">
                   Assigned Business Profiles (Industry Presets):
                 </label>
-                <span className="text-[11px] text-indigo-200/50">
+                <span className="text-[11px] text-slate-400 dark:text-indigo-200/50">
                   Single profile locks category creation, multiple profiles gives options
                 </span>
               </div>
@@ -570,7 +567,7 @@ export default function LicensesPage() {
                       className={`flex flex-col gap-1 p-2.5 rounded-xl text-xs font-medium cursor-pointer text-left transition-all duration-200 border ${
                         on
                           ? bp.activeClasses
-                          : 'bg-black/10 border-white/5 text-indigo-200/50 hover:bg-black/20 hover:text-white'
+                          : 'bg-slate-50/80 dark:bg-white/[0.02] border-slate-200 dark:border-white/5 text-slate-500 dark:text-indigo-200/50 hover:bg-slate-100 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
                       }`}
                     >
                       <span className="font-semibold text-xs">{bp.shortTag}</span>
@@ -585,14 +582,14 @@ export default function LicensesPage() {
               <button
                 type="button"
                 onClick={() => setCreate(false)}
-                className="px-4 py-2 rounded-xl text-xs font-medium cursor-pointer bg-transparent text-indigo-200/60 hover:text-white transition-colors"
+                className="px-4 py-2 rounded-xl text-xs font-medium cursor-pointer bg-transparent text-slate-600 dark:text-indigo-200/60 hover:text-slate-900 dark:hover:text-white transition-colors"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={saving || !newName.trim()}
-                className="px-5 py-2 rounded-xl text-xs font-medium cursor-pointer bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white border border-white/20 shadow-lg shadow-indigo-500/25 disabled:opacity-50 transition-all"
+                className="px-5 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white border border-white/20 shadow-lg shadow-indigo-500/25 disabled:opacity-50 transition-all"
               >
                 {saving ? 'Creating...' : 'Confirm & Issue Key'}
               </button>
@@ -602,47 +599,47 @@ export default function LicensesPage() {
       )}
 
       {/* ── Stats & Search Filter Bar (Glassmorphic HUD) ──────────────────── */}
-      <div className="p-5 px-6 rounded-2xl bg-white/[0.06] backdrop-blur-xl border border-white/10 shadow-xl flex items-center justify-between flex-wrap gap-4">
+      <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 flex items-center justify-between flex-wrap gap-4">
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-7">
             <div>
-              <p className="text-2xl font-semibold text-white leading-none m-0">{licenses.length}</p>
-              <p className="text-[10px] font-medium uppercase tracking-wider text-indigo-200/60 mt-1.5 m-0">Total Clients</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white leading-none m-0">{licenses.length}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Total Clients</p>
             </div>
-            <div className="w-px h-8 bg-white/10" />
+            <div className="w-px h-8 bg-indigo-100 dark:bg-white/10" />
             <div>
-              <p className="text-2xl font-semibold text-emerald-400 leading-none m-0">{activeN}</p>
-              <p className="text-[10px] font-medium uppercase tracking-wider text-indigo-200/60 mt-1.5 m-0">Active Licenses</p>
+              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 leading-none m-0">{activeN}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Active Licenses</p>
             </div>
-            <div className="w-px h-8 bg-white/10" />
+            <div className="w-px h-8 bg-indigo-100 dark:bg-white/10" />
             <div>
-              <p className="text-2xl font-semibold text-pink-400 leading-none m-0">{licenses.length - activeN}</p>
-              <p className="text-[10px] font-medium uppercase tracking-wider text-indigo-200/60 mt-1.5 m-0">Suspended</p>
+              <p className="text-2xl font-bold text-rose-500 dark:text-pink-400 leading-none m-0">{licenses.length - activeN}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Suspended</p>
             </div>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-indigo-200/40" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 dark:text-indigo-200/40" />
             <input
               type="text"
               placeholder="Search store name, license key..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-64 pl-9 pr-3 h-9 text-xs rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500/50 focus:ring-2 focus:ring-indigo-500/20 transition-all"
+              className="w-64 pl-9 pr-3 h-9 text-xs rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-xs"
             />
           </div>
 
-          <div className="flex items-center p-1 rounded-xl bg-black/25 border border-white/5">
+          <div className="flex items-center p-1 rounded-xl bg-indigo-50/80 dark:bg-black/25 border border-indigo-100 dark:border-white/5">
             {(['all', 'active', 'disabled'] as const).map((f) => (
               <button
                 key={f}
                 onClick={() => setFilter(f)}
-                className={`px-3.5 py-1 rounded-lg text-xs font-medium cursor-pointer capitalize transition-all duration-150 ${
+                className={`px-3.5 py-1 rounded-lg text-xs font-semibold cursor-pointer capitalize transition-all duration-150 ${
                   filter === f
-                    ? 'bg-indigo-600/40 text-white border border-indigo-500/30 shadow-md shadow-indigo-500/20'
-                    : 'text-indigo-200/60 hover:text-white'
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
+                    : 'text-slate-600 dark:text-indigo-200/60 hover:text-slate-900 dark:hover:text-white'
                 }`}
               >
                 {f}
@@ -655,7 +652,7 @@ export default function LicensesPage() {
       {/* ── Client License Cards Stack (Glassmorphic Containers) ───────────── */}
       <div className="flex flex-col gap-6">
         {shown.length === 0 ? (
-          <div className="p-12 text-center text-indigo-200/60 text-sm rounded-2xl bg-white/[0.06] backdrop-blur-xl border border-white/10">
+          <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-12 text-center text-slate-500 dark:text-indigo-200/60 text-sm">
             No client licenses found matching your search.
           </div>
         ) : shown.map((lic) => {
@@ -666,10 +663,10 @@ export default function LicensesPage() {
           return (
             <div
               key={lic.id}
-              className={`rounded-2xl backdrop-blur-xl border transition-all duration-300 overflow-hidden relative shadow-xl hover:border-white/20 ${
+              className={`rounded-2xl backdrop-blur-2xl border transition-all duration-300 overflow-hidden relative shadow-xl dark:shadow-2xl p-6 ${
                 lic.isEnabled
-                  ? 'bg-white/[0.06] border-white/10'
-                  : 'bg-white/[0.03] border-rose-500/30'
+                  ? 'bg-white/90 dark:bg-white/[0.05] border-indigo-100 dark:border-white/10'
+                  : 'bg-rose-50/50 dark:bg-white/[0.02] border-rose-300 dark:border-rose-500/30'
               }`}
             >
               {/* Soft Ambient Top Accent Glow */}
@@ -682,14 +679,14 @@ export default function LicensesPage() {
               />
 
               {/* ── Top Bar of Card ─────────────────────────────────────── */}
-              <div className="p-5 px-6 border-b border-white/10 flex items-center justify-between flex-wrap gap-4">
+              <div className="p-5 px-6 border-b border-indigo-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-4">
                 {/* Left: Client Identity */}
                 <div className="flex items-center gap-3.5">
                   <div
                     className={`w-11 h-11 rounded-xl shrink-0 flex items-center justify-center font-bold text-sm text-white ${
                       lic.isEnabled
                         ? 'bg-gradient-to-tr from-indigo-500 via-purple-600 to-pink-500 shadow-md shadow-indigo-500/25 border border-white/20'
-                        : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'
+                        : 'bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30'
                     }`}
                   >
                     {initials}
@@ -697,28 +694,28 @@ export default function LicensesPage() {
 
                   <div>
                     <div className="flex items-center gap-2.5 flex-wrap">
-                      <h2 className="text-base font-semibold text-white m-0 tracking-tight">
+                      <h2 className="text-base font-bold text-slate-900 dark:text-white m-0 tracking-tight">
                         {lic.userName}
                       </h2>
                       {/* Status Badge */}
                       <span
                         className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${
                           lic.isEnabled
-                            ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 shadow-[0_0_8px_rgba(16,185,129,0.15)]'
-                            : 'bg-rose-500/20 text-rose-300 border-rose-500/30'
+                            ? 'bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/25 dark:border-emerald-500/30 shadow-xs'
+                            : 'bg-rose-500/15 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/25 dark:border-rose-500/30'
                         }`}
                       >
-                        <span className={`w-1.5 h-1.5 rounded-full ${lic.isEnabled ? 'bg-emerald-400 animate-pulse' : 'bg-rose-400'}`} />
+                        <span className={`w-1.5 h-1.5 rounded-full ${lic.isEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
                         {lic.isEnabled ? 'Active License' : 'Suspended'}
                       </span>
                     </div>
 
-                    <div className="flex items-center gap-2.5 mt-1 text-xs text-indigo-200/60">
+                    <div className="flex items-center gap-2.5 mt-1 text-xs text-slate-500 dark:text-indigo-200/60">
                       <span className="flex items-center gap-1">
-                        <Phone className="w-3 h-3 text-indigo-300/60" /> {lic.whatsappNumber || 'No phone'}
+                        <Phone className="w-3 h-3 text-indigo-500 dark:text-indigo-300/60" /> {lic.whatsappNumber || 'No phone'}
                       </span>
                       <span className="opacity-40">•</span>
-                      <span className="font-mono text-indigo-300 font-medium bg-indigo-500/15 px-2 py-0.5 rounded-md border border-indigo-500/25">
+                      <span className="font-mono text-indigo-700 dark:text-indigo-300 font-semibold bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 rounded-md border border-indigo-200/80 dark:border-indigo-500/25">
                         {enCount}/10 modules active
                       </span>
                     </div>
@@ -728,9 +725,9 @@ export default function LicensesPage() {
                 {/* Right: Key Container + Power Button */}
                 <div className="flex items-center gap-2.5 flex-wrap">
                   {/* Encrypted License Key Badge */}
-                  <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-black/25 border border-white/10 shadow-inner">
-                    <KeyRound className="w-3.5 h-3.5 text-indigo-400 shrink-0" />
-                    <span className="font-mono text-xs font-semibold text-indigo-200 tracking-wider">
+                  <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-indigo-50/70 dark:bg-black/25 border border-indigo-200/80 dark:border-white/10 shadow-inner">
+                    <KeyRound className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                    <span className="font-mono text-xs font-bold text-indigo-900 dark:text-indigo-200 tracking-wider">
                       {lic.key}
                     </span>
                     <button
@@ -738,8 +735,8 @@ export default function LicensesPage() {
                       onClick={() => copyKey(lic.key)}
                       className={`p-1 rounded-md cursor-pointer transition-colors border ${
                         copied === lic.key
-                          ? 'bg-indigo-500/30 text-indigo-300 border-indigo-500/40 shadow-[0_0_8px_rgba(99,102,241,0.4)]'
-                          : 'bg-white/5 text-indigo-200/60 border-transparent hover:text-white hover:bg-white/10'
+                          ? 'bg-indigo-500/30 text-indigo-700 dark:text-indigo-300 border-indigo-500/40 shadow-xs'
+                          : 'bg-white dark:bg-white/5 text-slate-600 dark:text-indigo-200/60 border-slate-200 dark:border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
                       }`}
                       title="Copy Key"
                     >
@@ -753,8 +750,8 @@ export default function LicensesPage() {
                     onClick={() => toggleLic(lic.id, lic.isEnabled, lic.userName)}
                     className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider cursor-pointer transition-all duration-150 border ${
                       lic.isEnabled
-                        ? 'bg-white/5 text-indigo-200/70 border-white/10 hover:bg-rose-500/20 hover:text-rose-300 hover:border-rose-500/30'
-                        : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30'
+                        ? 'bg-white dark:bg-white/5 text-slate-700 dark:text-indigo-200/70 border-indigo-200/80 dark:border-white/10 hover:bg-rose-500/15 hover:text-rose-600 dark:hover:text-rose-300 hover:border-rose-500/30'
+                        : 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30'
                     }`}
                   >
                     <Power className="w-3.5 h-3.5" />
@@ -767,17 +764,17 @@ export default function LicensesPage() {
               <div className="p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
 
                 {/* LEFT: Hardware Terminals (Inner Sub-Card) ──────────────── */}
-                <div className="p-4 rounded-xl bg-black/20 border border-white/5 space-y-3.5">
+                <div className="p-4 rounded-xl bg-indigo-50/60 dark:bg-black/20 border border-indigo-100 dark:border-white/5 space-y-3.5">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Cpu className="w-3.5 h-3.5 text-indigo-400" />
-                      <span className="text-xs font-semibold text-white">Hardware Terminals</span>
+                      <Cpu className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                      <span className="text-xs font-bold text-slate-900 dark:text-white">Hardware Terminals</span>
                     </div>
                     <span
                       className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
                         ratio >= 1
-                          ? 'bg-rose-500/20 text-rose-300 border-rose-500/30'
-                          : 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30'
+                          ? 'bg-rose-500/15 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/25 dark:border-rose-500/30'
+                          : 'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-500/25 dark:border-indigo-500/30'
                       }`}
                     >
                       {lic.activeDevices?.length || 0} / {lic.maxDevices} In Use
@@ -785,7 +782,7 @@ export default function LicensesPage() {
                   </div>
 
                   {/* Progress Bar with Glowing Gradient (Guideline 6) */}
-                  <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
                     <div
                       className={`h-full rounded-full transition-all duration-300 ${
                         ratio >= 1
@@ -801,28 +798,28 @@ export default function LicensesPage() {
                     />
                   </div>
 
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-indigo-200/50 m-0">
+                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/50 m-0">
                     Linked HWID Machines:
                   </p>
 
                   {!lic.activeDevices?.length ? (
-                    <div className="p-3 rounded-lg text-center bg-white/[0.02] border border-dashed border-white/10 text-xs text-indigo-200/40 italic">
+                    <div className="p-3 rounded-xl text-center bg-white/60 dark:bg-white/[0.02] border border-dashed border-indigo-200/80 dark:border-white/10 text-xs text-slate-400 dark:text-indigo-200/40 italic">
                       No machines registered yet.
                     </div>
                   ) : lic.activeDevices.map((dev) => (
                     <div
                       key={dev.hwid}
-                      className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.04] border border-white/5 hover:border-white/10 transition-colors"
+                      className="flex items-center justify-between bg-white dark:bg-white/[0.03] border border-indigo-100 dark:border-white/5 rounded-xl p-4 hover:bg-indigo-50/70 dark:hover:bg-white/[0.07] transition-all shadow-xs"
                     >
                       <div className="flex items-center gap-2 min-w-0">
-                        <div className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 shrink-0">
+                        <div className="p-1.5 rounded-lg bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 shrink-0">
                           <Laptop className="w-3.5 h-3.5" />
                         </div>
                         <div className="min-w-0">
-                          <p className="text-xs font-medium text-white m-0 truncate max-w-[130px]">
+                          <p className="text-xs font-semibold text-slate-900 dark:text-white m-0 truncate max-w-[130px]">
                             {dev.deviceName || 'Cashier PC'}
                           </p>
-                          <p className="font-mono text-[10px] text-indigo-200/40 m-0 truncate max-w-[130px]">
+                          <p className="font-mono text-[10px] text-slate-400 dark:text-indigo-200/40 m-0 truncate max-w-[130px]">
                             {dev.hwid.slice(0, 14)}...
                           </p>
                         </div>
@@ -830,7 +827,7 @@ export default function LicensesPage() {
                       <button
                         type="button"
                         onClick={() => removeDevice(lic.id, dev.hwid, dev.deviceName)}
-                        className="p-1.5 rounded-md cursor-pointer text-indigo-200/40 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                        className="p-1.5 rounded-md cursor-pointer text-slate-400 dark:text-indigo-200/40 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                         title="Unlink Machine"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
@@ -845,12 +842,12 @@ export default function LicensesPage() {
                   <div>
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <Tag className="w-3.5 h-3.5 text-indigo-400" />
-                        <h3 className="text-xs font-semibold text-white uppercase tracking-wider m-0">
+                        <Tag className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                        <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider m-0">
                           Business Profiles / Industry Types
                         </h3>
                       </div>
-                      <span className="text-[11px] text-indigo-200/50">
+                      <span className="text-[11px] text-slate-400 dark:text-indigo-200/50">
                         {(lic.businessProfiles || ['standard']).length === 1 ? 'Single Profile (Auto-Locked in Category)' : 'Multi-Profile (Filtered in Category)'}
                       </span>
                     </div>
@@ -862,13 +859,13 @@ export default function LicensesPage() {
                             key={bp.key}
                             type="button"
                             onClick={() => toggleProfile(lic, bp.key)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium cursor-pointer transition-all duration-200 border ${
+                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-all duration-200 border ${
                               active
                                 ? bp.activeClasses
-                                : 'bg-black/20 border-white/5 text-indigo-200/50 hover:bg-black/30 hover:text-white'
+                                : 'bg-slate-100/80 dark:bg-black/20 border-slate-200 dark:border-white/5 text-slate-600 dark:text-indigo-200/50 hover:bg-slate-200 dark:hover:bg-black/30 hover:text-slate-900 dark:hover:text-white'
                             }`}
                           >
-                            <span className={`w-1.5 h-1.5 rounded-full ${active ? bp.dotColor : 'bg-indigo-200/30'}`} />
+                            <span className={`w-1.5 h-1.5 rounded-full ${active ? bp.dotColor : 'bg-slate-400 dark:bg-indigo-200/30'}`} />
                             {bp.shortTag}
                           </button>
                         );
@@ -880,8 +877,8 @@ export default function LicensesPage() {
                   <div>
                     <div className="flex items-center justify-between mb-2.5">
                       <div className="flex items-center gap-2">
-                        <Sliders className="w-3.5 h-3.5 text-indigo-400" />
-                        <h3 className="text-xs font-semibold text-white uppercase tracking-wider m-0">
+                        <Sliders className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                        <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider m-0">
                           Live Module Switchboard
                         </h3>
                       </div>
@@ -889,14 +886,14 @@ export default function LicensesPage() {
                         <button
                           type="button"
                           onClick={() => bulkMod(lic, true)}
-                          className="px-2.5 py-1 rounded-lg text-[11px] font-medium cursor-pointer bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 hover:bg-indigo-500/30 transition-colors"
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 dark:border-indigo-500/30 hover:bg-indigo-500/25 transition-colors"
                         >
                           Enable All
                         </button>
                         <button
                           type="button"
                           onClick={() => bulkMod(lic, false)}
-                          className="px-2.5 py-1 rounded-lg text-[11px] font-medium cursor-pointer bg-white/5 text-indigo-200/60 border border-white/10 hover:bg-white/10 hover:text-white transition-colors"
+                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-indigo-200/60 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors"
                         >
                           Disable All
                         </button>
@@ -912,10 +909,10 @@ export default function LicensesPage() {
                           <div
                             key={m.key}
                             onClick={() => toggleMod(lic, m.key)}
-                            className={`flex items-center justify-between p-3 rounded-xl cursor-pointer select-none transition-all duration-200 border ${
+                            className={`flex items-center justify-between bg-white dark:bg-white/[0.03] border border-indigo-100 dark:border-white/5 rounded-xl p-4 hover:bg-indigo-50/70 dark:hover:bg-white/[0.07] transition-all cursor-pointer select-none ${
                               on
-                                ? 'bg-black/30 border-white/10 shadow-sm hover:border-white/20'
-                                : 'bg-black/10 border-transparent opacity-50 hover:opacity-75'
+                                ? 'bg-indigo-50/60 dark:bg-white/[0.07] border-indigo-200 dark:border-white/15 shadow-xs'
+                                : 'opacity-65 hover:opacity-100'
                             }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
@@ -928,13 +925,13 @@ export default function LicensesPage() {
 
                               <div className="min-w-0">
                                 <p
-                                  className={`text-xs font-medium m-0 truncate ${
-                                    on ? 'text-white' : 'text-indigo-200/40 line-through'
+                                  className={`text-xs font-semibold m-0 truncate ${
+                                    on ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-indigo-200/40 line-through'
                                   }`}
                                 >
                                   {m.label}
                                 </p>
-                                <p className="text-[11px] text-indigo-200/50 m-0 truncate">
+                                <p className="text-[11px] text-slate-500 dark:text-indigo-200/50 m-0 truncate">
                                   {m.desc}
                                 </p>
                               </div>
@@ -945,13 +942,13 @@ export default function LicensesPage() {
                               <div
                                 className={`w-8 h-4.5 rounded-full p-0.5 flex items-center transition-colors duration-200 ${
                                   on
-                                    ? 'bg-indigo-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]'
-                                    : 'bg-white/10'
+                                    ? 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]'
+                                    : 'bg-slate-300 dark:bg-white/10'
                                 }`}
                               >
                                 <div
                                   className={`w-3.5 h-3.5 rounded-full bg-white shadow-xs transition-transform duration-200 ${
-                                    on ? 'translate-x-3.5' : 'translate-x-0 bg-indigo-200/40'
+                                    on ? 'translate-x-3.5' : 'translate-x-0 bg-white dark:bg-indigo-200/40'
                                   }`}
                                 />
                               </div>

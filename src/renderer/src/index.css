@@ -1,5 +1,8 @@
 @import "tailwindcss";
 
+@variant dark (&:where([data-theme="dark"], [data-theme="dark"] *, .dark, .dark *));
+@variant light (&:where([data-theme="light"], [data-theme="light"] *, .light, .light *));
+
 :root, [data-theme="dark"], .dark {
   --primary: #6366F1;
   --primary-hover: #4F46E5;
@@ -42,12 +45,13 @@ body {
 
 /* Glassmorphism Cards & Subcards matching Image 2 */
 .glass-card {
-  background: rgba(255, 255, 255, 0.06);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 1rem;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  padding: 1.5rem;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
@@ -56,9 +60,15 @@ body {
 }
 
 .glass-subcard {
-  background: rgba(0, 0, 0, 0.22);
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 0.75rem;
+  padding: 1rem;
+  transition: all 0.2s ease;
+}
+
+.glass-subcard:hover {
+  background: rgba(255, 255, 255, 0.07);
 }
 
 .light .glass-card {
