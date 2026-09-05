@@ -9,15 +9,15 @@ import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function ShellLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex w-full h-screen overflow-hidden shell-gradient-bg cyber-grid relative transition-colors duration-300">
-      {/* Ambient Cyber Lighting */}
+    <div className="flex w-full h-screen overflow-hidden bg-gradient-to-br from-[#111328] via-[#181a3a] to-[#0d0e1f] text-slate-100 min-h-screen relative transition-colors duration-300">
+      {/* Ambient Soft Glowing Light Effects (Image 2 ShikshaQ Style) */}
       <div className="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        {/* Electric Cyan Beacon */}
-        <div className="absolute -top-[20%] right-[10%] w-[600px] h-[600px] rounded-full bg-cyan-500/8 dark:bg-cyan-500/12 blur-[140px]" />
-        {/* Deep Indigo Tech Mesh */}
-        <div className="absolute top-[30%] -left-[10%] w-[700px] h-[700px] rounded-full bg-indigo-500/6 dark:bg-indigo-600/12 blur-[160px]" />
-        {/* Subtle Violet Accent */}
-        <div className="absolute -bottom-[20%] right-[25%] w-[600px] h-[600px] rounded-full bg-blue-500/6 dark:bg-violet-600/10 blur-[150px]" />
+        {/* Top-Right Fuchsia/Violet Ambient Glow */}
+        <div className="absolute -top-[10%] -right-[5%] w-[550px] h-[550px] rounded-full bg-fuchsia-500/15 dark:bg-purple-600/20 blur-[130px]" />
+        {/* Center-Top Indigo Core Glow */}
+        <div className="absolute -top-[15%] left-[20%] w-[650px] h-[650px] rounded-full bg-indigo-500/20 dark:bg-indigo-600/25 blur-[150px]" />
+        {/* Bottom-Left Electric Blue Depth */}
+        <div className="absolute -bottom-[15%] -left-[10%] w-[600px] h-[600px] rounded-full bg-blue-600/15 dark:bg-blue-600/20 blur-[160px]" />
       </div>
 
       <Sidebar />
@@ -35,7 +35,7 @@ export default function App() {
         <Toaster
           position="top-right"
           toastOptions={{
-            className: '!bg-slate-950/95 dark:!bg-[#0B0F19]/95 !text-slate-100 !border !border-cyan-500/30 !rounded-xl !backdrop-blur-xl !shadow-[0_10px_30px_rgba(0,0,0,0.6)] !text-xs !font-semibold',
+            className: '!bg-[#15133B]/95 !text-white !border !border-white/15 !rounded-2xl !backdrop-blur-xl !shadow-2xl !text-xs !font-medium',
           }}
         />
         <ShellLayout>
