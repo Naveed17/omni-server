@@ -6,7 +6,6 @@ export interface BusinessCategoryTemplate {
 export interface BusinessProfile {
   id: string;
   name: string;
-  urduName: string;
   iconName: string;
   module: 'fastfood' | 'minimart';
   description: string;
@@ -27,7 +26,6 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   footwear: {
     id: 'footwear',
     name: 'Footwear & Shoes Store',
-    urduName: 'جوتے اور چپل کا سٹور',
     iconName: 'Footprints',
     module: 'minimart',
     description: 'Specialized for shoe shops with sizes 38 - 45, colors, pairs and article codes',
@@ -48,7 +46,6 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   apparel: {
     id: 'apparel',
     name: 'Garments, Clothing & Boutique',
-    urduName: 'کپڑے اور گارمنٹس بوتیک',
     iconName: 'Shirt',
     module: 'minimart',
     description: 'Standard apparel sizes (XS to 3XL) and unstitched fabric / meter measurements',
@@ -70,7 +67,6 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   grocery: {
     id: 'grocery',
     name: 'Grocery, Supermarket & Mini Mart',
-    urduName: 'کریانہ اور سپر مارکیٹ',
     iconName: 'ShoppingBag',
     module: 'minimart',
     description: 'Barcode scanning POS with weighed loose grains (KG/Grams) and FMCG items',
@@ -92,7 +88,6 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   cosmetics: {
     id: 'cosmetics',
     name: 'Cosmetics & Beauty Store',
-    urduName: 'کاسمیٹکس اور بیوٹی سٹور',
     iconName: 'Palette',
     module: 'minimart',
     description: 'Beauty products with shade color numbers (#01, #08) and bottle volume sizes',
@@ -115,7 +110,6 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   pharmacy: {
     id: 'pharmacy',
     name: 'Pharmacy & Medical Store',
-    urduName: 'میڈیکل سٹور اور فارمیسی',
     iconName: 'Cross',
     module: 'minimart',
     description: 'Medicines with strip/box/tablet division, batch numbers and expiry tracking',
@@ -136,7 +130,6 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   electronics: {
     id: 'electronics',
     name: 'Mobile, Electronics & Accessories',
-    urduName: 'موبائل اور الیکٹرانکس',
     iconName: 'Smartphone',
     module: 'minimart',
     description: 'Smartphones and electronics with unique IMEI/Serial numbers and warranty tracking',
@@ -156,15 +149,14 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   },
   bakery: {
     id: 'bakery',
-    name: 'Bakery & Sweets / Mithai',
-    urduName: 'بیکری اور مٹھائی',
+    name: 'Bakery & Sweets / Confectionery',
     iconName: 'Cake',
     module: 'minimart',
     description: 'Fresh confectionery and traditional sweets sold by box / weight (250g, 500g, 1 KG)',
     suggestedUnits: ['KG', 'GRAM', 'DABBA', 'PCS', 'BOX'],
     suggestedSizes: ['250g', '500g', '1 KG', '2 KG'],
     defaultCategories: [
-      { name: 'Mithai & Traditional Sweets', profile: 'bakery' },
+      { name: 'Traditional Sweets & Mithai', profile: 'bakery' },
       { name: 'Cakes, Pastries & Desserts', profile: 'bakery' },
       { name: 'Bakery Biscuits & Cookies', profile: 'bakery' },
       { name: 'Fresh Breads, Rusk & Buns', profile: 'bakery' },
@@ -177,7 +169,6 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   food: {
     id: 'food',
     name: 'Fast Food, Cafe & Restaurant',
-    urduName: 'ریستوران اور فاسٹ فوڈ',
     iconName: 'Utensils',
     module: 'fastfood',
     description: 'Food and kitchen menu with KDS ticket dispatch, portion sizes and deal combos',
@@ -198,24 +189,43 @@ export const BUSINESS_PROFILES: Record<string, BusinessProfile> = {
   },
   hardware: {
     id: 'hardware',
-    name: 'Hardware, Sanitary & Electric',
-    urduName: 'ہارڈویئر، سینیٹری اور الیکٹرک',
+    name: 'Hardware, Sanitary & Paint Store',
     iconName: 'Wrench',
     module: 'minimart',
-    description: 'Building materials, paints, taps and wires with decimal/length and weight units',
-    suggestedUnits: ['METER', 'FEET', 'KG', 'GALLON', 'QUARTER', 'BALTI', 'COIL', 'PCS'],
+    description: 'Building materials, paints, plumbing, sanitary fittings, fasteners and tools',
+    suggestedUnits: ['METER', 'FEET', 'KG', 'GALLON', 'QUARTER', 'BALTI', 'PCS'],
     suggestedSizes: ['Quarter (1L)', 'Gallon (4L)', 'Balti (16L)', '0.5 KG', '1.0 KG', 'Half Inch', 'One Inch'],
     defaultCategories: [
       { name: 'Paints, Distemper & Coatings', profile: 'hardware' },
-      { name: 'Sanitary Fittings & Pipes', profile: 'hardware' },
-      { name: 'Electrical Cables, Switches & Lights', profile: 'hardware' },
-      { name: 'Fasteners, Screws & Keel', profile: 'hardware' },
+      { name: 'Sanitary Fittings & Bathroom Pipes', profile: 'hardware' },
+      { name: 'Fasteners, Screws & Nails', profile: 'hardware' },
       { name: 'Hand Tools & Power Equipment', profile: 'hardware' },
       { name: 'Locks, Handles & Security', profile: 'hardware' },
     ],
     features: {
       hasPipeDecimals: true,
       hasWeighingScale: true,
+    },
+  },
+  electric: {
+    id: 'electric',
+    name: 'Electrical Store & Lighting',
+    iconName: 'Zap',
+    module: 'minimart',
+    description: 'Electrical cables, switches, sockets, LED lights, breakers, conduits and appliances',
+    suggestedUnits: ['COIL', 'METER', 'FEET', 'PCS', 'PACK', 'BOX'],
+    suggestedSizes: ['1.5mm', '2.5mm', '7/29', '7/36', '7/44', '9W', '12W', '18W'],
+    defaultCategories: [
+      { name: 'Electrical Cables & Flexible Wires', profile: 'electric' },
+      { name: 'Switches, Sockets & Face Plates', profile: 'electric' },
+      { name: 'LED Lights, Bulbs & Panels', profile: 'electric' },
+      { name: 'Circuit Breakers & DB Distribution Boxes', profile: 'electric' },
+      { name: 'PVC Conduit Pipes & Fittings', profile: 'electric' },
+      { name: 'Ceiling & Exhaust Fans', profile: 'electric' },
+      { name: 'Extension Boards & Power Strips', profile: 'electric' },
+    ],
+    features: {
+      hasPipeDecimals: true,
     },
   },
 };
