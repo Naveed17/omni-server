@@ -133,6 +133,21 @@ export class ProductsController {
   }
 }
 
+import { BUSINESS_PROFILES } from '../common/businessProfiles';
+
+@Controller('api/business-profiles')
+export class BusinessProfilesController {
+  @Get()
+  getProfiles() {
+    return Object.values(BUSINESS_PROFILES);
+  }
+
+  @Get(':id')
+  getProfileById(@Param('id') id: string) {
+    return BUSINESS_PROFILES[id] || null;
+  }
+}
+
 @Controller('api/categories')
 export class CategoriesController {
   constructor(private readonly db: DatabaseService) {}
@@ -144,13 +159,13 @@ export class CategoriesController {
       let res;
       if (module) {
         res = await this.db.query(
-          'SELECT * FROM categories WHERE schema_id = $1 AND module = $2 ORDER BY name ASC',
-          [schemaId, module]
+          'SELECT id, schema_id, module, name, COALESCE(profile, $3) as profile, created_at FROM categories WHERE schema_id = $1 AND module = $2 ORDER BY name ASC',
+          [schemaId, module, 'standard']
         );
       } else {
         res = await this.db.query(
-          'SELECT * FROM categories WHERE schema_id = $1 ORDER BY name ASC',
-          [schemaId]
+          'SELECT id, schema_id, module, name, COALESCE(profile, $2) as profile, created_at FROM categories WHERE schema_id = $1 ORDER BY name ASC',
+          [schemaId, 'standard']
         );
       }
       return res.rows;
@@ -163,13 +178,46 @@ export class CategoriesController {
   async createCategory(@Req() req: Request, @Body() body: any) {
     const schemaId = resolveTenantSchemaId(req);
     const id = body.id || `cat_${Date.now()}`;
+    const profile = body.profile || 'standard';
     const res = await this.db.query(
-      `INSERT INTO categories (id, schema_id, module, name) VALUES ($1, $2, $3, $4)
-       ON CONFLICT (id) DO UPDATE SET name = EXCLUDED.name, schema_id = EXCLUDED.schema_id
+      `INSERT INTO categories (id, schema_id, module, name, profile) VALUES ($1, $2, $3, $4, $5)
+       ON CONFLICT (id) DO UPDATE SET 
+         name = EXCLUDED.name, 
+         module = EXCLUDED.module,
+         profile = EXCLUDED.profile,
+         schema_id = EXCLUDED.schema_id
        RETURNING *`,
-      [id, schemaId, body.module || 'fastfood', body.name]
+      [id, schemaId, body.module || 'fastfood', body.name, profile]
     );
     return res.rows[0];
+  }
+
+  @Post('seed-profile')
+  async seedProfile(@Req() req: Request, @Body() body: { profileKey: string; module?: string }) {
+    const schemaId = resolveTenantSchemaId(req);
+    const prof = BUSINESS_PROFILES[body.profileKey];
+    if (!prof) {
+      return { ok: false, message: `Unknown profile ${body.profileKey}` };
+    }
+    const targetModule = body.module || prof.module;
+    const inserted = [];
+
+    for (const item of prof.defaultCategories) {
+      const catId = `cat_${prof.id}_${item.name.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      const res = await this.db.query(
+        `INSERT INTO categories (id, schema_id, module, name, profile)
+         VALUES ($1, $2, $3, $4, $5)
+         ON CONFLICT (id) DO UPDATE SET
+           name = EXCLUDED.name,
+           profile = EXCLUDED.profile,
+           schema_id = EXCLUDED.schema_id
+         RETURNING *`,
+        [catId, schemaId, targetModule, item.name, item.profile || prof.id]
+      );
+      inserted.push(res.rows[0]);
+    }
+
+    return { ok: true, count: inserted.length, categories: inserted };
   }
 
   @Delete(':id')

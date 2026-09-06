@@ -160,6 +160,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       -- Multi-tenant schema separation columns
       ALTER TABLE products ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE categories ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+      ALTER TABLE categories ADD COLUMN IF NOT EXISTS profile TEXT DEFAULT 'standard';
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS stock_deducted BOOLEAN DEFAULT FALSE;
       ALTER TABLE customer_khatas ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';

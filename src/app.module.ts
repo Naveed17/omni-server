@@ -4,7 +4,7 @@ import { DatabaseModule } from './database/database.module';
 import { LicenseModule } from './license/license.module';
 import { PosController } from './pos/pos.controller';
 import { KhataController } from './khata/khata.controller';
-import { ProductsController, CategoriesController } from './pos/products.controller';
+import { ProductsController, CategoriesController, BusinessProfilesController } from './pos/products.controller';
 import { OrdersController } from './pos/orders.controller';
 import {
   StockController,
@@ -26,6 +26,7 @@ import { HealthController } from './health.controller';
     KhataController,
     ProductsController,
     CategoriesController,
+    BusinessProfilesController,
     OrdersController,
     StockController,
     ExpensesController,
