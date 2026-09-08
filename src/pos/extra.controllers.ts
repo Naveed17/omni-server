@@ -49,6 +49,14 @@ export class StockController {
     const res = await this.db.query(
       `INSERT INTO stock_movements (id, schema_id, module, product_id, product_name, type, quantity, unit_cost, unit_price, reason, note, date)
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, COALESCE($12::timestamptz, NOW()))
+       ON CONFLICT (id) DO UPDATE SET
+         type = EXCLUDED.type,
+         quantity = EXCLUDED.quantity,
+         unit_cost = EXCLUDED.unit_cost,
+         unit_price = EXCLUDED.unit_price,
+         reason = EXCLUDED.reason,
+         note = EXCLUDED.note,
+         date = EXCLUDED.date
        RETURNING *`,
       [
         id,
@@ -61,19 +69,59 @@ export class StockController {
         body.unitCost ? Number(body.unitCost) : null,
         body.unitPrice ? Number(body.unitPrice) : null,
         body.reason || 'General',
-        body.note || null,
+        body.note || body.referenceInvoice || null,
         body.date || null,
       ]
     );
 
-    // Also update product stock count for this tenant
-    const qtyDelta = body.type === 'in' ? Number(body.quantity) : -Number(body.quantity);
-    await this.db.query(
-      `UPDATE products SET opening_stock = COALESCE(opening_stock, 0) + $1 WHERE id = $2 AND schema_id = $3`,
-      [qtyDelta, body.productId, schemaId]
-    );
+    // Also update product stock count for this tenant if valid productId
+    if (body.productId && body.productId !== 'prod_gen' && body.productId !== 'manual') {
+      try {
+        const qtyDelta = body.type === 'in' ? Number(body.quantity) : -Number(body.quantity);
+        await this.db.query(
+          `UPDATE products SET opening_stock = COALESCE(opening_stock, 0) + $1 WHERE id = $2 AND schema_id = $3`,
+          [qtyDelta, body.productId, schemaId]
+        );
+      } catch (err) {
+        console.warn('[Stock] Product stock update warning:', err);
+      }
+    }
 
     return res.rows[0];
+  }
+
+  @Put(':id')
+  async updateMovement(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
+    const res = await this.db.query(
+      `UPDATE stock_movements SET
+         type = COALESCE($3, type),
+         quantity = COALESCE($4, quantity),
+         unit_cost = COALESCE($5, unit_cost),
+         unit_price = COALESCE($6, unit_price),
+         reason = COALESCE($7, reason),
+         note = COALESCE($8, note)
+       WHERE id = $1 AND schema_id = $2
+       RETURNING *`,
+      [
+        id,
+        schemaId,
+        body.type,
+        body.quantity != null ? Number(body.quantity) : null,
+        body.unitCost != null ? Number(body.unitCost) : null,
+        body.unitPrice != null ? Number(body.unitPrice) : null,
+        body.reason,
+        body.note,
+      ]
+    );
+    return res.rows[0] || body;
+  }
+
+  @Delete(':id')
+  async deleteMovement(@Req() req: Request, @Param('id') id: string) {
+    const schemaId = resolveTenantSchemaId(req);
+    await this.db.query('DELETE FROM stock_movements WHERE id = $1 AND schema_id = $2', [id, schemaId]);
+    return { ok: true, id };
   }
 }
 
@@ -111,6 +159,13 @@ export class ExpensesController {
     const res = await this.db.query(
       `INSERT INTO expenses (id, schema_id, category, amount, payment_mode, vendor_name, description, date)
        VALUES ($1, $2, $3, $4, $5, $6, $7, COALESCE($8::timestamptz, NOW()))
+       ON CONFLICT (id) DO UPDATE SET
+         category = EXCLUDED.category,
+         amount = EXCLUDED.amount,
+         payment_mode = EXCLUDED.payment_mode,
+         vendor_name = EXCLUDED.vendor_name,
+         description = EXCLUDED.description,
+         date = EXCLUDED.date
        RETURNING *`,
       [
         id,
@@ -126,13 +181,47 @@ export class ExpensesController {
 
     // If paid via cash, also increment cash drawer cashOut
     if (body.paymentMode === 'cash') {
-      await this.db.query(
-        `UPDATE cash_drawer SET cash_out = cash_out + $1 WHERE schema_id = $2 AND status = 'open'`,
-        [Number(body.amount) || 0, schemaId]
-      );
+      try {
+        await this.db.query(
+          `UPDATE cash_drawer SET cash_out = cash_out + $1 WHERE schema_id = $2 AND status = 'open'`,
+          [Number(body.amount) || 0, schemaId]
+        );
+      } catch {}
     }
 
     return res.rows[0];
+  }
+
+  @Put('expenses/:id')
+  async updateExpense(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
+    const res = await this.db.query(
+      `UPDATE expenses SET
+         category = COALESCE($3, category),
+         amount = COALESCE($4, amount),
+         payment_mode = COALESCE($5, payment_mode),
+         vendor_name = COALESCE($6, vendor_name),
+         description = COALESCE($7, description)
+       WHERE id = $1 AND schema_id = $2
+       RETURNING *`,
+      [
+        id,
+        schemaId,
+        body.category,
+        body.amount != null ? Number(body.amount) : null,
+        body.paymentMode,
+        body.vendorName,
+        body.description,
+      ]
+    );
+    return res.rows[0] || body;
+  }
+
+  @Delete('expenses/:id')
+  async deleteExpense(@Req() req: Request, @Param('id') id: string) {
+    const schemaId = resolveTenantSchemaId(req);
+    await this.db.query('DELETE FROM expenses WHERE id = $1 AND schema_id = $2', [id, schemaId]);
+    return { ok: true, id };
   }
 
   @Get('cash-drawer')
@@ -310,11 +399,20 @@ export class ReportsController {
       );
       const totalExpenses = parseFloat(expRes.rows[0].exp || 0);
 
-      const cogs = Math.round(grossSales * 0.35);
-      const netProfit = grossSales - cogs - totalExpenses;
+      const refRes = await this.db.query(
+        `SELECT COALESCE(SUM(refund_amount), 0) as refunds FROM order_refunds WHERE schema_id = $1`,
+        [schemaId]
+      );
+      const totalRefunds = parseFloat(refRes.rows[0]?.refunds || 0);
+      const netSales = Math.max(0, grossSales - totalRefunds);
+
+      const cogs = Math.round(netSales * 0.35);
+      const netProfit = netSales - cogs - totalExpenses;
 
       return {
         totalGrossSales: grossSales,
+        totalRefunds,
+        netSales,
         estimatedCOGS: cogs,
         totalExpenses,
         netProfit,
@@ -322,7 +420,32 @@ export class ReportsController {
         topSellingItems: [],
       };
     } catch {
-      return { totalGrossSales: 0, estimatedCOGS: 0, totalExpenses: 0, netProfit: 0, totalOrdersCount: 0, topSellingItems: [] };
+      return { totalGrossSales: 0, totalRefunds: 0, netSales: 0, estimatedCOGS: 0, totalExpenses: 0, netProfit: 0, totalOrdersCount: 0, topSellingItems: [] };
+    }
+  }
+}
+
+// ── Database Wipe (Tenant-isolated clear) ──
+@Controller('api/database')
+export class DatabaseWipeController {
+  constructor(private readonly db: DatabaseService) {}
+
+  @Post('wipe')
+  async wipeTenantData(@Req() req: Request) {
+    const schemaId = resolveTenantSchemaId(req);
+    try {
+      await this.db.query('DELETE FROM kitchen_tickets WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM order_refunds WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM orders WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM khata_transactions WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM customer_khatas WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM stock_movements WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM expenses WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM products WHERE schema_id = $1', [schemaId]);
+      await this.db.query('DELETE FROM categories WHERE schema_id = $1', [schemaId]);
+      return { ok: true };
+    } catch (err: any) {
+      return { ok: false, error: err.message };
     }
   }
 }

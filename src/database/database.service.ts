@@ -163,12 +163,27 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       ALTER TABLE categories ADD COLUMN IF NOT EXISTS profile TEXT DEFAULT 'standard';
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE orders ADD COLUMN IF NOT EXISTS stock_deducted BOOLEAN DEFAULT FALSE;
+      ALTER TABLE orders ADD COLUMN IF NOT EXISTS refunded_amount NUMERIC DEFAULT 0;
       ALTER TABLE customer_khatas ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE khata_transactions ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE expenses ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE stock_movements ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE kitchen_tickets ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
       ALTER TABLE cash_drawer ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
+
+      CREATE TABLE IF NOT EXISTS order_refunds (
+        id TEXT PRIMARY KEY,
+        schema_id TEXT DEFAULT 'lic_demo',
+        order_id TEXT NOT NULL,
+        customer_name TEXT,
+        refund_amount NUMERIC NOT NULL,
+        payment_mode TEXT DEFAULT 'cash',
+        reason TEXT,
+        items JSONB NOT NULL DEFAULT '[]'::jsonb,
+        created_at TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      ALTER TABLE order_refunds ADD COLUMN IF NOT EXISTS schema_id TEXT DEFAULT 'lic_demo';
 
       CREATE INDEX IF NOT EXISTS idx_products_schema ON products (schema_id);
       CREATE INDEX IF NOT EXISTS idx_categories_schema ON categories (schema_id);
@@ -177,6 +192,7 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       CREATE INDEX IF NOT EXISTS idx_expenses_schema ON expenses (schema_id);
       CREATE INDEX IF NOT EXISTS idx_stock_schema ON stock_movements (schema_id);
       CREATE INDEX IF NOT EXISTS idx_kitchen_schema ON kitchen_tickets (schema_id);
+      CREATE INDEX IF NOT EXISTS idx_refunds_schema ON order_refunds (schema_id);
 
       CREATE TABLE IF NOT EXISTS licenses (
         id TEXT PRIMARY KEY,

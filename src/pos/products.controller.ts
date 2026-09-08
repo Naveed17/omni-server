@@ -220,6 +220,21 @@ export class CategoriesController {
     return { ok: true, count: inserted.length, categories: inserted };
   }
 
+  @Put(':id')
+  async updateCategory(@Req() req: Request, @Param('id') id: string, @Body() body: any) {
+    const schemaId = resolveTenantSchemaId(req);
+    const res = await this.db.query(
+      `UPDATE categories SET
+         name = COALESCE($3, name),
+         module = COALESCE($4, module),
+         profile = COALESCE($5, profile)
+       WHERE id = $1 AND schema_id = $2
+       RETURNING *`,
+      [id, schemaId, body.name, body.module, body.profile]
+    );
+    return res.rows[0] || body;
+  }
+
   @Delete(':id')
   async deleteCategory(@Req() req: Request, @Param('id') id: string) {
     const schemaId = resolveTenantSchemaId(req);
