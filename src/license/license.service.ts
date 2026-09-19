@@ -192,54 +192,9 @@ export class LicenseService {
     const activeLicenses = licenses.filter((l) => l.isEnabled).length;
     const totalDevices = licenses.reduce((sum, l) => sum + (l.activeDevices?.length || 0), 0);
 
-    let orderCount = 0;
-    let volumeSum = 0;
-    let recentOrders: any[] = [];
-    try {
-      const statsRes = await this.db.query(
-        'SELECT count(*)::int as count, coalesce(sum(total_amount), 0)::numeric as volume FROM orders'
-      );
-      if (statsRes.rows && statsRes.rows.length) {
-        orderCount = parseInt(statsRes.rows[0].count, 10) || 0;
-        volumeSum = parseFloat(statsRes.rows[0].volume) || 0;
-      }
-
-      const ordersRes = await this.db.query(
-        'SELECT id, schema_id, module, total_amount, stage, customer_name, created_at FROM orders ORDER BY created_at DESC LIMIT 50'
-      );
-      recentOrders = (ordersRes.rows || []).map((r) => {
-        const matchingLic = licenses.find((l) => l.schemaId === r.schema_id);
-        const storeName = matchingLic
-          ? matchingLic.userName
-          : (r.schema_id === 'lic_demo' ? 'Omnipos Live Demo' : (r.schema_id || 'Cashier Counter'));
-
-        const dateObj = new Date(r.created_at);
-        const timeStr = !isNaN(dateObj.getTime())
-          ? dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
-          : 'Just now';
-
-        return {
-          id: r.id,
-          store: storeName,
-          type:
-            r.module === 'fastfood'
-              ? 'Fast Food Order'
-              : r.module === 'omnimart'
-              ? 'Retail Barcode Sale'
-              : r.module
-              ? `${r.module} order`
-              : 'Counter Sale',
-          amount: `PKR ${parseFloat(r.total_amount || 0).toLocaleString()}`,
-          stage: r.stage ? r.stage.charAt(0).toUpperCase() + r.stage.slice(1) : 'Paid',
-          status: 'Synced',
-          customerName: r.customer_name || 'Walk-in Customer',
-          time: timeStr,
-          rawTime: r.created_at,
-        };
-      });
-    } catch (e) {
-      console.error('[getOverviewStats] Error querying orders:', e);
-    }
+    const orderCount = 0;
+    const volumeSum = 0;
+    const recentOrders: any[] = [];
 
     const stores = licenses.map((l) => {
       const activeDevCount = l.activeDevices?.length || 0;
