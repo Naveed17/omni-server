@@ -4,6 +4,7 @@ import { Toaster } from 'react-hot-toast';
 import { Sidebar } from './components/Sidebar';
 import Dashboard from './pages/Dashboard';
 import LicensesPage from './pages/LicensesPage';
+import SettingsPage from './pages/SettingsPage';
 import { ThemeProvider, useTheme } from './context/ThemeContext';
 
 function ShellLayout({ children }: { children: React.ReactNode }) {
@@ -60,8 +61,8 @@ function AppWithTheme() {
           <Route path="/" element={<Dashboard />} />
           <Route path="/licenses" element={<LicensesPage />} />
           <Route path="/sync-feed" element={<Navigate to="/licenses" replace />} />
-          <Route path="/stores" element={<LicensesPage />} />
-          <Route path="/settings" element={<Dashboard />} />
+          <Route path="/stores" element={<Navigate to="/licenses" replace />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </ShellLayout>

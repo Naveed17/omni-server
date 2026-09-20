@@ -12,7 +12,6 @@ export function Sidebar() {
   const navItems = [
     { to: '/', label: 'Overview', icon: LayoutDashboard },
     { to: '/licenses', label: 'Store Licenses', icon: KeyRound, badge: 'Live' },
-    { to: '/stores', label: 'Registered Stores', icon: Store },
     { to: '/settings', label: 'Server Config', icon: Settings },
   ];
 

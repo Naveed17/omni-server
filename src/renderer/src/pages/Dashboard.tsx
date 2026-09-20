@@ -179,7 +179,7 @@ export default function Dashboard() {
               </div>
               <div>
                 <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">
-                  {stat.value}
+                  {loading ? <span className="inline-block w-12 h-7 bg-slate-200 dark:bg-white/10 rounded animate-pulse" /> : stat.value}
                 </p>
                 <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-semibold flex items-center gap-1.5">
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
@@ -210,9 +210,30 @@ export default function Dashboard() {
           </div>
 
           <div className="space-y-3">
-            {data.stores.length === 0 ? (
+            {loading ? (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="bg-white/60 dark:bg-white/[0.02] border border-indigo-100 dark:border-white/5 rounded-xl p-4 flex items-center justify-between animate-pulse"
+                  >
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-slate-200 dark:bg-white/10" />
+                      <div className="space-y-1.5">
+                        <div className="w-32 h-4 rounded bg-slate-200 dark:bg-white/10" />
+                        <div className="w-48 h-3 rounded bg-slate-200 dark:bg-white/10" />
+                      </div>
+                    </div>
+                    <div className="space-y-1.5">
+                      <div className="w-16 h-4 rounded bg-slate-200 dark:bg-white/10" />
+                      <div className="w-20 h-3 rounded bg-slate-200 dark:bg-white/10" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : data.stores.length === 0 ? (
               <div className="p-8 text-center bg-white/50 dark:bg-white/[0.02] border border-dashed border-indigo-200 dark:border-white/10 rounded-xl text-xs text-slate-500 dark:text-indigo-200/50">
-                {loading ? 'Fetching active store registry...' : 'No stores registered yet. Issue a license key to register.'}
+                No stores registered yet. Issue a license key to register.
               </div>
             ) : (
               data.stores.map((store) => (

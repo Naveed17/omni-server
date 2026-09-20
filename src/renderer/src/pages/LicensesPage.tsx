@@ -49,8 +49,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Footwear & Shoes',
     desc: 'Sizes 38-45 matrix, pairs, colors & articles',
     color: '#ec4899',
-    activeClasses: 'bg-pink-500/20 border-pink-500/40 text-pink-200 shadow-[0_0_12px_rgba(236,72,153,0.25)]',
-    dotColor: 'bg-pink-400',
+    activeClasses: 'bg-pink-100/80 border-pink-300 text-pink-700 font-bold dark:bg-pink-500/20 dark:border-pink-500/40 dark:text-pink-200 shadow-[0_0_12px_rgba(236,72,153,0.25)]',
+    dotColor: 'bg-pink-600 dark:bg-pink-400',
   },
   {
     key: 'apparel',
@@ -58,8 +58,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Garments & Boutique',
     desc: 'Garments & clothing with sizes XS-3XL & fabrics',
     color: '#8b5cf6',
-    activeClasses: 'bg-violet-500/20 border-violet-500/40 text-violet-200 shadow-[0_0_12px_rgba(139,92,246,0.25)]',
-    dotColor: 'bg-violet-400',
+    activeClasses: 'bg-violet-100/80 border-violet-300 text-violet-700 font-bold dark:bg-violet-500/20 dark:border-violet-500/40 dark:text-violet-200 shadow-[0_0_12px_rgba(139,92,246,0.25)]',
+    dotColor: 'bg-violet-600 dark:bg-violet-400',
   },
   {
     key: 'grocery',
@@ -67,8 +67,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Grocery & Supermarket',
     desc: 'Weighed grains, loose items (KG/Grams) & FMCG',
     color: '#10b981',
-    activeClasses: 'bg-emerald-500/20 border-emerald-500/40 text-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.25)]',
-    dotColor: 'bg-emerald-400',
+    activeClasses: 'bg-emerald-100/80 border-emerald-300 text-emerald-800 font-bold dark:bg-emerald-500/20 dark:border-emerald-500/40 dark:text-emerald-200 shadow-[0_0_12px_rgba(16,185,129,0.25)]',
+    dotColor: 'bg-emerald-600 dark:bg-emerald-400',
   },
   {
     key: 'cosmetics',
@@ -76,8 +76,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Cosmetics & Beauty',
     desc: 'Shades, lipstick/nail colors, volumes (50-250ml)',
     color: '#d946ef',
-    activeClasses: 'bg-fuchsia-500/20 border-fuchsia-500/40 text-fuchsia-200 shadow-[0_0_12px_rgba(217,70,239,0.25)]',
-    dotColor: 'bg-fuchsia-400',
+    activeClasses: 'bg-fuchsia-100/80 border-fuchsia-300 text-fuchsia-800 font-bold dark:bg-fuchsia-500/20 dark:border-fuchsia-500/40 dark:text-fuchsia-200 shadow-[0_0_12px_rgba(217,70,239,0.25)]',
+    dotColor: 'bg-fuchsia-600 dark:bg-fuchsia-400',
   },
   {
     key: 'pharmacy',
@@ -85,8 +85,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Pharmacy & Medical',
     desc: 'Medicines, strips, boxes, batches & expiry tracking',
     color: '#0284c7',
-    activeClasses: 'bg-sky-500/20 border-sky-500/40 text-sky-200 shadow-[0_0_12px_rgba(2,132,199,0.25)]',
-    dotColor: 'bg-sky-400',
+    activeClasses: 'bg-sky-100/80 border-sky-300 text-sky-800 font-bold dark:bg-sky-500/20 dark:border-sky-500/40 dark:text-sky-200 shadow-[0_0_12px_rgba(2,132,199,0.25)]',
+    dotColor: 'bg-sky-600 dark:bg-sky-400',
   },
   {
     key: 'electronics',
@@ -94,8 +94,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Mobile & Electronics',
     desc: 'Smartphones, unique IMEI/Serial numbers & warranty',
     color: '#3b82f6',
-    activeClasses: 'bg-blue-500/20 border-blue-500/40 text-blue-200 shadow-[0_0_12px_rgba(59,130,246,0.25)]',
-    dotColor: 'bg-blue-400',
+    activeClasses: 'bg-blue-100/80 border-blue-300 text-blue-800 font-bold dark:bg-blue-500/20 dark:border-blue-500/40 dark:text-blue-200 shadow-[0_0_12px_rgba(59,130,246,0.25)]',
+    dotColor: 'bg-blue-600 dark:bg-blue-400',
   },
   {
     key: 'bakery',
@@ -103,8 +103,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Bakery & Sweets',
     desc: 'Fresh confectionery, sweets & weighed dabba boxes',
     color: '#f59e0b',
-    activeClasses: 'bg-amber-500/20 border-amber-500/40 text-amber-200 shadow-[0_0_12px_rgba(245,158,11,0.25)]',
-    dotColor: 'bg-amber-400',
+    activeClasses: 'bg-amber-100/80 border-amber-300 text-amber-900 font-bold dark:bg-amber-500/20 dark:border-amber-500/40 dark:text-amber-200 shadow-[0_0_12px_rgba(245,158,11,0.25)]',
+    dotColor: 'bg-amber-600 dark:bg-amber-400',
   },
   {
     key: 'food',
@@ -112,8 +112,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Food & Restaurant',
     desc: 'Burgers, pizzas, portions & KDS kitchen dispatch',
     color: '#ef4444',
-    activeClasses: 'bg-red-500/20 border-red-500/40 text-red-200 shadow-[0_0_12px_rgba(239,68,68,0.25)]',
-    dotColor: 'bg-red-400',
+    activeClasses: 'bg-red-100/80 border-red-300 text-red-800 font-bold dark:bg-red-500/20 dark:border-red-500/40 dark:text-red-200 shadow-[0_0_12px_rgba(239,68,68,0.25)]',
+    dotColor: 'bg-red-600 dark:bg-red-400',
   },
   {
     key: 'hardware',
@@ -121,8 +121,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Hardware & Sanitary',
     desc: 'Paints, distemper, plumbing pipes, sanitary & tools',
     color: '#d97706',
-    activeClasses: 'bg-yellow-600/20 border-yellow-600/40 text-yellow-200 shadow-[0_0_12px_rgba(217,119,6,0.25)]',
-    dotColor: 'bg-yellow-500',
+    activeClasses: 'bg-amber-100/80 border-amber-400/60 text-amber-950 font-bold dark:bg-yellow-600/20 dark:border-yellow-600/40 dark:text-yellow-200 shadow-[0_0_12px_rgba(217,119,6,0.25)]',
+    dotColor: 'bg-amber-600 dark:bg-yellow-500',
   },
   {
     key: 'electric',
@@ -130,8 +130,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'Electric & Lighting',
     desc: 'Cables, flexible wires, LED lights, switches & breakers',
     color: '#eab308',
-    activeClasses: 'bg-yellow-500/20 border-yellow-500/40 text-yellow-100 shadow-[0_0_12px_rgba(234,179,8,0.25)]',
-    dotColor: 'bg-yellow-400',
+    activeClasses: 'bg-yellow-100/90 border-yellow-400/60 text-yellow-950 font-bold dark:bg-yellow-500/20 dark:border-yellow-500/40 dark:text-yellow-100 shadow-[0_0_12px_rgba(234,179,8,0.25)]',
+    dotColor: 'bg-yellow-600 dark:bg-yellow-400',
   },
   {
     key: 'standard',
@@ -139,8 +139,8 @@ export const BUSINESS_PROFILES: BusinessProfileMeta[] = [
     shortTag: 'General Retail',
     desc: 'General supermarket, packaged items & FMCG',
     color: '#6366f1',
-    activeClasses: 'bg-indigo-500/20 border-indigo-500/40 text-indigo-200 shadow-[0_0_12px_rgba(99,102,241,0.25)]',
-    dotColor: 'bg-indigo-400',
+    activeClasses: 'bg-indigo-100/80 border-indigo-300 text-indigo-800 font-bold dark:bg-indigo-500/20 dark:border-indigo-500/40 dark:text-indigo-200 shadow-[0_0_12px_rgba(99,102,241,0.25)]',
+    dotColor: 'bg-indigo-600 dark:bg-indigo-400',
   },
 ];
 
@@ -288,11 +288,83 @@ const MODULES: ModuleMeta[] = [
   },
 ];
 
+function LicenseCardSkeleton() {
+  return (
+    <div className="rounded-2xl backdrop-blur-2xl border bg-white/90 dark:bg-white/[0.05] border-indigo-100 dark:border-white/10 shadow-xl dark:shadow-2xl p-6 relative overflow-hidden animate-pulse">
+      {/* Top Ambient Line */}
+      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
+
+      {/* Top Bar Skeleton */}
+      <div className="p-5 px-6 border-b border-indigo-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="w-11 h-11 rounded-xl bg-slate-200 dark:bg-white/10 shrink-0" />
+          <div className="space-y-2">
+            <div className="flex items-center gap-2.5">
+              <div className="h-5 w-36 bg-slate-200 dark:bg-white/10 rounded-md" />
+              <div className="h-5 w-24 bg-slate-200 dark:bg-white/10 rounded-full" />
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="h-3.5 w-28 bg-slate-200 dark:bg-white/10 rounded" />
+              <div className="h-3.5 w-24 bg-slate-200 dark:bg-white/10 rounded" />
+            </div>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-44 bg-slate-200 dark:bg-white/10 rounded-xl" />
+          <div className="h-8 w-24 bg-slate-200 dark:bg-white/10 rounded-xl" />
+        </div>
+      </div>
+
+      {/* Body Grid */}
+      <div className="p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
+        {/* Left: Hardware Terminals */}
+        <div className="p-4 rounded-xl bg-indigo-50/60 dark:bg-black/20 border border-indigo-100 dark:border-white/5 space-y-3.5">
+          <div className="flex items-center justify-between">
+            <div className="h-4 w-28 bg-slate-200 dark:bg-white/10 rounded" />
+            <div className="h-4 w-16 bg-slate-200 dark:bg-white/10 rounded-full" />
+          </div>
+          <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10" />
+          <div className="h-3 w-32 bg-slate-200 dark:bg-white/10 rounded" />
+          <div className="h-14 rounded-xl bg-slate-200 dark:bg-white/10" />
+        </div>
+
+        {/* Right: Business Profiles & Modules */}
+        <div className="space-y-4">
+          <div>
+            <div className="h-4 w-48 bg-slate-200 dark:bg-white/10 rounded mb-2.5" />
+            <div className="flex flex-wrap gap-1.5">
+              {[1, 2, 3, 4, 5, 6, 7].map((i) => (
+                <div key={i} className="h-7 w-28 bg-slate-200 dark:bg-white/10 rounded-xl" />
+              ))}
+            </div>
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between mb-2.5">
+              <div className="h-4 w-36 bg-slate-200 dark:bg-white/10 rounded" />
+              <div className="flex gap-2">
+                <div className="h-6 w-16 bg-slate-200 dark:bg-white/10 rounded-lg" />
+                <div className="h-6 w-16 bg-slate-200 dark:bg-white/10 rounded-lg" />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+              {[1, 2, 3, 4, 5, 6].map((i) => (
+                <div key={i} className="h-16 rounded-xl bg-slate-200 dark:bg-white/10" />
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function LicensesPage() {
   const { isDark, toggleTheme } = useTheme();
 
   const [licenses, setLicenses]         = useState<LicenseRecord[]>([]);
-  const [loading, setLoading]           = useState(false);
+  const [loading, setLoading]           = useState(true);
   const [copied, setCopied]             = useState<string | null>(null);
   const [search, setSearch]             = useState('');
   const [filter, setFilter]             = useState<'all' | 'active' | 'disabled'>('all');
@@ -657,17 +729,23 @@ export default function LicensesPage() {
         <div className="flex items-center gap-6">
           <div className="flex items-center gap-7">
             <div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white leading-none m-0">{licenses.length}</p>
+              <p className="text-2xl font-bold text-slate-900 dark:text-white leading-none m-0">
+                {loading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-white/10 rounded animate-pulse" /> : licenses.length}
+              </p>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Total Clients</p>
             </div>
             <div className="w-px h-8 bg-indigo-100 dark:bg-white/10" />
             <div>
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 leading-none m-0">{activeN}</p>
+              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 leading-none m-0">
+                {loading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-white/10 rounded animate-pulse" /> : activeN}
+              </p>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Active Licenses</p>
             </div>
             <div className="w-px h-8 bg-indigo-100 dark:bg-white/10" />
             <div>
-              <p className="text-2xl font-bold text-rose-500 dark:text-pink-400 leading-none m-0">{licenses.length - activeN}</p>
+              <p className="text-2xl font-bold text-rose-500 dark:text-pink-400 leading-none m-0">
+                {loading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-white/10 rounded animate-pulse" /> : licenses.length - activeN}
+              </p>
               <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Suspended</p>
             </div>
           </div>
@@ -705,7 +783,12 @@ export default function LicensesPage() {
 
       {/* ── Client License Cards Stack (Glassmorphic Containers) ───────────── */}
       <div className="flex flex-col gap-6">
-        {shown.length === 0 ? (
+        {loading ? (
+          <>
+            <LicenseCardSkeleton />
+            <LicenseCardSkeleton />
+          </>
+        ) : shown.length === 0 ? (
           <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-12 text-center text-slate-500 dark:text-indigo-200/60 text-sm">
             No client licenses found matching your search.
           </div>
