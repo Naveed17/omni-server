@@ -87,6 +87,30 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
       INSERT INTO license_settings (id, support_phone, support_email)
       VALUES ('default', '+92 300 0000000', 'support@omnipos.pk')
       ON CONFLICT (id) DO NOTHING;
+
+      -- Cloud Backups per License Key (.zip full backup / .db database)
+      CREATE TABLE IF NOT EXISTS license_backups (
+        id TEXT PRIMARY KEY,
+        license_id TEXT NOT NULL REFERENCES licenses(id) ON DELETE CASCADE,
+        license_key TEXT NOT NULL,
+        file_name TEXT NOT NULL,
+        original_name TEXT NOT NULL,
+        file_path TEXT NOT NULL,
+        file_size BIGINT NOT NULL DEFAULT 0,
+        mime_type TEXT DEFAULT 'application/zip',
+        format TEXT DEFAULT 'zip', -- 'zip' (Full: DB + Images) or 'db' (Database only)
+        device_hwid TEXT,
+        device_name TEXT DEFAULT 'POS Terminal',
+        backup_type TEXT DEFAULT 'auto', -- 'auto', 'manual', 'eod_closing'
+        notes TEXT,
+        record_count INT DEFAULT 0,
+        created_at TIMESTAMPTZ DEFAULT NOW(),
+        updated_at TIMESTAMPTZ DEFAULT NOW()
+      );
+
+      CREATE INDEX IF NOT EXISTS idx_license_backups_lic_id ON license_backups(license_id);
+      CREATE INDEX IF NOT EXISTS idx_license_backups_key ON license_backups(license_key);
+      CREATE INDEX IF NOT EXISTS idx_license_backups_created ON license_backups(created_at DESC);
     `);
   }
 }
