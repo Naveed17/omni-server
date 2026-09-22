@@ -21,9 +21,16 @@ export class BackupService {
     private readonly backupRepo: BackupRepository,
     private readonly licenseRepo: LicenseRepository,
   ) {
-    this.baseStorageDir = path.resolve(process.cwd(), 'storage', 'backups');
-    if (!fs.existsSync(this.baseStorageDir)) {
-      fs.mkdirSync(this.baseStorageDir, { recursive: true });
+    this.baseStorageDir = process.env.VERCEL
+      ? path.join('/tmp', 'omnipos_backups')
+      : path.resolve(process.cwd(), 'storage', 'backups');
+
+    try {
+      if (!fs.existsSync(this.baseStorageDir)) {
+        fs.mkdirSync(this.baseStorageDir, { recursive: true });
+      }
+    } catch (e: any) {
+      this.logger.warn(`[BackupService] Local storage directory initialization skipped: ${e.message}`);
     }
   }
 
@@ -31,13 +38,18 @@ export class BackupService {
     return name.replace(/[^a-zA-Z0-9._-]/g, '_');
   }
 
-  private getLicenseFolder(licenseKey: string): string {
-    const safeKey = this.sanitizeFileName(licenseKey.trim().toUpperCase());
-    const folder = path.join(this.baseStorageDir, safeKey);
-    if (!fs.existsSync(folder)) {
-      fs.mkdirSync(folder, { recursive: true });
+  private getLicenseFolder(licenseKey: string): string | null {
+    try {
+      const safeKey = this.sanitizeFileName(licenseKey.trim().toUpperCase());
+      const folder = path.join(this.baseStorageDir, safeKey);
+      if (!fs.existsSync(folder)) {
+        fs.mkdirSync(folder, { recursive: true });
+      }
+      return folder;
+    } catch (e: any) {
+      this.logger.warn(`[BackupService] Could not create local folder (${licenseKey}): ${e.message}`);
+      return null;
     }
-    return folder;
   }
 
   /**
@@ -69,25 +81,34 @@ export class BackupService {
       throw new ForbiddenException(`License "${licenseKey}" is disabled.`);
     }
 
-    const folder = this.getLicenseFolder(license.key);
     const originalName = file.originalname || `Omnipos_Backup_${new Date().toISOString().replace(/[:.]/g, '-')}.zip`;
     const sanitizedName = this.sanitizeFileName(originalName);
     const diskFileName = `${Date.now()}_${sanitizedName}`;
-    const destinationPath = path.join(folder, diskFileName);
 
     const isZip = originalName.toLowerCase().endsWith('.zip');
     const format = isZip ? 'zip' : 'db';
 
-    // Write file to disk
-    await fs.promises.writeFile(destinationPath, file.buffer);
+    // Attempt to write file to local disk or /tmp as cache, but NEVER crash if filesystem is read-only (e.g. Vercel)
+    let destinationPath = `cloud://${license.key}/${diskFileName}`;
+    try {
+      const folder = this.getLicenseFolder(license.key);
+      if (folder) {
+        const localPath = path.join(folder, diskFileName);
+        await fs.promises.writeFile(localPath, file.buffer);
+        destinationPath = localPath;
+      }
+    } catch (fsErr: any) {
+      this.logger.warn(`[BackupService] Local disk write skipped (${fsErr.message}). Backup persisted safely in PostgreSQL vault.`);
+    }
 
-    // Save record to DB
+    // Save record to DB (storing binary payload in Neon PostgreSQL bytea column)
     const record = await this.backupRepo.create({
       licenseId: license.id,
       licenseKey: license.key,
       fileName: diskFileName,
       originalName,
       filePath: destinationPath,
+      fileData: file.buffer,
       fileSize: file.size || file.buffer.length,
       mimeType: file.mimetype || (isZip ? 'application/zip' : 'application/octet-stream'),
       format,
@@ -101,7 +122,7 @@ export class BackupService {
     // Enforce retention policy (keep last 10 backups)
     await this.enforceRetention(license.id);
 
-    this.logger.log(`[BackupService] Backup saved for ${license.key}: ${diskFileName} (${format.toUpperCase()}, ${file.size} bytes)`);
+    this.logger.log(`[BackupService] Backup saved for ${license.key}: ${diskFileName} (${format.toUpperCase()}, ${file.size || file.buffer.length} bytes)`);
     return record;
   }
 
@@ -170,21 +191,29 @@ export class BackupService {
    */
   async getBackupFileForDownload(id: string): Promise<{
     record: LicenseBackupRecord;
-    filePath: string;
+    buffer?: Buffer;
+    filePath?: string;
   }> {
-    const record = await this.backupRepo.findById(id);
+    const record = await this.backupRepo.findByIdWithData(id);
     if (!record) {
       throw new NotFoundException('Backup file record not found.');
     }
 
-    if (!fs.existsSync(record.filePath)) {
-      throw new NotFoundException('Backup file is missing from storage.');
+    if (record.fileData && Buffer.isBuffer(record.fileData)) {
+      return {
+        record,
+        buffer: record.fileData,
+      };
     }
 
-    return {
-      record,
-      filePath: record.filePath,
-    };
+    if (record.filePath && fs.existsSync(record.filePath)) {
+      return {
+        record,
+        filePath: record.filePath,
+      };
+    }
+
+    throw new NotFoundException('Backup file content is missing from storage.');
   }
 
   /**

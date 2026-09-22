@@ -12,7 +12,8 @@ export class BackupRepository {
     licenseKey: string;
     fileName: string;
     originalName: string;
-    filePath: string;
+    filePath?: string;
+    fileData?: Buffer;
     fileSize: number;
     mimeType?: string;
     format?: string;
@@ -29,18 +30,19 @@ export class BackupRepository {
     const res = await this.db.query(
       `INSERT INTO license_backups (
         id, license_id, license_key, file_name, original_name,
-        file_path, file_size, mime_type, format, device_hwid, device_name,
+        file_path, file_data, file_size, mime_type, format, device_hwid, device_name,
         backup_type, notes, record_count
       )
-      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-      RETURNING *`,
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+      RETURNING id, license_id, license_key, file_name, original_name, file_path, file_size, mime_type, format, device_hwid, device_name, backup_type, notes, record_count, created_at, updated_at`,
       [
         id,
         data.licenseId,
         data.licenseKey.trim().toUpperCase(),
         data.fileName,
         data.originalName,
-        data.filePath,
+        data.filePath || `cloud://${data.licenseKey}/${data.fileName}`,
+        data.fileData || null,
         data.fileSize,
         data.mimeType || (format === 'zip' ? 'application/zip' : 'application/octet-stream'),
         format,
@@ -57,7 +59,8 @@ export class BackupRepository {
 
   async findByLicenseId(licenseId: string): Promise<LicenseBackupRecord[]> {
     const res = await this.db.query(
-      `SELECT * FROM license_backups 
+      `SELECT id, license_id, license_key, file_name, original_name, file_path, file_size, mime_type, format, device_hwid, device_name, backup_type, notes, record_count, created_at, updated_at
+       FROM license_backups 
        WHERE license_id = $1 
        ORDER BY created_at DESC`,
       [licenseId],
@@ -68,7 +71,8 @@ export class BackupRepository {
   async findByLicenseKey(licenseKey: string): Promise<LicenseBackupRecord[]> {
     const normalized = licenseKey.trim().toUpperCase();
     const res = await this.db.query(
-      `SELECT * FROM license_backups 
+      `SELECT id, license_id, license_key, file_name, original_name, file_path, file_size, mime_type, format, device_hwid, device_name, backup_type, notes, record_count, created_at, updated_at
+       FROM license_backups 
        WHERE UPPER(license_key) = $1 
        ORDER BY created_at DESC`,
       [normalized],
@@ -77,6 +81,16 @@ export class BackupRepository {
   }
 
   async findById(id: string): Promise<LicenseBackupRecord | null> {
+    const res = await this.db.query(
+      `SELECT id, license_id, license_key, file_name, original_name, file_path, file_size, mime_type, format, device_hwid, device_name, backup_type, notes, record_count, created_at, updated_at
+       FROM license_backups WHERE id = $1`,
+      [id],
+    );
+    if (!res.rows.length) return null;
+    return mapBackupRow(res.rows[0]);
+  }
+
+  async findByIdWithData(id: string): Promise<LicenseBackupRecord | null> {
     const res = await this.db.query('SELECT * FROM license_backups WHERE id = $1', [id]);
     if (!res.rows.length) return null;
     return mapBackupRow(res.rows[0]);
@@ -85,7 +99,8 @@ export class BackupRepository {
   async findLatestByLicenseKey(licenseKey: string): Promise<LicenseBackupRecord | null> {
     const normalized = licenseKey.trim().toUpperCase();
     const res = await this.db.query(
-      `SELECT * FROM license_backups 
+      `SELECT id, license_id, license_key, file_name, original_name, file_path, file_size, mime_type, format, device_hwid, device_name, backup_type, notes, record_count, created_at, updated_at
+       FROM license_backups 
        WHERE UPPER(license_key) = $1 
        ORDER BY created_at DESC 
        LIMIT 1`,

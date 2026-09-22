@@ -5,6 +5,7 @@ export interface LicenseBackupRecord {
   fileName: string;
   originalName: string;
   filePath: string;
+  fileData?: Buffer;
   fileSize: number;
   mimeType: string;
   format: 'zip' | 'db' | string;
@@ -28,7 +29,8 @@ export function mapBackupRow(row: Record<string, any>): LicenseBackupRecord {
     licenseKey: String(row.license_key || row.licenseKey),
     fileName: String(row.file_name || row.fileName),
     originalName,
-    filePath: String(row.file_path || row.filePath),
+    filePath: String(row.file_path || row.filePath || ''),
+    fileData: row.file_data && Buffer.isBuffer(row.file_data) ? row.file_data : undefined,
     fileSize: Number(row.file_size || row.fileSize || 0),
     mimeType: String(row.mime_type || row.mimeType || (format === 'zip' ? 'application/zip' : 'application/octet-stream')),
     format,

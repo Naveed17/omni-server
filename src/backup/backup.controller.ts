@@ -91,9 +91,14 @@ export class BackupController {
    */
   @Get(':id/download')
   async downloadBackup(@Param('id') id: string, @Res() res: Response) {
-    const { record, filePath } = await this.backupService.getBackupFileForDownload(id);
+    const { record, buffer, filePath } = await this.backupService.getBackupFileForDownload(id);
     res.setHeader('Content-Type', record.mimeType || 'application/octet-stream');
     res.setHeader('Content-Disposition', `attachment; filename="${record.originalName}"`);
-    return res.download(filePath, record.originalName);
+    if (buffer) {
+      return res.send(buffer);
+    }
+    if (filePath) {
+      return res.download(filePath, record.originalName);
+    }
   }
 }

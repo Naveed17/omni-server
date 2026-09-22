@@ -95,7 +95,8 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         license_key TEXT NOT NULL,
         file_name TEXT NOT NULL,
         original_name TEXT NOT NULL,
-        file_path TEXT NOT NULL,
+        file_path TEXT,
+        file_data BYTEA,
         file_size BIGINT NOT NULL DEFAULT 0,
         mime_type TEXT DEFAULT 'application/zip',
         format TEXT DEFAULT 'zip', -- 'zip' (Full: DB + Images) or 'db' (Database only)
@@ -107,6 +108,9 @@ export class DatabaseService implements OnModuleInit, OnModuleDestroy {
         created_at TIMESTAMPTZ DEFAULT NOW(),
         updated_at TIMESTAMPTZ DEFAULT NOW()
       );
+
+      ALTER TABLE license_backups ADD COLUMN IF NOT EXISTS file_data BYTEA;
+      ALTER TABLE license_backups ALTER COLUMN file_path DROP NOT NULL;
 
       CREATE INDEX IF NOT EXISTS idx_license_backups_lic_id ON license_backups(license_id);
       CREATE INDEX IF NOT EXISTS idx_license_backups_key ON license_backups(license_key);
