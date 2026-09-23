@@ -15,7 +15,7 @@ import { LicenseBackupRecord } from './backup.types';
 export class BackupService {
   private readonly logger = new Logger(BackupService.name);
   private readonly baseStorageDir: string;
-  private readonly maxRetainedBackups = 10;
+  private readonly maxRetainedBackups = 3;
 
   constructor(
     private readonly backupRepo: BackupRepository,

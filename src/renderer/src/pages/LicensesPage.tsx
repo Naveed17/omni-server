@@ -1371,7 +1371,7 @@ export default function LicensesPage() {
                     <span>Archived Snapshots History</span>
                   </div>
                   <span className="text-[11px] text-slate-500 dark:text-indigo-200/50">
-                    Auto-purges older than 10 snapshots
+                    Auto-purges older than 3 snapshots
                   </span>
                 </div>
 

@@ -115,7 +115,7 @@ export class BackupRepository {
     return (res.rowCount ?? 0) > 0;
   }
 
-  async getBackupsExceedingLimit(licenseId: string, limit: number = 10): Promise<LicenseBackupRecord[]> {
+  async getBackupsExceedingLimit(licenseId: string, limit: number = 3): Promise<LicenseBackupRecord[]> {
     const res = await this.db.query(
       `SELECT * FROM license_backups 
        WHERE license_id = $1 
