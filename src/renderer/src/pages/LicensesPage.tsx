@@ -7,7 +7,7 @@ import {
   Archive, Download, UploadCloud, HardDrive, FileArchive, Clock, FileText, AlertCircle, ShieldCheck, Database,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { useTheme } from '../context/ThemeContext';
+import { PageShell, PageHeader, LiveChip } from '../components/ui';
 
 /* ─── Types ─────────────────────────────────────────────────────────────────── */
 interface LicenseDevice { hwid: string; deviceName: string; activatedAt: string; }
@@ -306,70 +306,26 @@ const MODULES: ModuleMeta[] = [
 
 function LicenseCardSkeleton() {
   return (
-    <div className="rounded-2xl backdrop-blur-2xl border bg-white/90 dark:bg-white/[0.05] border-indigo-100 dark:border-white/10 shadow-xl dark:shadow-2xl p-6 relative overflow-hidden animate-pulse">
-      {/* Top Ambient Line */}
-      <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-indigo-500/40 to-transparent" />
-
-      {/* Top Bar Skeleton */}
-      <div className="p-5 px-6 border-b border-indigo-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-3.5">
-          <div className="w-11 h-11 rounded-xl bg-slate-200 dark:bg-white/10 shrink-0" />
+    <div className="panel p-5 space-y-5">
+      <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="flex items-center gap-3">
+          <span className="skeleton w-10 h-10 rounded-[10px]" />
           <div className="space-y-2">
-            <div className="flex items-center gap-2.5">
-              <div className="h-5 w-36 bg-slate-200 dark:bg-white/10 rounded-md" />
-              <div className="h-5 w-24 bg-slate-200 dark:bg-white/10 rounded-full" />
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="h-3.5 w-28 bg-slate-200 dark:bg-white/10 rounded" />
-              <div className="h-3.5 w-24 bg-slate-200 dark:bg-white/10 rounded" />
-            </div>
+            <span className="skeleton block w-40 h-3.5" />
+            <span className="skeleton block w-56 h-2.5" />
           </div>
         </div>
-
-        <div className="flex items-center gap-2.5">
-          <div className="h-8 w-44 bg-slate-200 dark:bg-white/10 rounded-xl" />
-          <div className="h-8 w-24 bg-slate-200 dark:bg-white/10 rounded-xl" />
+        <div className="flex gap-2">
+          <span className="skeleton w-44 h-8" />
+          <span className="skeleton w-24 h-8" />
         </div>
       </div>
-
-      {/* Body Grid */}
-      <div className="p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-        {/* Left: Hardware Terminals */}
-        <div className="p-4 rounded-xl bg-indigo-50/60 dark:bg-black/20 border border-indigo-100 dark:border-white/5 space-y-3.5">
-          <div className="flex items-center justify-between">
-            <div className="h-4 w-28 bg-slate-200 dark:bg-white/10 rounded" />
-            <div className="h-4 w-16 bg-slate-200 dark:bg-white/10 rounded-full" />
-          </div>
-          <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10" />
-          <div className="h-3 w-32 bg-slate-200 dark:bg-white/10 rounded" />
-          <div className="h-14 rounded-xl bg-slate-200 dark:bg-white/10" />
-        </div>
-
-        {/* Right: Business Profiles & Modules */}
-        <div className="space-y-4">
-          <div>
-            <div className="h-4 w-48 bg-slate-200 dark:bg-white/10 rounded mb-2.5" />
-            <div className="flex flex-wrap gap-1.5">
-              {[1, 2, 3, 4, 5, 6, 7].map((i) => (
-                <div key={i} className="h-7 w-28 bg-slate-200 dark:bg-white/10 rounded-xl" />
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <div className="h-4 w-36 bg-slate-200 dark:bg-white/10 rounded" />
-              <div className="flex gap-2">
-                <div className="h-6 w-16 bg-slate-200 dark:bg-white/10 rounded-lg" />
-                <div className="h-6 w-16 bg-slate-200 dark:bg-white/10 rounded-lg" />
-              </div>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
-              {[1, 2, 3, 4, 5, 6].map((i) => (
-                <div key={i} className="h-16 rounded-xl bg-slate-200 dark:bg-white/10" />
-              ))}
-            </div>
-          </div>
+      <div className="grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-5">
+        <span className="skeleton h-40 rounded-[10px]" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
+          {[1, 2, 3, 4, 5, 6].map((i) => (
+            <span key={i} className="skeleton h-14 rounded-[10px]" />
+          ))}
         </div>
       </div>
     </div>
@@ -377,7 +333,7 @@ function LicenseCardSkeleton() {
 }
 
 export default function LicensesPage() {
-  const { isDark, toggleTheme } = useTheme();
+
 
   const [licenses, setLicenses]         = useState<LicenseRecord[]>([]);
   const [loading, setLoading]           = useState(true);
@@ -667,124 +623,79 @@ export default function LicensesPage() {
 
   /* ── Render ────────────────────────────────────────────────────────────── */
   return (
-    <div className="flex-1 overflow-y-auto h-full p-8 max-w-[1400px] mx-auto space-y-7">
+    <PageShell>
+      <PageHeader
+        index="02"
+        section="Licenses"
+        status={<LiveChip label="Control hub" tone="accent" />}
+        title="Client licenses"
+        subtitle="Remote module authority, client management and HWID terminal locking."
+        actions={
+          <>
+            <button type="button" onClick={load} disabled={loading} className="btn">
+              <RefreshCw className={`w-3.5 h-3.5 text-muted ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Syncing' : 'Refresh'}
+            </button>
+            <button type="button" onClick={() => setCreate((p) => !p)} className="btn btn-primary">
+              <Plus className="w-4 h-4" strokeWidth={2.5} />
+              Issue license
+            </button>
+          </>
+        }
+      />
 
-      {/* ── Top Header ─────────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 border border-indigo-500/25 dark:border-indigo-500/30 shadow-[0_0_15px_rgba(99,102,241,0.25)]">
-            <KeyRound className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2.5">
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">Client Licenses</h1>
-              <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 border border-indigo-500/25 dark:border-indigo-500/30 flex items-center gap-1.5">
-                <span className="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-pulse" />
-                Control Hub
-              </span>
-            </div>
-            <p className="text-sm text-slate-500 dark:text-indigo-200/60 mt-0.5 m-0">
-              Remote module authority, client management &amp; HWID terminal locking
-            </p>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-2.5">
-          {/* Theme Switcher Button */}
-          <button
-            type="button"
-            onClick={toggleTheme}
-            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/80 dark:bg-white/5 text-slate-700 dark:text-indigo-200/80 border border-indigo-200/80 dark:border-white/10 backdrop-blur-md hover:bg-indigo-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all duration-150 shadow-xs"
-            title="Toggle Theme"
-          >
-            {isDark ? (
-              <Sun className="w-3.5 h-3.5 text-amber-500" />
-            ) : (
-              <Moon className="w-3.5 h-3.5 text-indigo-500" />
-            )}
-            <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>
-          </button>
-
-          {/* Refresh Action */}
-          <button
-            type="button"
-            onClick={load}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/80 dark:bg-white/5 text-slate-700 dark:text-indigo-200/80 border border-indigo-200/80 dark:border-white/10 backdrop-blur-md hover:bg-indigo-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all duration-150 shadow-xs"
-          >
-            <RefreshCw className={`w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 ${loading ? 'animate-spin' : ''}`} />
-            {loading ? 'Syncing...' : 'Refresh'}
-          </button>
-
-          {/* Issue New License Action */}
-          <button
-            type="button"
-            onClick={() => setCreate((p) => !p)}
-            className="flex items-center gap-2 px-4.5 py-2 rounded-xl text-xs font-semibold tracking-wide text-white cursor-pointer bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 border border-white/20 shadow-lg shadow-indigo-500/25 transition-all duration-200"
-          >
-            <Plus className="w-4 h-4 stroke-[2.5]" />
-            Issue New License
-          </button>
-        </div>
-      </div>
-
-      {/* ── Create License Drawer (Glassmorphic Card) ────────────────────── */}
+      {/* ── Create license ─────────────────────────────────────────────── */}
       {showCreate && (
-        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-5 transition-all duration-300">
-          <div className="flex items-center justify-between pb-3.5 border-b border-indigo-100 dark:border-white/10">
+        <div className="panel ticks rise p-5 sm:p-6 space-y-6">
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-2.5">
-              <Sparkles className="w-4 h-4 text-indigo-500 dark:text-indigo-400" />
-              <span className="font-bold text-sm text-slate-900 dark:text-white">Issue Enterprise License Key</span>
+              <Sparkles className="w-4 h-4 text-accent-ink" />
+              <span className="text-[14px] font-medium text-fg tracking-tight">Issue a new license key</span>
             </div>
-            <button
-              type="button"
-              onClick={() => setCreate(false)}
-              className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium cursor-pointer bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-indigo-200/60 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white"
-            >
-              <X className="w-3 h-3" /> Close
+            <button type="button" onClick={() => setCreate(false)} className="btn btn-sm btn-icon btn-ghost" aria-label="Close">
+              <X className="w-4 h-4" />
             </button>
           </div>
 
-          <form onSubmit={create} className="space-y-5">
+          <form onSubmit={create} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-1.5">Store / Client Name *</label>
+              <label className="block">
+                <span className="eyebrow block mb-2">Store / client name *</span>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Al-Madina Cafe"
                   value={newName}
                   onChange={(e) => setNewName(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors shadow-xs"
+                  className="input"
                 />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-1.5">WhatsApp Contact</label>
+              </label>
+              <label className="block">
+                <span className="eyebrow block mb-2">WhatsApp contact</span>
                 <input
                   type="text"
                   placeholder="+92 300 1234567"
                   value={newPhone}
                   onChange={(e) => setNewPhone(e.target.value)}
-                  className="w-full px-3.5 py-2 text-xs rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors shadow-xs"
+                  className="input"
                 />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-1.5">Max Terminal Devices</label>
+              </label>
+              <label className="block">
+                <span className="eyebrow block mb-2">Max terminals</span>
                 <input
                   type="number"
                   min={1}
                   max={50}
                   value={newMax}
                   onChange={(e) => setNewMax(parseInt(e.target.value, 10) || 1)}
-                  className="w-full px-3.5 py-2 text-xs font-semibold rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-colors shadow-xs"
+                  className="input num"
                 />
-              </div>
+              </label>
             </div>
 
-            {/* Initial Module Selectors */}
             <div>
-              <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70 mb-2">Initial Module Authority:</label>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+              <span className="eyebrow block mb-2.5">Initial modules</span>
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                 {MODULES.map((m) => {
                   const on = selMods[m.key];
                   const Ic = m.icon;
@@ -793,15 +704,14 @@ export default function LicensesPage() {
                       key={m.key}
                       type="button"
                       onClick={() => setSelMods((p) => ({ ...p, [m.key]: !p[m.key] }))}
-                      className={`flex items-center gap-2.5 p-2.5 rounded-xl text-xs font-medium cursor-pointer text-left transition-all duration-200 border ${
+                      aria-pressed={on}
+                      className={`flex items-center gap-2.5 h-10 px-3 rounded-[9px] text-[12.5px] cursor-pointer text-left transition-colors border ${
                         on
-                          ? 'bg-indigo-50 dark:bg-white/[0.07] border-indigo-200 dark:border-white/15 text-slate-900 dark:text-white shadow-xs'
-                          : 'bg-slate-50/80 dark:bg-white/[0.02] border-slate-200 dark:border-white/5 text-slate-500 dark:text-indigo-200/50 hover:bg-slate-100 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
+                          ? 'bg-surface-2 border-line-strong text-fg'
+                          : 'bg-transparent border-line text-faint hover:text-muted'
                       }`}
                     >
-                      <div className={`p-1.5 rounded-lg ${m.accent.iconBg} ${m.accent.iconText}`}>
-                        <Ic className="w-3.5 h-3.5" />
-                      </div>
+                      <Ic className={`w-3.5 h-3.5 shrink-0 ${on ? 'text-accent-ink' : ''}`} />
                       <span className="truncate">{m.label}</span>
                     </button>
                   );
@@ -809,23 +719,19 @@ export default function LicensesPage() {
               </div>
             </div>
 
-            {/* Business Profile Selection */}
             <div>
-              <div className="flex justify-between items-center mb-2">
-                <label className="block text-xs font-semibold text-slate-700 dark:text-indigo-200/70">
-                  Assigned Business Profiles (Industry Presets):
-                </label>
-                <span className="text-[11px] text-slate-400 dark:text-indigo-200/50">
-                  Single profile locks category creation, multiple profiles gives options
-                </span>
+              <div className="flex justify-between items-baseline gap-3 mb-2.5 flex-wrap">
+                <span className="eyebrow">Business profiles</span>
+                <span className="text-[11.5px] text-faint">One profile locks categories · several give options</span>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                 {BUSINESS_PROFILES.map((bp) => {
                   const on = selProfiles.includes(bp.key);
                   return (
                     <button
                       key={bp.key}
                       type="button"
+                      aria-pressed={on}
                       onClick={() => {
                         setSelProfiles((prev) =>
                           prev.includes(bp.key)
@@ -833,88 +739,76 @@ export default function LicensesPage() {
                             : [...prev, bp.key]
                         );
                       }}
-                      className={`flex flex-col gap-1 p-2.5 rounded-xl text-xs font-medium cursor-pointer text-left transition-all duration-200 border ${
-                        on
-                          ? bp.activeClasses
-                          : 'bg-slate-50/80 dark:bg-white/[0.02] border-slate-200 dark:border-white/5 text-slate-500 dark:text-indigo-200/50 hover:bg-slate-100 dark:hover:bg-white/[0.05] hover:text-slate-900 dark:hover:text-white'
+                      className={`flex flex-col gap-1 p-3 rounded-[9px] cursor-pointer text-left transition-colors border ${
+                        on ? 'bg-surface-2 border-line-strong' : 'bg-transparent border-line hover:border-line-strong'
                       }`}
                     >
-                      <span className="font-semibold text-xs">{bp.shortTag}</span>
-                      <span className="text-[10px] opacity-75 truncate">{bp.label}</span>
+                      <span className="flex items-center gap-2 text-[12.5px] font-medium text-fg">
+                        <span className="dot" style={{ color: on ? bp.color : 'var(--faint)' }} />
+                        {bp.shortTag}
+                      </span>
+                      <span className="text-[11px] text-faint truncate">{bp.label}</span>
                     </button>
                   );
                 })}
               </div>
             </div>
 
-            <div className="flex justify-end gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => setCreate(false)}
-                className="px-4 py-2 rounded-xl text-xs font-medium cursor-pointer bg-transparent text-slate-600 dark:text-indigo-200/60 hover:text-slate-900 dark:hover:text-white transition-colors"
-              >
+            <div className="flex justify-end gap-2 pt-5 border-t border-line">
+              <button type="button" onClick={() => setCreate(false)} className="btn btn-ghost">
                 Cancel
               </button>
-              <button
-                type="submit"
-                disabled={saving || !newName.trim()}
-                className="px-5 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white border border-white/20 shadow-lg shadow-indigo-500/25 disabled:opacity-50 transition-all"
-              >
-                {saving ? 'Creating...' : 'Confirm & Issue Key'}
+              <button type="submit" disabled={saving || !newName.trim()} className="btn btn-primary">
+                {saving ? 'Issuing…' : 'Confirm & issue key'}
               </button>
             </div>
           </form>
         </div>
       )}
 
-      {/* ── Stats & Search Filter Bar (Glassmorphic HUD) ──────────────────── */}
-      <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 flex items-center justify-between flex-wrap gap-4">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-7">
-            <div>
-              <p className="text-2xl font-bold text-slate-900 dark:text-white leading-none m-0">
-                {loading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-white/10 rounded animate-pulse" /> : licenses.length}
-              </p>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Total Clients</p>
+      {/* ── HUD: stats + search + filter ───────────────────────────────── */}
+      <div className="panel rise p-4 sm:p-5 flex items-center justify-between flex-wrap gap-5" style={{ animationDelay: '60ms' }}>
+        <div className="flex items-center gap-6 sm:gap-8">
+          {[
+            { label: 'Total', value: licenses.length, cls: 'text-fg' },
+            { label: 'Active', value: activeN, cls: 'text-ok' },
+            { label: 'Suspended', value: licenses.length - activeN, cls: 'text-bad' },
+          ].map((s, i) => (
+            <div key={s.label} className="flex items-center gap-6 sm:gap-8">
+              {i > 0 && <span className="w-px h-8 bg-line" />}
+              <div>
+                <p className={`num text-[26px] font-medium leading-none m-0 ${s.cls}`}>
+                  {loading ? <span className="skeleton inline-block w-8 h-6 align-middle" /> : s.value}
+                </p>
+                <p className="eyebrow mt-2 m-0 text-faint">{s.label}</p>
+              </div>
             </div>
-            <div className="w-px h-8 bg-indigo-100 dark:bg-white/10" />
-            <div>
-              <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 leading-none m-0">
-                {loading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-white/10 rounded animate-pulse" /> : activeN}
-              </p>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Active Licenses</p>
-            </div>
-            <div className="w-px h-8 bg-indigo-100 dark:bg-white/10" />
-            <div>
-              <p className="text-2xl font-bold text-rose-500 dark:text-pink-400 leading-none m-0">
-                {loading ? <span className="inline-block w-8 h-6 bg-slate-200 dark:bg-white/10 rounded animate-pulse" /> : licenses.length - activeN}
-              </p>
-              <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60 mt-1.5 m-0">Suspended</p>
-            </div>
-          </div>
+          ))}
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 dark:text-indigo-200/40" />
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
+          <div className="relative flex-1 sm:flex-none">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-faint pointer-events-none" />
             <input
               type="text"
-              placeholder="Search store name, license key..."
+              placeholder="Search name or key…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-64 pl-9 pr-3 h-9 text-xs rounded-xl bg-white dark:bg-white/5 border border-indigo-200 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 transition-all shadow-xs"
+              className="input pl-9 sm:w-64"
             />
           </div>
 
-          <div className="flex items-center p-1 rounded-xl bg-indigo-50/80 dark:bg-black/25 border border-indigo-100 dark:border-white/5">
+          <div className="flex p-[3px] rounded-[10px] bg-surface-2 border border-line" role="group" aria-label="Filter">
             {(['all', 'active', 'disabled'] as const).map((f) => (
               <button
                 key={f}
+                type="button"
                 onClick={() => setFilter(f)}
-                className={`px-3.5 py-1 rounded-lg text-xs font-semibold cursor-pointer capitalize transition-all duration-150 ${
+                aria-pressed={filter === f}
+                className={`h-7 px-3 rounded-[7px] text-[12px] cursor-pointer capitalize transition-colors border-0 ${
                   filter === f
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/20'
-                    : 'text-slate-600 dark:text-indigo-200/60 hover:text-slate-900 dark:hover:text-white'
+                    ? 'bg-surface-3 text-fg shadow-[0_0_0_1px_var(--line-strong)]'
+                    : 'bg-transparent text-faint hover:text-muted'
                 }`}
               >
                 {f}
@@ -924,129 +818,90 @@ export default function LicensesPage() {
         </div>
       </div>
 
-      {/* ── Client License Cards Stack (Glassmorphic Containers) ───────────── */}
-      <div className="flex flex-col gap-6">
+      {/* ── License cards ──────────────────────────────────────────────── */}
+      <div className="flex flex-col gap-4">
         {loading ? (
           <>
             <LicenseCardSkeleton />
             <LicenseCardSkeleton />
           </>
         ) : shown.length === 0 ? (
-          <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-12 text-center text-slate-500 dark:text-indigo-200/60 text-sm">
-            No client licenses found matching your search.
+          <div className="panel py-16 text-center">
+            <p className="text-[13px] text-fg m-0">No licenses match</p>
+            <p className="text-[12px] text-muted mt-1 m-0">Try a different search term or filter.</p>
           </div>
-        ) : shown.map((lic) => {
-          const ratio = (lic.activeDevices?.length || 0) / (lic.maxDevices || 1);
+        ) : shown.map((lic, idx) => {
+          const used = lic.activeDevices?.length || 0;
+          const ratio = used / (lic.maxDevices || 1);
           const enCount = MODULES.filter((m) => lic.modules?.[m.key] === true).length;
           const initials = lic.userName.slice(0, 2).toUpperCase();
+          const profiles = lic.businessProfiles || ['standard'];
 
           return (
-            <div
+            <article
               key={lic.id}
-              className={`rounded-2xl backdrop-blur-2xl border transition-all duration-300 overflow-hidden relative shadow-xl dark:shadow-2xl p-6 ${
-                lic.isEnabled
-                  ? 'bg-white/90 dark:bg-white/[0.05] border-indigo-100 dark:border-white/10'
-                  : 'bg-rose-50/50 dark:bg-white/[0.02] border-rose-300 dark:border-rose-500/30'
-              }`}
+              className={`panel ticks rise overflow-hidden ${lic.isEnabled ? '' : 'opacity-80'}`}
+              style={{ animationDelay: `${Math.min(idx, 6) * 50 + 100}ms` }}
             >
-              {/* Soft Ambient Top Accent Glow */}
-              <div
-                className={`absolute top-0 left-0 right-0 h-[2px] ${
-                  lic.isEnabled
-                    ? 'bg-gradient-to-r from-transparent via-indigo-500/60 to-transparent'
-                    : 'bg-gradient-to-r from-transparent via-rose-500/60 to-transparent'
-                }`}
+              {/* Status rail */}
+              <span
+                className={`absolute left-0 top-5 bottom-5 w-[2px] rounded-r-full ${lic.isEnabled ? 'bg-accent' : 'bg-bad'}`}
+                aria-hidden
               />
 
-              {/* ── Top Bar of Card ─────────────────────────────────────── */}
-              <div className="p-5 px-6 border-b border-indigo-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-4">
-                {/* Left: Client Identity */}
-                <div className="flex items-center gap-3.5">
-                  <div
-                    className={`w-11 h-11 rounded-xl shrink-0 flex items-center justify-center font-bold text-sm text-white ${
-                      lic.isEnabled
-                        ? 'bg-gradient-to-tr from-indigo-500 via-purple-600 to-pink-500 shadow-md shadow-indigo-500/25 border border-white/20'
-                        : 'bg-rose-500/20 text-rose-600 dark:text-rose-300 border border-rose-500/30'
-                    }`}
-                  >
+              {/* Header */}
+              <div className="px-5 sm:px-6 py-5 border-b border-line flex items-center justify-between flex-wrap gap-4">
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className="w-10 h-10 rounded-[10px] bg-surface-3 border border-line flex items-center justify-center font-mono text-[12px] font-medium text-fg shrink-0">
                     {initials}
                   </div>
-
-                  <div>
+                  <div className="min-w-0">
                     <div className="flex items-center gap-2.5 flex-wrap">
-                      <h2 className="text-base font-bold text-slate-900 dark:text-white m-0 tracking-tight">
-                        {lic.userName}
-                      </h2>
-                      {/* Status Badge */}
-                      <span
-                        className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${
-                          lic.isEnabled
-                            ? 'bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/25 dark:border-emerald-500/30 shadow-xs'
-                            : 'bg-rose-500/15 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/25 dark:border-rose-500/30'
-                        }`}
-                      >
-                        <span className={`w-1.5 h-1.5 rounded-full ${lic.isEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500'}`} />
-                        {lic.isEnabled ? 'Active License' : 'Suspended'}
+                      <h2 className="text-[16px] font-medium text-fg m-0 tracking-tight truncate">{lic.userName}</h2>
+                      <span className={`chip ${lic.isEnabled ? 'chip-ok' : 'chip-bad'}`}>
+                        <span className={`dot ${lic.isEnabled ? 'dot-live' : ''}`} />
+                        {lic.isEnabled ? 'Active' : 'Suspended'}
                       </span>
                     </div>
-
-                    <div className="flex items-center gap-2.5 mt-1 text-xs text-slate-500 dark:text-indigo-200/60">
-                      <span className="flex items-center gap-1">
-                        <Phone className="w-3 h-3 text-indigo-500 dark:text-indigo-300/60" /> {lic.whatsappNumber || 'No phone'}
+                    <div className="flex items-center gap-2 mt-1.5 text-[12px] text-muted flex-wrap">
+                      <span className="flex items-center gap-1.5">
+                        <Phone className="w-3 h-3 text-faint" /> {lic.whatsappNumber || 'No phone'}
                       </span>
-                      <span className="opacity-40">•</span>
-                      <span className="font-mono text-indigo-700 dark:text-indigo-300 font-semibold bg-indigo-50 dark:bg-indigo-500/15 px-2 py-0.5 rounded-md border border-indigo-200/80 dark:border-indigo-500/25">
-                        {enCount}/10 modules active
+                      <span className="text-faint">·</span>
+                      <span className="font-mono text-[11.5px]">
+                        <span className="text-fg">{enCount}</span>/{MODULES.length} modules
                       </span>
                     </div>
                   </div>
                 </div>
 
-                {/* Right: Key Container + Power Button */}
-                <div className="flex items-center gap-2.5 flex-wrap">
-                  {/* Encrypted License Key Badge */}
-                  <div className="flex items-center gap-2.5 px-3.5 py-1.5 rounded-xl bg-indigo-50/70 dark:bg-black/25 border border-indigo-200/80 dark:border-white/10 shadow-inner">
-                    <KeyRound className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
-                    <span className="font-mono text-xs font-bold text-indigo-900 dark:text-indigo-200 tracking-wider">
-                      {lic.key}
-                    </span>
+                <div className="flex items-center gap-2 flex-wrap">
+                  <div className="flex items-center gap-2 h-[34px] pl-3 pr-1 rounded-[9px] bg-surface-2 border border-line">
+                    <KeyRound className="w-3.5 h-3.5 text-faint shrink-0" />
+                    <span className="font-mono text-[12px] text-fg tracking-wider">{lic.key}</span>
                     <button
                       type="button"
                       onClick={() => copyKey(lic.key)}
-                      className={`p-1 rounded-md cursor-pointer transition-colors border ${
-                        copied === lic.key
-                          ? 'bg-indigo-500/30 text-indigo-700 dark:text-indigo-300 border-indigo-500/40 shadow-xs'
-                          : 'bg-white dark:bg-white/5 text-slate-600 dark:text-indigo-200/60 border-slate-200 dark:border-transparent hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10'
-                      }`}
-                      title="Copy Key"
+                      className="btn btn-sm btn-icon btn-ghost w-7 h-7"
+                      title="Copy key"
+                      aria-label="Copy license key"
                     >
-                      {copied === lic.key ? <Check className="w-3 h-3" /> : <Copy className="w-3 h-3" />}
+                      {copied === lic.key ? <Check className="w-3.5 h-3.5 text-ok" /> : <Copy className="w-3.5 h-3.5" />}
                     </button>
                   </div>
 
-                  {/* Cloud Backups Button */}
-                  <button
-                    type="button"
-                    onClick={() => openBackupsDrawer(lic)}
-                    className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/90 dark:bg-white/5 text-indigo-700 dark:text-indigo-300 border border-indigo-200/80 dark:border-white/10 hover:bg-indigo-50 dark:hover:bg-white/10 transition-all duration-150 shadow-xs group"
-                    title="Manage Cloud Backups for this License"
-                  >
-                    <Archive className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 group-hover:scale-110 transition-transform" />
-                    <span>Backups</span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-500/15 dark:bg-indigo-500/25 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30">
+                  <button type="button" onClick={() => openBackupsDrawer(lic)} className="btn" title="Cloud backups">
+                    <Archive className="w-3.5 h-3.5 text-muted" />
+                    Backups
+                    <span className="num text-[11px] text-muted bg-surface-3 border border-line rounded-[5px] px-1.5 leading-[18px]">
                       {backupCounts[lic.id] || 0}
                     </span>
                   </button>
 
-                  {/* Power Button */}
                   <button
                     type="button"
                     onClick={() => toggleLic(lic.id, lic.isEnabled, lic.userName)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider cursor-pointer transition-all duration-150 border ${
-                      lic.isEnabled
-                        ? 'bg-white dark:bg-white/5 text-slate-700 dark:text-indigo-200/70 border-indigo-200/80 dark:border-white/10 hover:bg-rose-500/15 hover:text-rose-600 dark:hover:text-rose-300 hover:border-rose-500/30'
-                        : 'bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/30'
-                    }`}
+                    className={`btn ${lic.isEnabled ? 'btn-danger' : 'btn-primary'}`}
                   >
                     <Power className="w-3.5 h-3.5" />
                     {lic.isEnabled ? 'Suspend' : 'Activate'}
@@ -1054,112 +909,89 @@ export default function LicensesPage() {
                 </div>
               </div>
 
-              {/* ── Body: Two Panels ─────────────────────────────────────── */}
-              <div className="p-6 grid grid-cols-1 lg:grid-cols-[300px_1fr] gap-6">
-
-                {/* LEFT: Hardware Terminals (Inner Sub-Card) ──────────────── */}
-                <div className="p-4 rounded-xl bg-indigo-50/60 dark:bg-black/20 border border-indigo-100 dark:border-white/5 space-y-3.5">
+              {/* Body */}
+              <div className="p-5 sm:p-6 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-6">
+                {/* Terminals */}
+                <div className="well p-4 space-y-4 self-start">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Cpu className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                      <span className="text-xs font-bold text-slate-900 dark:text-white">Hardware Terminals</span>
-                    </div>
-                    <span
-                      className={`font-mono text-[11px] font-semibold px-2 py-0.5 rounded-full border ${
-                        ratio >= 1
-                          ? 'bg-rose-500/15 dark:bg-rose-500/20 text-rose-700 dark:text-rose-300 border-rose-500/25 dark:border-rose-500/30'
-                          : 'bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border-indigo-500/25 dark:border-indigo-500/30'
-                      }`}
-                    >
-                      {lic.activeDevices?.length || 0} / {lic.maxDevices} In Use
+                    <span className="flex items-center gap-2 text-[12.5px] font-medium text-fg">
+                      <Cpu className="w-3.5 h-3.5 text-accent-ink" /> Terminals
+                    </span>
+                    <span className={`num text-[12px] ${ratio >= 1 ? 'text-bad' : 'text-muted'}`}>
+                      {used}<span className="text-faint">/{lic.maxDevices}</span>
                     </span>
                   </div>
 
-                  {/* Progress Bar with Glowing Gradient (Guideline 6) */}
-                  <div className="h-1.5 rounded-full bg-slate-200 dark:bg-white/10 overflow-hidden">
-                    <div
-                      className={`h-full rounded-full transition-all duration-300 ${
-                        ratio >= 1
-                          ? 'w-full bg-rose-500 shadow-[0_0_10px_rgba(244,63,94,0.6)]'
-                          : ratio >= 0.75
-                          ? 'w-3/4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]'
-                          : ratio >= 0.5
-                          ? 'w-1/2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]'
-                          : ratio > 0
-                          ? 'w-1/4 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 shadow-[0_0_12px_rgba(99,102,241,0.5)]'
-                          : 'w-0'
-                      }`}
-                    />
+                  {/* Segmented capacity meter */}
+                  <div className="flex gap-1" aria-label={`${used} of ${lic.maxDevices} terminals used`}>
+                    {Array.from({ length: Math.min(lic.maxDevices || 1, 20) }).map((_, i) => (
+                      <span
+                        key={i}
+                        className={`h-1.5 flex-1 rounded-full ${
+                          i < used ? (ratio >= 1 ? 'bg-bad' : 'bg-accent') : 'bg-surface-3'
+                        }`}
+                      />
+                    ))}
                   </div>
 
-                  <p className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/50 m-0">
-                    Linked HWID Machines:
-                  </p>
-
-                  {!lic.activeDevices?.length ? (
-                    <div className="p-3 rounded-xl text-center bg-white/60 dark:bg-white/[0.02] border border-dashed border-indigo-200/80 dark:border-white/10 text-xs text-slate-400 dark:text-indigo-200/40 italic">
-                      No machines registered yet.
-                    </div>
-                  ) : lic.activeDevices.map((dev) => (
-                    <div
-                      key={dev.hwid}
-                      className="flex items-center justify-between bg-white dark:bg-white/[0.03] border border-indigo-100 dark:border-white/5 rounded-xl p-4 hover:bg-indigo-50/70 dark:hover:bg-white/[0.07] transition-all shadow-xs"
-                    >
-                      <div className="flex items-center gap-2 min-w-0">
-                        <div className="p-1.5 rounded-lg bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-300 shrink-0">
-                          <Laptop className="w-3.5 h-3.5" />
-                        </div>
-                        <div className="min-w-0">
-                          <p className="text-xs font-semibold text-slate-900 dark:text-white m-0 truncate max-w-[130px]">
-                            {dev.deviceName || 'Cashier PC'}
-                          </p>
-                          <p className="font-mono text-[10px] text-slate-400 dark:text-indigo-200/40 m-0 truncate max-w-[130px]">
-                            {dev.hwid.slice(0, 14)}...
-                          </p>
-                        </div>
+                  <div className="space-y-1.5">
+                    {!lic.activeDevices?.length ? (
+                      <div className="py-4 text-center rounded-[8px] border border-dashed border-line text-[12px] text-faint">
+                        No machines linked yet
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => removeDevice(lic.id, dev.hwid, dev.deviceName)}
-                        className="p-1.5 rounded-md cursor-pointer text-slate-400 dark:text-indigo-200/40 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
-                        title="Unlink Machine"
+                    ) : lic.activeDevices.map((dev) => (
+                      <div
+                        key={dev.hwid}
+                        className="group flex items-center justify-between gap-2 px-2.5 py-2 rounded-[8px] bg-surface border border-line"
                       >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
-                  ))}
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <Laptop className="w-3.5 h-3.5 text-faint shrink-0" />
+                          <div className="min-w-0">
+                            <p className="text-[12px] font-medium text-fg m-0 truncate">{dev.deviceName || 'Cashier PC'}</p>
+                            <p className="font-mono text-[10.5px] text-faint m-0 truncate">{dev.hwid.slice(0, 16)}…</p>
+                          </div>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => removeDevice(lic.id, dev.hwid, dev.deviceName)}
+                          className="btn btn-sm btn-icon btn-ghost btn-danger w-7 h-7 opacity-50 group-hover:opacity-100"
+                          title="Unlink machine"
+                          aria-label="Unlink machine"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
-                {/* RIGHT: Live Module Switchboard & Business Profile Switchboard */}
-                <div className="space-y-4">
-                  {/* Live Business Profile Selector */}
+                <div className="space-y-6 min-w-0">
+                  {/* Business profiles */}
                   <div>
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <Tag className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                        <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider m-0">
-                          Business Profiles / Industry Types
-                        </h3>
-                      </div>
-                      <span className="text-[11px] text-slate-400 dark:text-indigo-200/50">
-                        {(lic.businessProfiles || ['standard']).length === 1 ? 'Single Profile (Auto-Locked in Category)' : 'Multi-Profile (Filtered in Category)'}
+                    <div className="flex items-baseline justify-between gap-3 mb-3 flex-wrap">
+                      <span className="eyebrow flex items-center gap-2">
+                        <Tag className="w-3 h-3" /> Business profiles
+                      </span>
+                      <span className="text-[11.5px] text-faint">
+                        {profiles.length === 1 ? 'Single · locked in category' : 'Multi · filtered in category'}
                       </span>
                     </div>
                     <div className="flex flex-wrap gap-1.5">
                       {BUSINESS_PROFILES.map((bp) => {
-                        const active = (lic.businessProfiles || ['standard']).includes(bp.key);
+                        const active = profiles.includes(bp.key);
                         return (
                           <button
                             key={bp.key}
                             type="button"
                             onClick={() => toggleProfile(lic, bp.key)}
-                            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer transition-all duration-200 border ${
+                            aria-pressed={active}
+                            className={`flex items-center gap-2 h-7 px-2.5 rounded-[7px] text-[12px] cursor-pointer transition-colors border ${
                               active
-                                ? bp.activeClasses
-                                : 'bg-slate-100/80 dark:bg-black/20 border-slate-200 dark:border-white/5 text-slate-600 dark:text-indigo-200/50 hover:bg-slate-200 dark:hover:bg-black/30 hover:text-slate-900 dark:hover:text-white'
+                                ? 'bg-surface-3 border-line-strong text-fg'
+                                : 'bg-transparent border-line text-faint hover:text-muted hover:border-line-strong'
                             }`}
                           >
-                            <span className={`w-1.5 h-1.5 rounded-full ${active ? bp.dotColor : 'bg-slate-400 dark:bg-indigo-200/30'}`} />
+                            <span className="dot" style={{ color: active ? bp.color : 'var(--faint)' }} />
                             {bp.shortTag}
                           </button>
                         );
@@ -1167,231 +999,148 @@ export default function LicensesPage() {
                     </div>
                   </div>
 
-                  {/* Live Module Switchboard (Inner Sub-Cards with Pastel Icon Blocks) */}
+                  {/* Module switchboard */}
                   <div>
-                    <div className="flex items-center justify-between mb-2.5">
-                      <div className="flex items-center gap-2">
-                        <Sliders className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                        <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider m-0">
-                          Live Module Switchboard
-                        </h3>
-                      </div>
-                      <div className="flex gap-2">
-                        <button
-                          type="button"
-                          onClick={() => bulkMod(lic, true)}
-                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 dark:border-indigo-500/30 hover:bg-indigo-500/25 transition-colors"
-                        >
-                          Enable All
+                    <div className="flex items-center justify-between gap-3 mb-3 flex-wrap">
+                      <span className="eyebrow flex items-center gap-2">
+                        <Sliders className="w-3 h-3" /> Module switchboard
+                      </span>
+                      <div className="flex gap-1">
+                        <button type="button" onClick={() => bulkMod(lic, true)} className="btn btn-sm btn-ghost">
+                          Enable all
                         </button>
-                        <button
-                          type="button"
-                          onClick={() => bulkMod(lic, false)}
-                          className="px-2.5 py-1 rounded-lg text-[11px] font-semibold cursor-pointer bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-indigo-200/60 border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-colors"
-                        >
-                          Disable All
+                        <button type="button" onClick={() => bulkMod(lic, false)} className="btn btn-sm btn-ghost">
+                          Disable all
                         </button>
                       </div>
                     </div>
 
-                    {/* 10 Module Grid (Matching Image 2 ShikshaQ Style) */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-2">
                       {MODULES.map((m) => {
                         const on = lic.modules?.[m.key] === true;
                         const Ic = m.icon;
                         return (
-                          <div
+                          <button
                             key={m.key}
+                            type="button"
+                            role="switch"
+                            aria-checked={on}
                             onClick={() => toggleMod(lic, m.key)}
-                            className={`flex items-center justify-between bg-white dark:bg-white/[0.03] border border-indigo-100 dark:border-white/5 rounded-xl p-4 hover:bg-indigo-50/70 dark:hover:bg-white/[0.07] transition-all cursor-pointer select-none ${
+                            className={`flex items-center justify-between gap-3 px-3 py-2.5 rounded-[10px] cursor-pointer select-none text-left transition-colors border ${
                               on
-                                ? 'bg-indigo-50/60 dark:bg-white/[0.07] border-indigo-200 dark:border-white/15 shadow-xs'
-                                : 'opacity-65 hover:opacity-100'
+                                ? 'bg-surface-2 border-line-strong'
+                                : 'bg-transparent border-line hover:border-line-strong'
                             }`}
                           >
                             <div className="flex items-center gap-3 min-w-0">
-                              {/* Saturated Pastel Gradient Icon Block (Image 2) */}
-                              <div
-                                className={`w-9 h-9 rounded-xl shrink-0 flex items-center justify-center transition-colors ${m.accent.iconBg} ${m.accent.iconText}`}
-                              >
-                                <Ic className="w-4 h-4" />
-                              </div>
-
+                              <Ic className={`w-4 h-4 shrink-0 transition-colors ${on ? 'text-accent-ink' : 'text-faint'}`} />
                               <div className="min-w-0">
-                                <p
-                                  className={`text-xs font-semibold m-0 truncate ${
-                                    on ? 'text-slate-900 dark:text-white' : 'text-slate-400 dark:text-indigo-200/40 line-through'
-                                  }`}
-                                >
+                                <p className={`text-[12.5px] font-medium m-0 truncate ${on ? 'text-fg' : 'text-muted'}`}>
                                   {m.label}
                                 </p>
-                                <p className="text-[11px] text-slate-500 dark:text-indigo-200/50 m-0 truncate">
-                                  {m.desc}
-                                </p>
+                                <p className="text-[11px] text-faint m-0 truncate">{m.desc}</p>
                               </div>
                             </div>
-
-                            {/* Glowing Indigo Toggle Switch (Image 2 Guideline 4) */}
-                            <div className="pl-1.5 shrink-0">
-                              <div
-                                className={`w-8 h-4.5 rounded-full p-0.5 flex items-center transition-colors duration-200 ${
-                                  on
-                                    ? 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]'
-                                    : 'bg-slate-300 dark:bg-white/10'
-                                }`}
-                              >
-                                <div
-                                  className={`w-3.5 h-3.5 rounded-full bg-white shadow-xs transition-transform duration-200 ${
-                                    on ? 'translate-x-3.5' : 'translate-x-0 bg-white dark:bg-indigo-200/40'
-                                  }`}
-                                />
-                              </div>
-                            </div>
-                          </div>
+                            <span className="switch" data-on={on} aria-hidden />
+                          </button>
                         );
                       })}
                     </div>
                   </div>
-
                 </div>
               </div>
-            </div>
+            </article>
           );
         })}
       </div>
 
-      {/* ── Cloud Backups Modal / Vault ──────────────────────────────────── */}
+      {/* ── Cloud backups vault ────────────────────────────────────────── */}
       {selectedBackupLic && (
-        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 sm:p-6 overflow-y-auto animate-fadeIn">
-          <div className="bg-white dark:bg-[#0b101b] border border-indigo-200 dark:border-white/10 rounded-2xl shadow-2xl max-w-4xl w-full overflow-hidden flex flex-col max-h-[92vh] transition-all">
-            
-            {/* Modal Header */}
-            <div className="p-5 px-6 border-b border-indigo-100 dark:border-white/10 flex items-center justify-between flex-wrap gap-4 bg-gradient-to-r from-indigo-50/50 via-white to-purple-50/50 dark:from-white/[0.03] dark:via-transparent dark:to-white/[0.02]">
-              <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center bg-gradient-to-tr from-indigo-500 to-purple-600 text-white shadow-md shadow-indigo-500/25 border border-white/20">
-                  <Archive className="w-5 h-5" />
-                </div>
-                <div>
-                  <div className="flex items-center gap-2.5 flex-wrap">
-                    <h2 className="text-lg font-bold text-slate-900 dark:text-white m-0 tracking-tight">
-                      Cloud Vault Backups
-                    </h2>
-                    <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/15 dark:bg-indigo-500/25 text-indigo-700 dark:text-indigo-300 border border-indigo-500/30">
-                      {backupsList.length} {backupsList.length === 1 ? 'Snapshot' : 'Snapshots'}
-                    </span>
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-                      {formatBytes(backupsList.reduce((acc, b) => acc + (b.fileSize || 0), 0))} Used
-                    </span>
-                  </div>
-                  <p className="text-xs text-slate-500 dark:text-indigo-200/60 mt-0.5 m-0 flex items-center gap-1.5 flex-wrap">
-                    <span className="font-semibold text-slate-700 dark:text-white">{selectedBackupLic.userName}</span>
-                    <span className="opacity-40">•</span>
-                    <span className="font-mono text-indigo-600 dark:text-indigo-400">{selectedBackupLic.key}</span>
-                  </p>
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6"
+          onClick={(e) => { if (e.target === e.currentTarget) setSelectedBackupLic(null); }}
+        >
+          <div className="panel rise w-full max-w-3xl overflow-hidden flex flex-col max-h-[92vh]" role="dialog" aria-modal="true" aria-label="Cloud backups">
+            {/* Header */}
+            <div className="px-5 sm:px-6 py-5 border-b border-line flex items-start justify-between gap-4">
+              <div className="min-w-0">
+                <span className="eyebrow"><span className="text-accent-ink">Vault</span><span className="mx-2 text-faint">/</span>{selectedBackupLic.userName}</span>
+                <h2 className="text-[20px] font-medium text-fg m-0 mt-2 tracking-tight">Cloud backups</h2>
+                <div className="flex items-center gap-2 mt-2.5 flex-wrap">
+                  <span className="chip">{backupsList.length} {backupsList.length === 1 ? 'snapshot' : 'snapshots'}</span>
+                  <span className="chip">{formatBytes(backupsList.reduce((acc, b) => acc + (b.fileSize || 0), 0))} used</span>
+                  <span className="font-mono text-[11.5px] text-faint">{selectedBackupLic.key}</span>
                 </div>
               </div>
-
-              <button
-                type="button"
-                onClick={() => setSelectedBackupLic(null)}
-                className="p-2 rounded-xl text-slate-400 hover:text-slate-700 dark:text-indigo-200/50 dark:hover:text-white bg-slate-100 dark:bg-white/5 hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
-                title="Close Vault"
-              >
+              <button type="button" onClick={() => setSelectedBackupLic(null)} className="btn btn-icon btn-ghost" aria-label="Close vault">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Modal Scrollable Body */}
-            <div className="p-6 overflow-y-auto space-y-6 flex-1">
-              
-              {/* Manual Upload Card */}
-              <div className="p-4.5 rounded-xl bg-indigo-50/50 dark:bg-white/[0.03] border border-indigo-100 dark:border-white/10 space-y-3.5">
-                <div className="flex items-center justify-between flex-wrap gap-2">
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white">
-                    <UploadCloud className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-                    <span>Upload Omnipos System Backup Archive</span>
-                  </div>
-                  <span className="text-[11px] text-slate-500 dark:text-indigo-200/50">
-                    Accepts <code className="text-indigo-600 dark:text-indigo-300">.zip</code> (Database + Images) or <code className="text-indigo-600 dark:text-indigo-300">.db</code>
+            {/* Body */}
+            <div className="p-5 sm:p-6 overflow-y-auto space-y-6 flex-1">
+              {/* Upload */}
+              <form onSubmit={handleUploadBackup} className="well p-4 space-y-4">
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <span className="flex items-center gap-2 text-[12.5px] font-medium text-fg">
+                    <UploadCloud className="w-4 h-4 text-accent-ink" /> Upload backup archive
                   </span>
+                  <span className="font-mono text-[11px] text-faint">.zip · .db</span>
                 </div>
 
-                <form onSubmit={handleUploadBackup} className="space-y-3">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[11px] font-medium text-slate-600 dark:text-indigo-200/70">
-                        Choose Backup File:
-                      </label>
-                      <input
-                        type="file"
-                        accept=".zip,.db,.sqlite,.dbbackup"
-                        onChange={(e) => setBackupFile(e.target.files?.[0] || null)}
-                        disabled={uploadingBackup}
-                        className="text-xs file:mr-3 file:py-1.5 file:px-3.5 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500 cursor-pointer text-slate-600 dark:text-indigo-200/80"
-                      />
-                    </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <label className="flex items-center gap-3 h-9 px-3 rounded-[9px] border border-dashed border-line-strong bg-surface cursor-pointer hover:border-faint transition-colors min-w-0">
+                    <FileArchive className="w-4 h-4 text-faint shrink-0" />
+                    <span className={`text-[12.5px] truncate ${backupFile ? 'text-fg' : 'text-faint'}`}>
+                      {backupFile ? backupFile.name : 'Choose file…'}
+                    </span>
+                    <input
+                      type="file"
+                      accept=".zip,.db,.sqlite,.dbbackup"
+                      onChange={(e) => setBackupFile(e.target.files?.[0] || null)}
+                      disabled={uploadingBackup}
+                      className="sr-only"
+                    />
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Note (optional) — e.g. day close"
+                    value={uploadNotes}
+                    onChange={(e) => setUploadNotes(e.target.value)}
+                    disabled={uploadingBackup}
+                    className="input bg-surface"
+                  />
+                </div>
 
-                    <div className="flex flex-col gap-1">
-                      <label className="text-[11px] font-medium text-slate-600 dark:text-indigo-200/70">
-                        Upload Remarks / Note (Optional):
-                      </label>
-                      <input
-                        type="text"
-                        placeholder="e.g. Day Close, WhatsApp received snapshot..."
-                        value={uploadNotes}
-                        onChange={(e) => setUploadNotes(e.target.value)}
-                        disabled={uploadingBackup}
-                        className="h-9 px-3 text-xs rounded-xl bg-white dark:bg-white/5 border border-indigo-200/80 dark:border-white/10 text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-indigo-200/40 focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20"
-                      />
-                    </div>
-                  </div>
+                <div className="flex justify-end">
+                  <button type="submit" disabled={!backupFile || uploadingBackup} className="btn btn-primary">
+                    <UploadCloud className={`w-3.5 h-3.5 ${uploadingBackup ? 'animate-bounce' : ''}`} />
+                    {uploadingBackup ? 'Uploading…' : 'Save to vault'}
+                  </button>
+                </div>
+              </form>
 
-                  <div className="flex items-center justify-end">
-                    <button
-                      type="submit"
-                      disabled={!backupFile || uploadingBackup}
-                      className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold cursor-pointer transition-all ${
-                        !backupFile || uploadingBackup
-                          ? 'bg-slate-200 dark:bg-white/10 text-slate-400 dark:text-indigo-200/40 cursor-not-allowed'
-                          : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-md shadow-indigo-500/20'
-                      }`}
-                    >
-                      <UploadCloud className={`w-3.5 h-3.5 ${uploadingBackup ? 'animate-bounce' : ''}`} />
-                      {uploadingBackup ? 'Uploading to Vault...' : 'Save to Cloud Vault'}
-                    </button>
-                  </div>
-                </form>
-              </div>
-
-              {/* Backups List */}
+              {/* List */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-900 dark:text-white">
-                    <HardDrive className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                    <span>Archived Snapshots History</span>
-                  </div>
-                  <span className="text-[11px] text-slate-500 dark:text-indigo-200/50">
-                    Auto-purges older than 3 snapshots
-                  </span>
+                  <span className="eyebrow flex items-center gap-2"><HardDrive className="w-3 h-3" /> Snapshot history</span>
+                  <span className="text-[11.5px] text-faint">Keeps latest 3</span>
                 </div>
 
                 {loadingBackups ? (
-                  <div className="p-8 text-center text-xs text-slate-500 dark:text-indigo-200/60 animate-pulse flex items-center justify-center gap-2">
-                    <RefreshCw className="w-4 h-4 animate-spin text-indigo-500" />
-                    <span>Loading store vault records...</span>
+                  <div className="py-10 text-center text-[12px] text-muted flex items-center justify-center gap-2">
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" /> Loading vault…
                   </div>
                 ) : backupsList.length === 0 ? (
-                  <div className="p-8 rounded-xl border border-dashed border-indigo-200 dark:border-white/10 text-center space-y-2">
-                    <Database className="w-8 h-8 text-indigo-400 mx-auto opacity-60" />
-                    <p className="text-xs font-semibold text-slate-700 dark:text-white m-0">
-                      No cloud backups found for this store.
-                    </p>
-                    <p className="text-[11px] text-slate-500 dark:text-indigo-200/60 m-0">
-                      When the cashier or POS counter runs Day Closing or syncs system backup, it will be securely vaulted here.
+                  <div className="py-10 px-6 rounded-[10px] border border-dashed border-line text-center">
+                    <Database className="w-6 h-6 text-faint mx-auto mb-3" />
+                    <p className="text-[13px] text-fg m-0">No backups yet</p>
+                    <p className="text-[12px] text-muted mt-1 m-0 max-w-sm mx-auto">
+                      When a counter runs day closing or syncs a system backup, it is vaulted here.
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-2.5">
+                  <div className="rounded-[10px] border border-line divide-y divide-line overflow-hidden">
                     {backupsList.map((bk) => {
                       const isZip = bk.format === 'zip' || bk.originalName.toLowerCase().endsWith('.zip');
                       const formattedDate = new Date(bk.createdAt).toLocaleString('en-US', {
@@ -1403,79 +1152,37 @@ export default function LicensesPage() {
                       });
 
                       return (
-                        <div
-                          key={bk.id}
-                          className="p-4 rounded-xl bg-white/80 dark:bg-white/[0.04] border border-indigo-100 dark:border-white/10 hover:border-indigo-300 dark:hover:border-white/20 transition-all flex items-center justify-between flex-wrap gap-4 shadow-xs"
-                        >
-                          {/* File Details */}
+                        <div key={bk.id} className="px-4 py-3.5 flex items-center justify-between gap-4 flex-wrap hover:bg-surface-2 transition-colors">
                           <div className="flex items-center gap-3 min-w-0">
-                            <div
-                              className={`w-10 h-10 rounded-xl shrink-0 flex items-center justify-center font-bold ${
-                                isZip
-                                  ? 'bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30'
-                                  : 'bg-sky-500/15 dark:bg-sky-500/20 text-sky-700 dark:text-sky-300 border border-sky-500/30'
-                              }`}
-                            >
-                              {isZip ? <FileArchive className="w-5 h-5" /> : <Database className="w-5 h-5" />}
+                            <div className="w-9 h-9 rounded-[9px] bg-surface-2 border border-line flex items-center justify-center shrink-0">
+                              {isZip ? <FileArchive className="w-4 h-4 text-accent-ink" /> : <Database className="w-4 h-4 text-muted" />}
                             </div>
-
                             <div className="min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="font-mono text-xs font-bold text-slate-900 dark:text-white truncate max-w-[280px] sm:max-w-md">
-                                  {bk.originalName}
-                                </span>
-                                <span
-                                  className={`px-2 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider border ${
-                                    isZip
-                                      ? 'bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border-emerald-500/20'
-                                      : 'bg-sky-500/10 text-sky-700 dark:text-sky-300 border-sky-500/20'
-                                  }`}
-                                >
-                                  {isZip ? 'Full ZIP (DB + Images)' : 'Database (.DB)'}
-                                </span>
+                                <span className="font-mono text-[12px] text-fg truncate max-w-[260px] sm:max-w-sm">{bk.originalName}</span>
+                                <span className="chip">{isZip ? 'zip · db+img' : 'db'}</span>
                               </div>
-
-                              <div className="flex items-center gap-2.5 mt-1 text-[11px] text-slate-500 dark:text-indigo-200/60 flex-wrap">
-                                <span className="font-semibold text-indigo-600 dark:text-indigo-400">
-                                  {formatBytes(bk.fileSize)}
-                                </span>
-                                <span className="opacity-40">•</span>
-                                <span className="flex items-center gap-1">
-                                  <Clock className="w-3 h-3 text-slate-400" />
-                                  {formattedDate}
-                                </span>
-                                <span className="opacity-40">•</span>
-                                <span className="flex items-center gap-1">
-                                  <Laptop className="w-3 h-3 text-slate-400" />
-                                  {bk.deviceName || 'Counter Terminal'}
-                                </span>
+                              <div className="flex items-center gap-2 mt-1 text-[11.5px] text-muted flex-wrap">
+                                <span className="num text-fg">{formatBytes(bk.fileSize)}</span>
+                                <span className="text-faint">·</span>
+                                <span className="flex items-center gap-1"><Clock className="w-3 h-3 text-faint" />{formattedDate}</span>
+                                <span className="text-faint">·</span>
+                                <span className="flex items-center gap-1"><Laptop className="w-3 h-3 text-faint" />{bk.deviceName || 'Counter terminal'}</span>
                               </div>
-
-                              {bk.notes && (
-                                <p className="text-[11px] text-slate-600 dark:text-indigo-200/80 mt-1 italic m-0">
-                                  "{bk.notes}"
-                                </p>
-                              )}
+                              {bk.notes && <p className="text-[11.5px] text-muted mt-1 m-0 italic">“{bk.notes}”</p>}
                             </div>
                           </div>
 
-                          {/* Action Buttons */}
-                          <div className="flex items-center gap-2 shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => downloadBackup(bk)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer transition-all shadow-xs shadow-indigo-500/20"
-                              title="Download Backup File"
-                            >
-                              <Download className="w-3.5 h-3.5" />
-                              <span>Download</span>
+                          <div className="flex items-center gap-1.5 shrink-0">
+                            <button type="button" onClick={() => downloadBackup(bk)} className="btn btn-sm" title="Download backup">
+                              <Download className="w-3.5 h-3.5" /> Download
                             </button>
-
                             <button
                               type="button"
                               onClick={() => deleteBackup(bk.id, bk.originalName)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 dark:text-indigo-200/50 dark:hover:text-rose-400 bg-slate-100 dark:bg-white/5 hover:bg-rose-50 dark:hover:bg-rose-500/20 border border-slate-200 dark:border-white/10 transition-colors cursor-pointer"
-                              title="Delete Backup"
+                              className="btn btn-sm btn-icon btn-ghost btn-danger w-7 h-7"
+                              title="Delete backup"
+                              aria-label="Delete backup"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -1486,29 +1193,20 @@ export default function LicensesPage() {
                   </div>
                 )}
               </div>
-
             </div>
 
-            {/* Modal Footer */}
-            <div className="p-4 px-6 border-t border-indigo-100 dark:border-white/10 bg-slate-50/80 dark:bg-white/[0.02] flex items-center justify-between flex-wrap gap-3">
-              <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-indigo-200/60">
-                <ShieldCheck className="w-4 h-4 text-emerald-500" />
-                <span>Encrypted storage isolation for license key <strong>{selectedBackupLic.key}</strong></span>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setSelectedBackupLic(null)}
-                className="px-4 py-1.5 rounded-xl text-xs font-semibold cursor-pointer bg-white dark:bg-white/10 text-slate-700 dark:text-white border border-slate-200 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/15 transition-all"
-              >
+            {/* Footer */}
+            <div className="px-5 sm:px-6 py-3.5 border-t border-line flex items-center justify-between gap-3 flex-wrap">
+              <span className="flex items-center gap-2 text-[11.5px] text-muted">
+                <ShieldCheck className="w-3.5 h-3.5 text-ok" /> Isolated, encrypted storage per license
+              </span>
+              <button type="button" onClick={() => setSelectedBackupLic(null)} className="btn btn-sm">
                 Close
               </button>
             </div>
-
           </div>
         </div>
       )}
-
-    </div>
+    </PageShell>
   );
 }
