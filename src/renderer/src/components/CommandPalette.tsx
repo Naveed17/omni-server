@@ -43,7 +43,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       label: s.name,
       hint: s.key,
       icon: Store,
-      run: go(`/licenses?q=${encodeURIComponent(s.key)}`),
+      run: go(`/licenses/${s.id}`),
     }));
     const needle = q.trim().toLowerCase();
     const all = [...stores, ...commands];

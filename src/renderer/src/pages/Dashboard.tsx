@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import type { AttentionKind, ActivityKind } from '@common/overview';
 import { useOverview, formatBytes, timeAgo } from '../lib/api';
-import { BUSINESS_PROFILES } from './LicensesPage';
+import { BUSINESS_PROFILES } from '../lib/licenses';
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 
@@ -254,7 +254,7 @@ export default function Dashboard() {
                       return (
                         <li key={`${a.licenseId}-${a.kind}-${i}`}>
                           <Link
-                            to={`/licenses?q=${encodeURIComponent(a.key)}`}
+                            to={`/licenses/${a.licenseId}`}
                             className="group grid grid-cols-[28px_minmax(0,1fr)_auto_16px] items-center gap-3.5 px-5 py-3 no-underline hover:bg-surface-2 transition-colors"
                           >
                             <span className={`w-7 h-7 rounded-[8px] bg-surface-2 border border-line flex items-center justify-center ${meta.tone}`}>

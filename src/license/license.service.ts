@@ -377,7 +377,13 @@ export class LicenseService {
       isEnabled: true,
       maxDevices: body.maxDevices || 4,
       licenseType: body.licenseType || 'annual',
-      expiresAt: body.expiresAt ? new Date(body.expiresAt) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      // lifetime never expires; otherwise honour an explicit date or default by plan length
+      expiresAt:
+        body.licenseType === 'lifetime'
+          ? null
+          : body.expiresAt
+            ? new Date(body.expiresAt)
+            : new Date(Date.now() + (body.licenseType === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000),
       modules: normalizeModules(body.modules),
       schemaId: schemaIdForLicenseKey(key),
       adminUsername,
