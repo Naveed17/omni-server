@@ -3,10 +3,7 @@ import {
   Server,
   Database,
   ShieldCheck,
-  Cpu,
   RefreshCw,
-  CheckCircle2,
-  Lock,
   Radio,
   Globe,
   Copy,
@@ -14,6 +11,7 @@ import {
   Zap,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { PageShell, PageHeader, LiveChip, StatTile, SectionTitle } from '../components/ui';
 
 export default function SettingsPage() {
   const [pinging, setPinging] = useState(false);
@@ -69,202 +67,108 @@ export default function SettingsPage() {
     { method: 'GET', path: '/api/health', desc: 'Provider health check & latency telemetry ping' },
   ];
 
+  const params: { k: string; v: React.ReactNode }[] = [
+    { k: 'Listening port', v: <span className="num text-fg">4000</span> },
+    { k: 'Host environment', v: 'Vercel serverless · local NestJS' },
+    {
+      k: 'CORS',
+      v: (
+        <span className="text-ok flex items-center gap-1.5">
+          <span className="dot" /> Enabled · universal POS clients
+        </span>
+      ),
+    },
+    { k: 'Offline grace period', v: '30-day token expiry' },
+    { k: 'Connection pool', v: 'Neon serverless PgBouncer' },
+  ];
+
   return (
-    <div className="p-8 space-y-8 flex-1 overflow-y-auto max-h-screen max-w-[1400px] mx-auto w-full">
-      {/* Header */}
-      <div className="flex items-center justify-between flex-wrap gap-4">
-        <div>
-          <div className="flex items-center gap-2.5">
-            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">
-              Server &amp; Cloud Gateway Config
-            </h1>
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-semibold uppercase tracking-wider bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300 border border-indigo-500/25 dark:border-indigo-500/30 flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              NodeJS / NestJS 11 Engine
-            </span>
-          </div>
-          <p className="text-sm text-slate-500 dark:text-indigo-200/60 mt-1 m-0">
-            OmniPos central cloud authority, database connectivity, zero-bandwidth verification &amp; API parameters
-          </p>
-        </div>
+    <PageShell>
+      <PageHeader
+        index="03"
+        section="Server"
+        status={<LiveChip label="NestJS 11" tone="accent" />}
+        title="Server & gateway"
+        subtitle="Central cloud authority, database connectivity, zero-bandwidth verification and public API surface."
+        actions={
+          <button type="button" onClick={testConnection} disabled={pinging} className="btn">
+            <RefreshCw className={`w-3.5 h-3.5 text-muted ${pinging ? 'animate-spin' : ''}`} />
+            {pinging ? 'Pinging' : 'Ping health'}
+          </button>
+        }
+      />
 
-        <button
-          type="button"
-          onClick={testConnection}
-          disabled={pinging}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-semibold cursor-pointer bg-white/80 dark:bg-white/5 text-slate-700 dark:text-indigo-200/80 border border-indigo-200/80 dark:border-white/10 backdrop-blur-md hover:bg-indigo-50 dark:hover:bg-white/10 hover:text-slate-900 dark:hover:text-white transition-all duration-150 shadow-xs"
-        >
-          <RefreshCw className={`w-3.5 h-3.5 text-indigo-500 dark:text-indigo-400 ${pinging ? 'animate-spin' : ''}`} />
-          {pinging ? 'Pinging API...' : 'Ping Live Health'}
-        </button>
-      </div>
-
-      {/* System Status Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-3 relative overflow-hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60">
-              API Gate Status
-            </span>
-            <div className="p-2.5 rounded-xl bg-emerald-500/15 dark:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">
-              <Server className="w-4 h-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">
+      <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        <StatTile
+          label="API gateway"
+          icon={Server}
+          value={
+            <span className={healthStatus.online ? 'text-fg' : 'text-bad'}>
               {healthStatus.online ? 'Online' : 'Degraded'}
-            </p>
-            <p className="text-xs text-emerald-600 dark:text-emerald-400 mt-1 font-semibold flex items-center gap-1.5">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              {healthStatus.responseTime ? `${healthStatus.responseTime}ms Latency` : 'Port 4000 Active'}
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-3 relative overflow-hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60">
-              Database Engine
             </span>
-            <div className="p-2.5 rounded-xl bg-indigo-500/15 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400">
-              <Database className="w-4 h-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">
-              Neon Cloud
-            </p>
-            <p className="text-xs text-indigo-600 dark:text-indigo-300 mt-1 font-semibold">
-              PostgreSQL 16 SSL Pool
-            </p>
-          </div>
-        </div>
-
-        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-3 relative overflow-hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60">
-              Security Protocol
+          }
+          meta={
+            <span className="flex items-center gap-1.5">
+              <span className={`dot ${healthStatus.online ? 'text-ok dot-live' : 'text-bad'}`} />
+              {healthStatus.responseTime ? `${healthStatus.responseTime} ms latency` : 'Port 4000 active'}
             </span>
-            <div className="p-2.5 rounded-xl bg-violet-500/15 dark:bg-violet-500/20 text-violet-600 dark:text-violet-400">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">
-              AES-256
-            </p>
-            <p className="text-xs text-violet-600 dark:text-violet-300 mt-1 font-semibold">
-              HWID CPU/Motherboard Binding
-            </p>
-          </div>
+          }
+        />
+        <StatTile label="Database" icon={Database} value="Neon" meta="PostgreSQL 16 · SSL pool" delay={60} />
+        <StatTile label="Security" icon={ShieldCheck} value="AES-256" meta="CPU / motherboard HWID binding" delay={120} />
+        <StatTile label="Mode" icon={Zap} value="Zero-BW" meta="Cloud license · offline POS" delay={180} />
+      </section>
+
+      <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        {/* Runtime parameters */}
+        <div className="panel ticks rise p-5" style={{ animationDelay: '240ms' }}>
+          <SectionTitle icon={Radio} title="Runtime parameters" hint="Effective configuration of the provider process" />
+          <dl className="mt-4 m-0 divide-y divide-line border-t border-line">
+            {params.map((p) => (
+              <div key={p.k} className="py-3 flex items-center justify-between gap-4 text-[12.5px]">
+                <dt className="font-mono text-[11px] uppercase tracking-[0.1em] text-faint">{p.k}</dt>
+                <dd className="m-0 text-fg text-right">{p.v}</dd>
+              </div>
+            ))}
+          </dl>
         </div>
 
-        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-3 relative overflow-hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold uppercase tracking-wider text-slate-500 dark:text-indigo-200/60">
-              Mode Architecture
-            </span>
-            <div className="p-2.5 rounded-xl bg-amber-500/15 dark:bg-amber-500/20 text-amber-600 dark:text-amber-400">
-              <Zap className="w-4 h-4" />
-            </div>
-          </div>
-          <div>
-            <p className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight m-0">
-              Zero-Bandwidth
-            </p>
-            <p className="text-xs text-amber-600 dark:text-amber-400 mt-1 font-semibold">
-              Cloud License • Local Offline POS
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Details Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Environment & Architecture Parameters */}
-        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <Radio className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider m-0">
-              Core Runtime Parameters
-            </h2>
-          </div>
-
-          <div className="divide-y divide-indigo-50 dark:divide-white/5 text-xs">
-            <div className="py-3 flex items-center justify-between">
-              <span className="text-slate-500 dark:text-indigo-200/60">Server Listening Port</span>
-              <span className="font-mono font-bold text-slate-800 dark:text-white bg-slate-100 dark:bg-white/10 px-2 py-0.5 rounded">
-                4000
-              </span>
-            </div>
-            <div className="py-3 flex items-center justify-between">
-              <span className="text-slate-500 dark:text-indigo-200/60">Host Environment</span>
-              <span className="font-semibold text-slate-800 dark:text-white">Vercel Serverless / Local NestJS</span>
-            </div>
-            <div className="py-3 flex items-center justify-between">
-              <span className="text-slate-500 dark:text-indigo-200/60">Cross-Origin Resource Sharing (CORS)</span>
-              <span className="font-semibold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                <CheckCircle2 className="w-3.5 h-3.5" /> Enabled (Universal POS Clients)
-              </span>
-            </div>
-            <div className="py-3 flex items-center justify-between">
-              <span className="text-slate-500 dark:text-indigo-200/60">Offline Grace Period</span>
-              <span className="font-semibold text-slate-800 dark:text-white">30 Days Token Expiry</span>
-            </div>
-            <div className="py-3 flex items-center justify-between">
-              <span className="text-slate-500 dark:text-indigo-200/60">Database Connection Pool</span>
-              <span className="font-semibold text-slate-800 dark:text-white">Neon Serverless PgBouncer Pool</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Cloud API Endpoints Catalog */}
-        <div className="bg-white/90 dark:bg-white/[0.05] backdrop-blur-2xl border border-indigo-100 dark:border-white/10 rounded-2xl shadow-xl dark:shadow-2xl p-6 space-y-4">
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider m-0">
-              Cloud API Endpoints
-            </h2>
-          </div>
-
-          <div className="space-y-2.5">
+        {/* Endpoints */}
+        <div className="panel ticks rise p-5" style={{ animationDelay: '300ms' }}>
+          <SectionTitle icon={Globe} title="API endpoints" hint="Public routes consumed by POS clients and this console" />
+          <div className="mt-4 space-y-1.5">
             {endpoints.map((ep) => (
               <div
                 key={ep.path}
-                className="p-3 rounded-xl bg-slate-50 dark:bg-white/[0.03] border border-indigo-50 dark:border-white/5 flex items-center justify-between gap-3 text-xs"
+                className="group flex items-center justify-between gap-3 px-3 py-2.5 rounded-[10px] border border-transparent hover:border-line hover:bg-surface-2 transition-colors"
               >
                 <div className="min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2.5">
                     <span
-                      className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold ${
-                        ep.method === 'POST'
-                          ? 'bg-blue-500/15 text-blue-700 dark:text-blue-300'
-                          : 'bg-emerald-500/15 text-emerald-700 dark:text-emerald-300'
+                      className={`font-mono text-[10px] font-semibold w-10 shrink-0 ${
+                        ep.method === 'POST' ? 'text-warn' : 'text-accent-ink'
                       }`}
                     >
                       {ep.method}
                     </span>
-                    <span className="font-mono font-semibold text-slate-800 dark:text-white truncate">
-                      {ep.path}
-                    </span>
+                    <span className="font-mono text-[12.5px] text-fg truncate">{ep.path}</span>
                   </div>
-                  <p className="text-[11px] text-slate-500 dark:text-indigo-200/50 mt-1 m-0 truncate">
-                    {ep.desc}
-                  </p>
+                  <p className="text-[11.5px] text-muted mt-1 m-0 pl-[50px] truncate">{ep.desc}</p>
                 </div>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(ep.path, ep.path)}
-                  className="p-1.5 rounded-lg border border-slate-200 dark:border-white/10 hover:bg-slate-200 dark:hover:bg-white/10 text-slate-500 dark:text-indigo-200/60 shrink-0 cursor-pointer transition-colors"
-                  title="Copy Path"
+                  className="btn btn-sm btn-icon btn-ghost opacity-60 group-hover:opacity-100"
+                  title="Copy path"
+                  aria-label={`Copy ${ep.path}`}
                 >
-                  {copiedEndpoint === ep.path ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
+                  {copiedEndpoint === ep.path ? <Check className="w-3.5 h-3.5 text-ok" /> : <Copy className="w-3.5 h-3.5" />}
                 </button>
               </div>
             ))}
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </PageShell>
   );
 }
