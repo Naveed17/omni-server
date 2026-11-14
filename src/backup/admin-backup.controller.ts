@@ -23,6 +23,15 @@ export class AdminBackupController {
   ) {}
 
   /**
+   * All backups across every store (metadata only, newest first)
+   */
+  @Get('backups')
+  async getAllBackups() {
+    const data = await this.backupService.getAllBackups();
+    return { success: true, count: data.length, data };
+  }
+
+  /**
    * Global backup storage overview
    */
   @Get('backups/overview')

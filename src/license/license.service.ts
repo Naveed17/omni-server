@@ -4,6 +4,14 @@ import { DatabaseService } from '../database/database.service';
 import { normalizeModules, OmniposModuleFlags } from '../common/modules';
 import { schemaIdForLicenseKey } from '../common/database-mode';
 import { LicenseRecord } from './license.types';
+import {
+  ActivityItem,
+  AttentionItem,
+  BACKUP_STALE_DAYS,
+  EXPIRING_WINDOW_DAYS,
+  OverviewData,
+  OverviewStore,
+} from '../common/overview';
 
 function generateKey(): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
@@ -187,54 +195,146 @@ export class LicenseService {
     return await this.licenses.findAll();
   }
 
-  async getOverviewStats() {
-    const licenses = await this.licenses.findAll();
-    const activeLicenses = licenses.filter((l) => l.isEnabled).length;
-    const totalDevices = licenses.reduce((sum, l) => sum + (l.activeDevices?.length || 0), 0);
+  async getOverviewStats(): Promise<{ success: true; data: OverviewData }> {
+    const now = Date.now();
+    const DAY = 86_400_000;
+    const toIso = (v: unknown): string | null => {
+      if (!v) return null;
+      const d = new Date(v as string);
+      return isNaN(d.getTime()) ? null : d.toISOString();
+    };
 
-    const orderCount = 0;
-    const volumeSum = 0;
-    const recentOrders: any[] = [];
+    const [licenses, backupAggRes, backupTotalsRes, recentBackupsRes] = await Promise.all([
+      this.licenses.findAll(),
+      this.db.query(
+        `SELECT license_id, MAX(created_at) AS last_at FROM license_backups GROUP BY license_id`,
+      ),
+      this.db.query(
+        `SELECT COUNT(*)::int AS total,
+                COALESCE(SUM(file_size), 0)::bigint AS bytes,
+                COUNT(*) FILTER (WHERE created_at > NOW() - INTERVAL '7 days')::int AS last7d,
+                COUNT(DISTINCT license_id)::int AS stores
+         FROM license_backups`,
+      ),
+      this.db.query(
+        `SELECT license_id, original_name, device_name, created_at
+         FROM license_backups ORDER BY created_at DESC LIMIT 15`,
+      ),
+    ]);
 
-    const stores = licenses.map((l) => {
-      const activeDevCount = l.activeDevices?.length || 0;
-      const firstDev = l.activeDevices?.[0];
-      let deviceLabel = `${activeDevCount} ${activeDevCount === 1 ? 'Register' : 'Registers'}`;
-      if (firstDev?.deviceName) {
-        deviceLabel += ` (${firstDev.deviceName})`;
-      }
+    const lastBackup = new Map<string, string | null>();
+    for (const row of backupAggRes.rows) lastBackup.set(String(row.license_id), toIso(row.last_at));
+    const nameById = new Map(licenses.map((l) => [l.id, l.userName]));
 
-      let lastSynced = 'Never';
-      if (firstDev?.activatedAt) {
-        const d = new Date(firstDev.activatedAt);
-        if (!isNaN(d.getTime())) {
-          lastSynced = d.toLocaleDateString();
+    const counts = { total: licenses.length, active: 0, suspended: 0, expired: 0, expiringSoon: 0, neverActivated: 0 };
+    const terminals = { used: 0, capacity: 0 };
+    const byType: Record<string, number> = {};
+    const byProfile: Record<string, number> = {};
+    const attention: AttentionItem[] = [];
+    const activity: ActivityItem[] = [];
+
+    const stores: OverviewStore[] = licenses.map((l) => {
+      const used = l.activeDevices?.length || 0;
+      const expiresAt = toIso(l.expiresAt);
+      const lastBackupAt = lastBackup.get(l.id) ?? null;
+      const base = { licenseId: l.id, name: l.userName, key: l.key };
+
+      terminals.used += used;
+      terminals.capacity += l.maxDevices || 0;
+      byType[l.licenseType || 'annual'] = (byType[l.licenseType || 'annual'] || 0) + 1;
+      for (const p of l.businessProfiles || ['standard']) byProfile[p] = (byProfile[p] || 0) + 1;
+
+      const msLeft = expiresAt ? new Date(expiresAt).getTime() - now : Infinity;
+      const isExpired = msLeft < 0;
+
+      if (isExpired) {
+        counts.expired++;
+        attention.push({ ...base, kind: 'expired', detail: `${Math.ceil(-msLeft / DAY)}d ago`, severity: 0 });
+      } else if (!l.isEnabled) {
+        counts.suspended++;
+        attention.push({ ...base, kind: 'suspended', detail: 'Suspended', severity: 3 });
+      } else {
+        counts.active++;
+        if (msLeft <= EXPIRING_WINDOW_DAYS * DAY) {
+          counts.expiringSoon++;
+          attention.push({ ...base, kind: 'expiring', detail: `in ${Math.max(1, Math.ceil(msLeft / DAY))}d`, severity: 1 });
         }
+        if (used === 0) {
+          attention.push({ ...base, kind: 'inactive', detail: 'No terminal activated', severity: 4 });
+        } else {
+          if (used >= (l.maxDevices || 1)) {
+            attention.push({ ...base, kind: 'capacity', detail: `${used}/${l.maxDevices} terminals`, severity: 2 });
+          }
+          const backupAge = lastBackupAt ? now - new Date(lastBackupAt).getTime() : Infinity;
+          if (backupAge > BACKUP_STALE_DAYS * DAY) {
+            attention.push({
+              ...base,
+              kind: 'no_backup',
+              detail: lastBackupAt ? `${Math.floor(backupAge / DAY)}d since backup` : 'Never backed up',
+              severity: 2,
+            });
+          }
+        }
+      }
+      if (used === 0) counts.neverActivated++;
+
+      const createdAt = toIso(l.createdAt);
+      if (createdAt) activity.push({ kind: 'license_created', licenseId: l.id, name: l.userName, label: 'License issued', at: createdAt });
+      for (const d of l.activeDevices || []) {
+        const at = toIso(d.activatedAt);
+        if (at) activity.push({ kind: 'device_activated', licenseId: l.id, name: l.userName, label: d.deviceName || 'Terminal', at });
       }
 
       return {
         id: l.id,
         name: l.userName,
-        license: l.key,
-        type: l.businessProfiles && l.businessProfiles[0] ? l.businessProfiles[0].toUpperCase() : 'RETAIL',
-        devices: deviceLabel,
-        devicesCount: activeDevCount,
-        status: l.isEnabled ? 'Active' : 'Suspended',
-        synced: lastSynced,
+        key: l.key,
+        isEnabled: l.isEnabled && !isExpired,
+        licenseType: l.licenseType || 'annual',
+        profiles: l.businessProfiles || ['standard'],
+        devicesUsed: used,
+        maxDevices: l.maxDevices || 0,
+        expiresAt,
+        lastBackupAt,
+        createdAt,
       };
     });
 
+    for (const row of recentBackupsRes.rows) {
+      const at = toIso(row.created_at);
+      const id = String(row.license_id);
+      if (at) {
+        activity.push({
+          kind: 'backup_uploaded',
+          licenseId: id,
+          name: nameById.get(id) || 'Unknown store',
+          label: row.device_name || row.original_name,
+          at,
+        });
+      }
+    }
+
+    attention.sort((a, b) => a.severity - b.severity || a.name.localeCompare(b.name));
+    activity.sort((a, b) => b.at.localeCompare(a.at));
+
+    const t = backupTotalsRes.rows[0] || {};
     return {
       success: true,
       data: {
-        activeLicenses,
-        totalLicenses: licenses.length,
-        connectedDevices: totalDevices,
-        totalOrders: orderCount,
-        volume: volumeSum,
-        formattedVolume: `PKR ${Math.round(volumeSum).toLocaleString()}`,
+        generatedAt: new Date(now).toISOString(),
+        licenses: counts,
+        terminals,
+        backups: {
+          total: Number(t.total || 0),
+          totalBytes: Number(t.bytes || 0),
+          last7d: Number(t.last7d || 0),
+          storesCovered: Number(t.stores || 0),
+        },
+        byType,
+        byProfile,
+        attention,
+        activity: activity.slice(0, 15),
         stores,
-        recentOrders,
       },
     };
   }
@@ -277,7 +377,13 @@ export class LicenseService {
       isEnabled: true,
       maxDevices: body.maxDevices || 4,
       licenseType: body.licenseType || 'annual',
-      expiresAt: body.expiresAt ? new Date(body.expiresAt) : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+      // lifetime never expires; otherwise honour an explicit date or default by plan length
+      expiresAt:
+        body.licenseType === 'lifetime'
+          ? null
+          : body.expiresAt
+            ? new Date(body.expiresAt)
+            : new Date(Date.now() + (body.licenseType === 'monthly' ? 30 : 365) * 24 * 60 * 60 * 1000),
       modules: normalizeModules(body.modules),
       schemaId: schemaIdForLicenseKey(key),
       adminUsername,

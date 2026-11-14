@@ -2,9 +2,15 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "omnipos-dev",
+      "name": "omnipos-api",
       "runtimeExecutable": "npm",
-      "runtimeArgs": ["run", "dev"],
+      "runtimeArgs": ["run", "dev:api"],
+      "port": 4000
+    },
+    {
+      "name": "omnipos-admin",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev:frontend"],
       "port": 5173
     }
   ]
