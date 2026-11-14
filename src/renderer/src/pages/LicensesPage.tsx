@@ -1,4 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { queryKeys } from '../lib/api';
 import {
   KeyRound, Plus, Copy, Check, Power, Laptop, Trash2, Search,
   Phone, RefreshCw, Sliders, Sparkles, Cpu,
@@ -7,7 +10,7 @@ import {
   Archive, Download, UploadCloud, HardDrive, FileArchive, Clock, FileText, AlertCircle, ShieldCheck, Database,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { PageShell, PageHeader, LiveChip } from '../components/ui';
+import { PageShell, PageHeader } from '../components/ui';
 
 /* ─── Types ─────────────────────────────────────────────────────────────────── */
 interface LicenseDevice { hwid: string; deviceName: string; activatedAt: string; }
@@ -333,14 +336,24 @@ function LicenseCardSkeleton() {
 }
 
 export default function LicensesPage() {
-
+  const [params, setParams] = useSearchParams();
+  const qc = useQueryClient();
 
   const [licenses, setLicenses]         = useState<LicenseRecord[]>([]);
   const [loading, setLoading]           = useState(true);
   const [copied, setCopied]             = useState<string | null>(null);
-  const [search, setSearch]             = useState('');
+  const [search, setSearch]             = useState(() => params.get('q') || '');
   const [filter, setFilter]             = useState<'all' | 'active' | 'disabled'>('all');
-  const [showCreate, setCreate]         = useState(false);
+  const [showCreate, setCreate]         = useState(() => params.get('new') === '1');
+
+  // Deep links from the top bar / command palette: ?q=<key> and ?new=1
+  useEffect(() => {
+    const q = params.get('q');
+    const isNew = params.get('new') === '1';
+    if (q !== null) setSearch(q);
+    if (isNew) setCreate(true);
+    if (q !== null || isNew) setParams({}, { replace: true });
+  }, [params, setParams]);
   const [newName, setNewName]           = useState('');
   const [newPhone, setNewPhone]         = useState('');
   const [newMax, setNewMax]             = useState(4);
@@ -382,6 +395,7 @@ export default function LicensesPage() {
       if (r.ok) {
         const j = await r.json();
         setLicenses(j.data || []);
+        qc.invalidateQueries({ queryKey: queryKeys.overview });
       }
     } catch {
       toast.error('Failed to load licenses.');
@@ -627,7 +641,6 @@ export default function LicensesPage() {
       <PageHeader
         index="02"
         section="Licenses"
-        status={<LiveChip label="Control hub" tone="accent" />}
         title="Client licenses"
         subtitle="Remote module authority, client management and HWID terminal locking."
         actions={
