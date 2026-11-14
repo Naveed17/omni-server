@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { Search, ArrowUp, ArrowDown, RefreshCw, AlertTriangle } from 'lucide-react';
 import { useOverview, timeAgo } from '../../lib/api';
 import {
@@ -8,7 +8,6 @@ import {
 } from '../../lib/licenses';
 import { BACKUP_STALE_DAYS } from '@common/overview';
 import { StatusChip, expiryInfo } from './shared';
-import { LicenseDrawer, type DrawerTab } from './LicenseDrawer';
 import { CreateLicenseDrawer } from './CreateLicenseDrawer';
 
 type Filter = 'all' | LicenseStatus;
@@ -46,8 +45,6 @@ function SortHeader({
 const GRID = 'md:grid md:grid-cols-[minmax(0,1.6fr)_minmax(0,1.3fr)_minmax(0,1fr)_96px_80px_minmax(0,0.9fr)_96px] md:items-center md:gap-4';
 
 export default function LicensesPage() {
-  const navigate = useNavigate();
-  const { id: selectedId } = useParams();
   const [params, setParams] = useSearchParams();
   const { data: licenses = [], isLoading, isError, refetch, isFetching } = useLicenses();
   const { data: counts = {} } = useBackupCounts();
@@ -115,7 +112,6 @@ export default function LicensesPage() {
     return [...list].sort((a, b) => (val(a) > val(b) ? 1 : val(a) < val(b) ? -1 : 0) * sort.dir);
   }, [rows, search, filter, sort]);
 
-  const selected = licenses.find((l) => l.id === selectedId) || null;
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -209,15 +205,13 @@ export default function LicensesPage() {
                 const backupStale =
                   r.status === 'active' && r.used > 0 &&
                   (!r.lastBackupAt || now - new Date(r.lastBackupAt).getTime() > BACKUP_STALE_DAYS * DAY);
-                const isSel = r.lic.id === selectedId;
                 return (
                   <li key={r.lic.id}>
-                    <button
-                      type="button"
-                      onClick={() => navigate(`/licenses/${r.lic.id}`)}
-                      className={`w-full text-left bg-transparent border-0 cursor-pointer px-5 py-3.5 transition-colors flex flex-col gap-2 ${GRID} ${
-                        isSel ? 'bg-surface-2' : 'hover:bg-surface-2'
-                      } ${r.status !== 'active' ? 'opacity-75' : ''}`}
+                    <Link
+                      to={`/licenses/${r.lic.id}`}
+                      className={`w-full text-left no-underline px-5 py-3.5 transition-colors flex flex-col gap-2 hover:bg-surface-2 ${GRID} ${
+                        r.status !== 'active' ? 'opacity-75' : ''
+                      }`}
                     >
                       {/* Store */}
                       <span className="flex items-center gap-3 min-w-0">
@@ -270,7 +264,7 @@ export default function LicensesPage() {
 
                       {/* Status */}
                       <span className="hidden md:flex justify-end"><StatusChip status={r.status} /></span>
-                    </button>
+                    </Link>
                   </li>
                 );
               })}
@@ -284,12 +278,6 @@ export default function LicensesPage() {
         )}
       </div>
 
-      <LicenseDrawer
-        license={selected}
-        open={!!selectedId && !!selected}
-        initialTab={(params.get('tab') as DrawerTab) || 'overview'}
-        onClose={() => navigate('/licenses')}
-      />
       <CreateLicenseDrawer
         open={creating}
         onClose={() => setCreating(false)}
