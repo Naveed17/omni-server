@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutGrid, KeyRound, Sun, Moon } from 'lucide-react';
+import { LayoutGrid, KeyRound, Archive, Sun, Moon } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
 export const NAV_ITEMS = [
   { to: '/', label: 'Overview', icon: LayoutGrid },
   { to: '/licenses', label: 'Licenses', icon: KeyRound },
+  { to: '/backups', label: 'Backups', icon: Archive },
 ];
 
 export function BrandMark({ size = 32 }: { size?: number }) {

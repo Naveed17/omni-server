@@ -12,11 +12,6 @@ export class AdminLicenseController {
     return { success: true, count: licenses.length, data: licenses };
   }
 
-  @Get('overview')
-  async getOverview() {
-    return await this.licenseService.getOverviewStats();
-  }
-
   @Post()
   async createLicense(
     @Body()

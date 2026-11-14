@@ -126,6 +126,21 @@ export class BackupRepository {
     return res.rows.map(mapBackupRow);
   }
 
+  /** Latest backups across all licenses (metadata only), with the store name joined in. */
+  async findAllWithStore(limit = 500): Promise<(LicenseBackupRecord & { storeName: string })[]> {
+    const res = await this.db.query(
+      `SELECT b.id, b.license_id, b.license_key, b.file_name, b.original_name, b.file_path, b.file_size,
+              b.mime_type, b.format, b.device_hwid, b.device_name, b.backup_type, b.notes, b.record_count,
+              b.created_at, b.updated_at, l.user_name AS store_name
+       FROM license_backups b
+       LEFT JOIN licenses l ON l.id = b.license_id
+       ORDER BY b.created_at DESC
+       LIMIT $1`,
+      [limit],
+    );
+    return res.rows.map((row) => ({ ...mapBackupRow(row), storeName: row.store_name || 'Unknown store' }));
+  }
+
   async getBackupCounts(): Promise<Record<string, number>> {
     const res = await this.db.query(
       `SELECT license_id, COUNT(*)::int as count 

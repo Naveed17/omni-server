@@ -21,7 +21,7 @@ function Section({ n, title, hint, children }: { n: string; title: string; hint?
   );
 }
 
-export function CreateLicenseDrawer({ open, onClose }: { open: boolean; onClose: () => void; onCreated?: () => void }) {
+export function CreateLicenseDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const navigate = useNavigate();
   const create = useCreateLicense();
 

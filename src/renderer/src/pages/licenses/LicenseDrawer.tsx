@@ -331,12 +331,17 @@ function BackupsTab({ lic }: { lic: LicenseRecord }) {
 
 /* ── Drawer ────────────────────────────────────────────────────────────── */
 
-export function LicenseDrawer({ license, open, onClose }: { license: LicenseRecord | null; open: boolean; onClose: () => void }) {
-  const [tab, setTab] = useState<TabKey>('overview');
+export type DrawerTab = TabKey;
+
+export function LicenseDrawer({
+  license, open, onClose, initialTab = 'overview',
+}: { license: LicenseRecord | null; open: boolean; onClose: () => void; initialTab?: TabKey }) {
+  const [tab, setTab] = useState<TabKey>(initialTab);
   const { toggleEnabled } = useLicenseActions();
   const { data: backups = [] } = useLicenseBackups(open ? license?.id : undefined);
 
-  useEffect(() => { setTab('overview'); }, [license?.id]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { setTab(initialTab); }, [license?.id]);
 
   if (!license) return null;
   const status = licenseStatus(license);

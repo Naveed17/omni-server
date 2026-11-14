@@ -281,11 +281,6 @@ body {
     border: 1px solid var(--line);
     white-space: nowrap;
   }
-  .chip-accent {
-    color: var(--accent-ink);
-    background: var(--accent-soft);
-    border-color: color-mix(in srgb, var(--accent-ink) 25%, transparent);
-  }
   .chip-ok {
     color: var(--ok);
     background: color-mix(in srgb, var(--ok) 9%, transparent);

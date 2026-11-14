@@ -6,6 +6,7 @@ import { TopBar } from './components/TopBar';
 import { CommandPalette } from './components/CommandPalette';
 import Dashboard from './pages/Dashboard';
 import LicensesPage from './pages/licenses/LicensesPage';
+import BackupsPage from './pages/BackupsPage';
 import { ThemeProvider } from './context/ThemeContext';
 
 function ShellLayout({ children }: { children: React.ReactNode }) {
@@ -60,6 +61,7 @@ export default function App() {
             <Route path="/" element={<Dashboard />} />
             <Route path="/licenses" element={<LicensesPage />} />
             <Route path="/licenses/:id" element={<LicensesPage />} />
+            <Route path="/backups" element={<BackupsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </ShellLayout>

@@ -8,7 +8,7 @@ import {
 } from '../../lib/licenses';
 import { BACKUP_STALE_DAYS } from '@common/overview';
 import { StatusChip, expiryInfo } from './shared';
-import { LicenseDrawer } from './LicenseDrawer';
+import { LicenseDrawer, type DrawerTab } from './LicenseDrawer';
 import { CreateLicenseDrawer } from './CreateLicenseDrawer';
 
 type Filter = 'all' | LicenseStatus;
@@ -284,11 +284,15 @@ export default function LicensesPage() {
         )}
       </div>
 
-      <LicenseDrawer license={selected} open={!!selectedId && !!selected} onClose={() => navigate('/licenses')} />
+      <LicenseDrawer
+        license={selected}
+        open={!!selectedId && !!selected}
+        initialTab={(params.get('tab') as DrawerTab) || 'overview'}
+        onClose={() => navigate('/licenses')}
+      />
       <CreateLicenseDrawer
         open={creating}
         onClose={() => setCreating(false)}
-        onCreated={() => setCreating(false)}
       />
     </div>
   );

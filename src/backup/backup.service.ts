@@ -237,6 +237,14 @@ export class BackupService {
   }
 
   /**
+   * All backups across stores (metadata only, newest first)
+   */
+  async getAllBackups() {
+    const rows = await this.backupRepo.findAllWithStore();
+    return rows.map(({ filePath, fileData, ...rest }) => rest);
+  }
+
+  /**
    * Global stats
    */
   async getGlobalStats() {

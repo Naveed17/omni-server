@@ -112,6 +112,7 @@ export const licenseKeys = {
   all: ['licenses'] as const,
   backupCounts: ['backupCounts'] as const,
   backups: (id: string) => ['backups', id] as const,
+  allBackups: ['backups', '__all'] as const,
 };
 
 async function json<T>(res: Response): Promise<T> {
@@ -136,6 +137,34 @@ export function useBackupCounts() {
       (await json<{ data: Record<string, number> }>(await fetch('/api/admin/backups/counts'))).data || {},
   });
 }
+
+export type StoreBackup = LicenseBackup & { storeName: string };
+
+export function useAllBackups() {
+  return useQuery({
+    queryKey: licenseKeys.allBackups,
+    queryFn: async () => (await json<{ data: StoreBackup[] }>(await fetch('/api/admin/backups'))).data || [],
+  });
+}
+
+/** Delete any backup by license + id (used where there is no single license in scope). */
+export function useDeleteBackup() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ licenseId, backupId }: { licenseId: string; backupId: string }) =>
+      json(await fetch(`/api/admin/licenses/${licenseId}/backups/${backupId}`, { method: 'DELETE' })),
+    onSuccess: () => {
+      toast.success('Backup deleted');
+      qc.invalidateQueries({ queryKey: ['backups'] });
+      qc.invalidateQueries({ queryKey: licenseKeys.backupCounts });
+      qc.invalidateQueries({ queryKey: queryKeys.overview });
+    },
+    onError: (e: any) => toast.error(e?.message || 'Delete failed'),
+  });
+}
+
+export const backupDownloadUrl = (licenseId: string, backupId: string) =>
+  `/api/admin/licenses/${licenseId}/backups/${backupId}/download`;
 
 export function useLicenseBackups(licenseId: string | undefined) {
   return useQuery({
@@ -229,7 +258,7 @@ export function useCreateLicense() {
 export function useBackupActions(licenseId: string) {
   const qc = useQueryClient();
   const refresh = () => {
-    qc.invalidateQueries({ queryKey: licenseKeys.backups(licenseId) });
+    qc.invalidateQueries({ queryKey: ['backups'] });
     qc.invalidateQueries({ queryKey: licenseKeys.backupCounts });
     qc.invalidateQueries({ queryKey: queryKeys.overview });
   };
@@ -253,7 +282,7 @@ export function useBackupActions(licenseId: string) {
     onError: (e: any) => toast.error(e?.message || 'Delete failed'),
   });
 
-  const downloadUrl = (backupId: string) => `/api/admin/licenses/${licenseId}/backups/${backupId}/download`;
+  const downloadUrl = (backupId: string) => backupDownloadUrl(licenseId, backupId);
 
   return { upload, remove, downloadUrl };
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, LayoutGrid, KeyRound, Plus, SunMoon, CornerDownLeft, Store } from 'lucide-react';
+import { Search, LayoutGrid, KeyRound, Archive, Plus, SunMoon, CornerDownLeft, Store } from 'lucide-react';
 import { useOverview } from '../lib/api';
 import { useTheme } from '../context/ThemeContext';
 
@@ -35,6 +35,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
       { id: 'c-new', group: 'Commands', label: 'Issue new license', icon: Plus, run: go('/licenses?new=1') },
       { id: 'c-ov', group: 'Commands', label: 'Go to Overview', icon: LayoutGrid, run: go('/') },
       { id: 'c-li', group: 'Commands', label: 'Go to Licenses', icon: KeyRound, run: go('/licenses') },
+      { id: 'c-bk', group: 'Commands', label: 'Go to Backups', icon: Archive, run: go('/backups') },
       { id: 'c-th', group: 'Commands', label: 'Toggle theme', icon: SunMoon, run: () => { toggleTheme(); onClose(); } },
     ];
     const stores: PaletteItem[] = (data?.stores || []).map((s) => ({
