@@ -229,9 +229,10 @@ export default function Dashboard() {
             </section>
 
             {/* Attention + activity */}
-            <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-4 items-start">
-              <div className="panel rise overflow-hidden" style={{ animationDelay: '220ms' }}>
-                <div className="px-5 h-14 flex items-center justify-between border-b border-line">
+            <section className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-4">
+              {/* Attention sets the row height; activity fills it and scrolls (lg+) */}
+              <div className="panel rise overflow-hidden flex flex-col lg:min-h-[320px]" style={{ animationDelay: '220ms' }}>
+                <div className="px-5 h-14 shrink-0 flex items-center justify-between border-b border-line">
                   <div className="flex items-center gap-2.5">
                     <h2 className="text-[14px] font-medium text-fg m-0 tracking-tight">Needs attention</h2>
                     {data.attention.length > 0 && <span className="chip">{data.attention.length}</span>}
@@ -242,13 +243,13 @@ export default function Dashboard() {
                 </div>
 
                 {data.attention.length === 0 ? (
-                  <div className="px-5 py-14 text-center">
-                    <CheckCircle2 className="w-6 h-6 text-ok mx-auto mb-3" />
+                  <div className="flex-1 flex flex-col items-center justify-center px-5 py-14 text-center">
+                    <CheckCircle2 className="w-6 h-6 text-ok mb-3" />
                     <p className="text-[13.5px] text-fg m-0">All clear</p>
                     <p className="text-[12px] text-muted mt-1 m-0">Every license is active, backed up and within limits.</p>
                   </div>
                 ) : (
-                  <ul className="m-0 p-0 list-none divide-y divide-line max-h-[460px] overflow-y-auto">
+                  <ul className="m-0 p-0 list-none divide-y divide-line max-h-[460px] overflow-y-auto border-b border-line">
                     {data.attention.map((a, i) => {
                       const meta = ATTENTION_META[a.kind];
                       return (
@@ -277,14 +278,15 @@ export default function Dashboard() {
                 )}
               </div>
 
-              <div className="panel rise" style={{ animationDelay: '280ms' }}>
-                <div className="px-5 h-14 flex items-center border-b border-line">
+              <div className="panel rise overflow-hidden relative min-h-[240px]" style={{ animationDelay: '280ms' }}>
+                <div className="lg:absolute lg:inset-0 flex flex-col">
+                <div className="px-5 h-14 shrink-0 flex items-center border-b border-line">
                   <h2 className="text-[14px] font-medium text-fg m-0 tracking-tight">Recent activity</h2>
                 </div>
                 {data.activity.length === 0 ? (
                   <p className="text-[12.5px] text-faint m-0 px-5 py-10 text-center">Nothing has happened yet.</p>
                 ) : (
-                  <ol className="m-0 list-none px-5 py-4 max-h-[460px] overflow-y-auto">
+                  <ol className="m-0 list-none px-5 py-4 max-h-[460px] lg:max-h-none flex-1 min-h-0 overflow-y-auto">
                     {data.activity.map((ev, i) => {
                       const meta = ACTIVITY_META[ev.kind];
                       const last = i === data.activity.length - 1;
@@ -306,11 +308,12 @@ export default function Dashboard() {
                     })}
                   </ol>
                 )}
+                </div>
               </div>
             </section>
 
-            {/* Mix */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Mix — cards keep their own height so a short list leaves no empty block */}
+            <section className="grid grid-cols-1 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-4 items-start">
               <div className="panel rise p-5" style={{ animationDelay: '320ms' }}>
                 <div className="flex items-baseline justify-between mb-5">
                   <h2 className="text-[14px] font-medium text-fg m-0 tracking-tight">Licenses by plan</h2>
