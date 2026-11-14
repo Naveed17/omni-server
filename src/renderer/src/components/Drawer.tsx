@@ -71,7 +71,7 @@ export function Tabs<T extends string>({
   onChange: (k: T) => void;
 }) {
   return (
-    <div className="flex gap-5 px-5 sm:px-6 border-b border-line overflow-x-auto" role="tablist">
+    <div className="flex gap-5 px-5 sm:px-6 border-b border-line overflow-x-auto overflow-y-hidden" role="tablist">
       {tabs.map((t) => {
         const on = t.key === value;
         return (

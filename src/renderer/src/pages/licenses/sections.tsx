@@ -1,20 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
-  Copy, Check, Power, Laptop, Trash2, UploadCloud, FileArchive, Database,
-  Download, RefreshCw, MessageCircle,
+  Copy, Check, Laptop, Trash2, UploadCloud, FileArchive, Database, Download, RefreshCw,
 } from 'lucide-react';
 import toast from 'react-hot-toast';
-import { Drawer, Tabs } from '../../components/Drawer';
 import { formatBytes, timeAgo } from '../../lib/api';
 import {
-  BUSINESS_PROFILES, MODULES, PLAN_LABEL, licenseStatus, useBackupActions, useLicenseActions, useLicenseBackups,
+  BUSINESS_PROFILES, MODULES, useBackupActions, useLicenseActions, useLicenseBackups,
   type LicenseRecord,
 } from '../../lib/licenses';
-import { StatusChip, expiryInfo, formatDate } from './shared';
 
-type TabKey = 'overview' | 'terminals' | 'modules' | 'backups';
-
-function CopyKey({ value }: { value: string }) {
+export function CopyKey({ value }: { value: string }) {
   const [done, setDone] = useState(false);
   return (
     <button
@@ -34,7 +29,7 @@ function CopyKey({ value }: { value: string }) {
   );
 }
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+export function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="py-3 flex items-start justify-between gap-6 border-b border-line last:border-b-0">
       <dt className="eyebrow text-faint pt-0.5 shrink-0">{label}</dt>
@@ -43,60 +38,9 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
   );
 }
 
-/* ── Tabs ──────────────────────────────────────────────────────────────── */
+/* ── Sections (used by the license detail page) ───────────────────────── */
 
-function OverviewTab({ lic, backups, onTab }: { lic: LicenseRecord; backups: number; onTab: (t: TabKey) => void }) {
-  const exp = expiryInfo(lic.expiresAt);
-  const used = lic.activeDevices?.length || 0;
-  const modulesOn = MODULES.filter((m) => lic.modules?.[m.key]).length;
-  const phoneDigits = (lic.whatsappNumber || '').replace(/[^\d]/g, '');
-  return (
-    <div className="px-5 sm:px-6 py-4">
-      <dl className="m-0">
-        <Field label="Plan">{PLAN_LABEL[lic.licenseType] || lic.licenseType}</Field>
-        <Field label="Expires">
-          <span className={exp.tone}>{exp.label}</span>
-          <span className="block font-mono text-[11px] text-faint">{exp.sub}</span>
-        </Field>
-        <Field label="Contact">
-          {phoneDigits ? (
-            <a
-              href={`https://wa.me/${phoneDigits}`}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-fg no-underline hover:text-accent-ink"
-            >
-              <MessageCircle className="w-3.5 h-3.5" /> {lic.whatsappNumber}
-            </a>
-          ) : (
-            <span className="text-faint">No phone</span>
-          )}
-        </Field>
-        <Field label="Issued">{lic.createdAt ? formatDate(lic.createdAt) : '—'}</Field>
-      </dl>
-
-      <div className="grid grid-cols-3 gap-2 mt-5">
-        {[
-          { label: 'Terminals', value: `${used}/${lic.maxDevices}`, tab: 'terminals' as const },
-          { label: 'Modules', value: `${modulesOn}/${MODULES.length}`, tab: 'modules' as const },
-          { label: 'Backups', value: String(backups), tab: 'backups' as const },
-        ].map((s) => (
-          <button
-            key={s.label}
-            type="button"
-            onClick={() => onTab(s.tab)}
-            className="well p-3 text-left cursor-pointer hover:border-line-strong transition-colors"
-          >
-            <span className="eyebrow text-faint block">{s.label}</span>
-            <span className="num text-[20px] text-fg block mt-2">{s.value}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function TerminalsTab({ lic }: { lic: LicenseRecord }) {
+export function TerminalsSection({ lic }: { lic: LicenseRecord }) {
   const { unlinkDevice } = useLicenseActions();
   const used = lic.activeDevices?.length || 0;
   return (
@@ -150,7 +94,7 @@ function TerminalsTab({ lic }: { lic: LicenseRecord }) {
   );
 }
 
-function ModulesTab({ lic }: { lic: LicenseRecord }) {
+export function ModulesSection({ lic }: { lic: LicenseRecord }) {
   const { setModules, setProfiles } = useLicenseActions();
   const profiles = lic.businessProfiles || ['standard'];
 
@@ -200,7 +144,7 @@ function ModulesTab({ lic }: { lic: LicenseRecord }) {
             <button type="button" className="btn btn-sm btn-ghost" onClick={() => setAll(false)}>Disable all</button>
           </div>
         </div>
-        <ul className="m-0 p-0 list-none rounded-[10px] border border-line divide-y divide-line overflow-hidden">
+        <ul className="m-0 p-0 list-none grid grid-cols-1 md:grid-cols-2 gap-2">
           {MODULES.map((m) => {
             const on = lic.modules?.[m.key] === true;
             return (
@@ -212,7 +156,7 @@ function ModulesTab({ lic }: { lic: LicenseRecord }) {
                   onClick={() =>
                     setModules(lic, { ...lic.modules, [m.key]: !on }, `${m.label} ${on ? 'disabled' : 'enabled'}`).catch(() => {})
                   }
-                  className="w-full flex items-center gap-3 px-3.5 py-3 bg-transparent border-0 cursor-pointer text-left hover:bg-surface-2 transition-colors"
+                  className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-[10px] border cursor-pointer text-left transition-colors ${on ? 'bg-surface-2 border-line-strong' : 'bg-transparent border-line hover:border-line-strong'}`}
                 >
                   <m.icon className={`w-4 h-4 shrink-0 ${on ? 'text-accent-ink' : 'text-faint'}`} />
                   <span className="flex-1 min-w-0">
@@ -230,7 +174,7 @@ function ModulesTab({ lic }: { lic: LicenseRecord }) {
   );
 }
 
-function BackupsTab({ lic }: { lic: LicenseRecord }) {
+export function BackupsSection({ lic }: { lic: LicenseRecord }) {
   const { data: backups = [], isLoading } = useLicenseBackups(lic.id);
   const { upload, remove, downloadUrl } = useBackupActions(lic.id);
   const [file, setFile] = useState<File | null>(null);
@@ -326,76 +270,5 @@ function BackupsTab({ lic }: { lic: LicenseRecord }) {
         )}
       </section>
     </div>
-  );
-}
-
-/* ── Drawer ────────────────────────────────────────────────────────────── */
-
-export type DrawerTab = TabKey;
-
-export function LicenseDrawer({
-  license, open, onClose, initialTab = 'overview',
-}: { license: LicenseRecord | null; open: boolean; onClose: () => void; initialTab?: TabKey }) {
-  const [tab, setTab] = useState<TabKey>(initialTab);
-  const { toggleEnabled } = useLicenseActions();
-  const { data: backups = [] } = useLicenseBackups(open ? license?.id : undefined);
-
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  useEffect(() => { setTab(initialTab); }, [license?.id]);
-
-  if (!license) return null;
-  const status = licenseStatus(license);
-  const modulesOn = MODULES.filter((m) => license.modules?.[m.key]).length;
-
-  return (
-    <Drawer
-      open={open}
-      onClose={onClose}
-      label={`License ${license.userName}`}
-      header={
-        <div className="flex items-start gap-3.5">
-          <span className="w-11 h-11 rounded-[11px] bg-surface-3 border border-line flex items-center justify-center font-mono text-[12px] text-fg shrink-0">
-            {license.userName.slice(0, 2).toUpperCase()}
-          </span>
-          <div className="min-w-0 space-y-2">
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h2 className="text-[18px] font-medium text-fg m-0 tracking-tight truncate">{license.userName}</h2>
-              <StatusChip status={status} />
-            </div>
-            <CopyKey value={license.key} />
-          </div>
-        </div>
-      }
-      footer={
-        <div className="flex items-center justify-between gap-3">
-          <span className="text-[11.5px] text-faint">
-            {status === 'expired' ? 'Expired licenses stay blocked until renewed.' : status === 'active' ? 'Suspending blocks every terminal at next check.' : 'Terminals are blocked while suspended.'}
-          </span>
-          <button
-            type="button"
-            onClick={() => toggleEnabled(license).catch(() => {})}
-            className={`btn ${license.isEnabled ? 'btn-danger' : 'btn-primary'}`}
-          >
-            <Power className="w-3.5 h-3.5" />
-            {license.isEnabled ? 'Suspend' : 'Activate'}
-          </button>
-        </div>
-      }
-    >
-      <Tabs<TabKey>
-        value={tab}
-        onChange={setTab}
-        tabs={[
-          { key: 'overview', label: 'Overview' },
-          { key: 'terminals', label: 'Terminals', count: license.activeDevices?.length || 0 },
-          { key: 'modules', label: 'Modules', count: modulesOn },
-          { key: 'backups', label: 'Backups', count: backups.length },
-        ]}
-      />
-      {tab === 'overview' && <OverviewTab lic={license} backups={backups.length} onTab={setTab} />}
-      {tab === 'terminals' && <TerminalsTab lic={license} />}
-      {tab === 'modules' && <ModulesTab lic={license} />}
-      {tab === 'backups' && <BackupsTab lic={license} />}
-    </Drawer>
   );
 }
